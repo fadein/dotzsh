@@ -16,7 +16,7 @@ case $OSTYPE in
                 function hostcolor {echo "%B%F{white}$1%f%b"} ;;
             explorer)
                 function hostcolor {echo "%B%F{blue}$1%f%b"} ;;
-            viking)
+            viking*)
                 function hostcolor {echo "%B%F{magenta}$1%f%b"} ;;
             *)
                 function hostcolor {echo "%B%F{white}$1%f%b"} ;;

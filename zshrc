@@ -13,7 +13,7 @@ zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p
 zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
-zstyle :compinstall filename '/home/fadein/.zshrc'
+zstyle :compinstall filename '$HOME/.zshrc'
 
 # enable cache for the completions
 zstyle ':completion::complete:*' use-cache 1
