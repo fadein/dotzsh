@@ -1,0 +1,4 @@
+dotzsh
+======
+
+Zsh configuration
