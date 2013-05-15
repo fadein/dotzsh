@@ -1,4 +1,4 @@
 dotzsh
 ======
 
-Zsh configuration
+my Zsh configuration stuff
