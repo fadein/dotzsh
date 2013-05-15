@@ -1,10 +1,8 @@
 # prompts.zsh
 
 # History {
-#
-# Version 1.4
-# Thu Apr 18 15:42:12 MDT 2013
-# Move elements into RPROMPT
+# Mon May 13 21:40:25 MDT 2013
+# Add tty in RPROMPTs
 #
 # Wed Jul 18 14:27:05 MDT 2012
 # Fix titlebar for xterm-256color
@@ -135,15 +133,14 @@ function plain() {
 #The jobcount is colored red if non-zero.
 function colorful() {
     PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# "
-    RPROMPT="[%1(j.%F{red}%%%j%f .)%B%F{yellow}${TASK:+$TASK }%f%b%F{yellow}!%!%f]"
+    RPROMPT="[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
 }
 
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() { 
-    #PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# "
     PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# "
-    RPROMPT="[%1(j.%F{red}%%%j%f .)%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f]"
+    RPROMPT="[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
 }
 
 function _git_branch_details() {
@@ -220,8 +217,8 @@ function git() {
     #
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
-    PROMPT="[%(?..%F{red}%?%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') %F{default}"
-    RPROMPT="[%1(j.%F{red}%%%j%f .)%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f]"
+    PROMPT="[%1(j.%F{red}%%%j%f .)%(?..%F{red}%?%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') %F{default}"
+    RPROMPT="[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
 }
 
 function gitprompt() {
