@@ -45,7 +45,7 @@ case $OSTYPE in
         function hostcolor {echo "%F{cyan}$1%f"} ;;
     solaris*)
         function hostcolor {echo "%F{yellow}$1%f"} ;;
-    linux*) 
+    linux*)
         case $HOST in
             gemini)
                 function hostcolor {echo "%B%F{cyan}$1%f%b"} ;;
@@ -72,8 +72,9 @@ case $UID in
 esac
 #}
 
+# Render the window title for virtual terminals
 function title {
-    case $TERM in 
+    case $TERM in
         (screen)
             # Use these two for GNU Screen:
             print -nP $'\ek'$1$'\e'\\
@@ -89,10 +90,10 @@ function title {
             ;;
     esac
 }
-  
+
 # Window title: "host tty cwd"
 function precmd {
-	title zsh "%M %l %~"
+    title zsh "%M %l %~"
 }
 
 function preexec() {
@@ -110,24 +111,24 @@ function preexec() {
                 cmd=(builtin jobs -l ${(Q)cmd[2]})
             fi;;
         %*) cmd=(builtin jobs -l ${(Q)cmd[1]});; # Same as "else" above
-    exec) shift cmd;& # If the command is 'exec', drop that, because
-    # we'd rather just see the command that is being
-    # exec'd. Note the ;& to fall through.
-    *)  title $cmd[1]:t "$cmd[2,-1]"    # Not resuming a job,
-    return;;                        # so we're all done
-          esac
+        exec) shift cmd;& # If the command is 'exec', drop that, because
+                          # we'd rather just see the command that is being
+                          # exec'd. Note the ;& to fall through.
+        *)  title $cmd[1]:t "$cmd[2,-1]"    # Not resuming a job,
+            return;;                        # so we're all done
+      esac
 
-          local -A jt; jt=(${(kv)jobtexts})       # Copy jobtexts for subshell
+      local -A jt; jt=(${(kv)jobtexts})       # Copy jobtexts for subshell
 
-          # Run the command, read its output, and look up the jobtext.
-          # Could parse $rest here, but $jobtexts (via $jt) is easier.
-          $cmd >>(read num rest
+      # Run the command, read its output, and look up the jobtext.
+      # Could parse $rest here, but $jobtexts (via $jt) is easier.
+      $cmd >>(read num rest
           cmd=(${(z)${(e):-\$jt$num}})
           title $cmd[1]:t "$cmd[2,-1]") 2>/dev/null
 }
 
 function plain() {
-	PS1='%n@%M %~ %# '
+    PS1='%n@%M %~ %# '
 }
 
 #The jobcount is colored red if non-zero.
@@ -138,74 +139,74 @@ function colorful() {
 
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
-function screen() { 
+function screen() {
     PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# "
     RPROMPT="[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
 }
 
 function _git_branch_details() {
-	_GITS=
-	local branch=
-	local IFS=$'\x0A'$'\x0D'
-	local staged=
-	local dirty=
-	local state=
+    _GITS=
+    local branch=
+    local IFS=$'\x0A'$'\x0D'
+    local staged=
+    local dirty=
+    local state=
     local unmerged=
     local untracked=
-    
-	local rx_branch="^# On branch (.+)"
-	local rx_changed="^#[[:space:]]+(new file|both modified|modified|deleted|renamed)"
-	local rx_inIndex="^# Changes to be committed:"
-	local rx_inWork="^# Changed but not updated:|^# Changes not staged for commit:" #prior to v1.7.4
-	local rx_fatal="^fatal:"
+
+    local rx_branch="^# On branch (.+)"
+    local rx_changed="^#[[:space:]]+(new file|both modified|modified|deleted|renamed)"
+    local rx_inIndex="^# Changes to be committed:"
+    local rx_inWork="^# Changed but not updated:|^# Changes not staged for commit:" #prior to v1.7.4
+    local rx_fatal="^fatal:"
     local rx_unmerged="^# Unmerged paths:"
-	local rx_untracked="^# Untracked files:"
+    local rx_untracked="^# Untracked files:"
     local rx_filename="^#[[:blank:]][[:alnum:]_#.]+"
-	
-	local LINE=
-	for LINE in $( git status 2>&1 )
-	do
-		if [[ ${LINE} =~ ${rx_branch} ]]; then
-			branch=$match[1]
-		elif [[ ${LINE} =~ ${rx_inIndex} ]]; then
-			state=index
-		elif [[ ${LINE} =~ ${rx_inWork} ]]; then
-			state=work
-		elif [[ ${LINE} =~ ${rx_untracked} ]]; then
+
+    local LINE=
+    for LINE in $( git status 2>&1 )
+    do
+        if [[ ${LINE} =~ ${rx_branch} ]]; then
+            branch=$match[1]
+        elif [[ ${LINE} =~ ${rx_inIndex} ]]; then
+            state=index
+        elif [[ ${LINE} =~ ${rx_inWork} ]]; then
+            state=work
+        elif [[ ${LINE} =~ ${rx_untracked} ]]; then
             state=untracked
-		elif [[ ${LINE} =~ ${rx_unmerged} ]]; then
+        elif [[ ${LINE} =~ ${rx_unmerged} ]]; then
             state=unmerge
-		elif [[ ${LINE} =~ ${rx_changed} ]]; then
-			case $state in
-				index)
-					let staged++;;
-				work)
-					let dirty++;;
+        elif [[ ${LINE} =~ ${rx_changed} ]]; then
+            case $state in
+                index)
+                    let staged++;;
+                work)
+                    let dirty++;;
                 unmerge)
                     let unmerged++;;
-			esac
+            esac
         elif [[ $state == 'untracked' ]]; then
             if [[ ${LINE} =~ ${rx_filename} ]]; then
                 let untracked++
             fi
-		elif [[ ${LINE} =~ ${rx_fatal} ]]; then
-			return
-		fi
-	done
-	
-	# get SHA1 of current commit when in detached HEAD state
-	# indicate detached head by prepending with *
-	if [[ -z "${branch}" ]]; then
-		branch="*"$(git rev-parse --short HEAD 2>/dev/null)
-	fi
-	
-	# show number of non-indexed changes in red
-	# and number of indexed changes in green
-	if [[ -n "${staged}${dirty}${unmerged}${untracked}" ]]; then
-		echo " %F{green}${staged}%F{red}${dirty}%U${unmerged}%u%F{yellow}${untracked}%F{red} ${branch}%f" 
-	else
-		echo " %F{green}${branch}%f" 
-	fi
+        elif [[ ${LINE} =~ ${rx_fatal} ]]; then
+            return
+        fi
+    done
+
+    # get SHA1 of current commit when in detached HEAD state
+    # indicate detached head by prepending with *
+    if [[ -z "${branch}" ]]; then
+        branch="*"$(git rev-parse --short HEAD 2>/dev/null)
+    fi
+
+    # show number of non-indexed changes in red
+    # and number of indexed changes in green
+    if [[ -n "${staged}${dirty}${unmerged}${untracked}" ]]; then
+        echo " %F{green}${staged}%F{red}${dirty}%U${unmerged}%u%F{yellow}${untracked}%F{red} ${branch}%f"
+    else
+        echo " %F{green}${branch}%f"
+    fi
 }
 
 # git prompt main entry point
@@ -242,13 +243,13 @@ function screenprompt() {
 }
 
 if [[ $# -gt 0 ]]; then
-	eval "$1"
+    eval "$1"
 else
-	plain
+    plain
 fi
 
 # Try to keep environment pollution down, EPA loves us.
-unfunction plain screen colorful 2>/dev/null 
+unfunction plain screen colorful 2>/dev/null
 unfunction git 2>/dev/null
 
 # excerpt from man zshmisc

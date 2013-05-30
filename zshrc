@@ -9,15 +9,12 @@ zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}' 'r:|[._-]=* r:|=
 zstyle ':completion:*' menu select=long
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle ':completion:*' accept-exact '*(N)'
-zstyle :compinstall filename '/home/pi/.zshrc'
+zstyle :compinstall filename '/home/fadein/.zshrc'
 
 # enable cache for the completions
 zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion::complete:*' cache-path ~/.zshcache
+zstyle ':completion::complete:*' cache-path ~/.zsh/cache
 
-HISTFILE=~/.zhistory
-HISTSIZE=1337
-SAVEHIST=1337
 bindkey -e
 
 autoload -U compinit; compinit
@@ -67,47 +64,31 @@ ulimit -c unlimited
 
 #source cool functions; needed for uniquify
 #TODO: see about making these functions autoloadable
+#TODO: checkout ~/build/Documentation/zsh/zshrc_mikachu for more functions to glean...
 source ~/.zsh/functions.zsh
-
-#remove duplicate entries from PATH
-export PATH=$PATH:/usr/sbin:$HOME/.zsh/tasks:$HOME/scripts
-if declare -F uniquify >/dev/null; then
-    [[ -n "$PATH" ]] && PATH=$(uniquify $PATH)
-fi
-
-#set my cool, cool prompt
-source ~/.zsh/prompts.zsh screen
-
-#set up escapepod
-if [[ -f  ~/scripts/escapepod.sh ]]; then
-    source ~/scripts/escapepod.sh
-    ESCAPEPOD_FILES=".abook/ .bashrc .config/newsbeuter .config/htop .csirc .git* .gnupg/
-    .htoprc .irssi/ .lynx* .mailcap .mc/ .mime.types .mutt/ .muttrc .newsbeuter/ .notes
-    .profile .redeclipse/serv* .screenrc .sig .ssh/ .toprc .vimrc .zshrc .zsh/ scripts/"
-    ESCAPEPOD_EXCLUDES="scripts/.git/* .zsh/*/.git/*"
-fi
-
-#setup ssh-agent
-#source ssh-agent-startup.sh
-
-# Exit MidnightCommander into its last CWD:
-#source /usr/libexec/mc/mc.sh
 
 #
 # Global environment variables
 #
-export GPG_TTY=$(tty)
-export BROWSER=/usr/bin/lynx
-export COWPATH=/usr/share/cows
-export EDIT=/usr/bin/vim
-export EDITOR=/usr/bin/vim
-export GREP_COLOR="02;41"   #red back, white fore
-export LYNX_CFG=~/.lynx.cfg
-export MAILDIR=~/.maildir
-export NNTPSERVER=nntp.aioe.org
+HISTFILE=~/.zsh/history
+HISTSIZE=1337
+SAVEHIST=1337
+export PATH=$PATH:/usr/sbin:$HOME/scripts:/usr/local/tasks
+export MANPATH=$MANPATH:/var/lib/share/man
+if declare -F uniquify >/dev/null; then
+    #remove duplicate entries from PATH, MANPATH
+    [[ -n "$PATH" ]] && PATH=$(uniquify $PATH)
+    [[ -n "$MANPATH" ]] && MANPATH=$(uniquify $MANPATH)
+fi
 
-#chose a search engine based on what day of the year it is
-#if that gets boring, change the %j below to %s for seconds since epoch
+#
+# Set my cool, cool prompt
+#
+source ~/.zsh/prompts.zsh screen
+
+#
+# Chose a search engine based on what day of the year it is if that gets
+# boring, change the %j below to %s for seconds since epoch
 sengines=(https://ixquick.com/ https://duckduckgo.com/)
 zmodload zsh/datetime
 #add one because zsh arrays are 1-indexed: WTF?
@@ -115,19 +96,16 @@ export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
 unset sengines
 
 #
-#User-specific aliases
+# User-specific aliases
 #
-alias apg='apg -MNCL -m 8'
 alias cp='cp -i'
-alias csi='csi -q'
 alias ctags='ctags --fields=+iaS --extra=+fq'
 alias curl='curl -A "Mozilla/4.0"'
 alias date='date +"%a, %b %e %Y  %r %Z"'
 alias df='df -h'
 alias du='du -h'
-alias entropy=cat\ /proc/sys/kernel/random/entropy_avail
 alias free='free -m'
-alias grep='grep --color=auto'
+alias grep='grep -n --color=auto'
 alias l='ls --color=auto -F'
 alias la='ls --color=auto -Fa'
 alias ll='ls --color=auto -Flh'
@@ -145,12 +123,11 @@ alias pd='pushd'
 alias pgrep='pgrep -l'
 alias pwd='pwd -P'
 alias rm='rm -i'
-alias shred='shred -uz'
-alias topu="htop -u $USER"
 alias which="which -p"
+alias topu="top -u $USER"
 
 #
-#because I can't spell...
+# because I can't spell...
 #
 alias grpe=grep
 alias les=less
@@ -185,6 +162,11 @@ alias deltree='rm -rf'
 alias move='mv -i'
 alias screen-r=screen\ -r
 alias screenr=screen\ -r
+
+#
+# Load custom stuff from local zshrc
+#
+[[ -f ".$(hostname).zshrc" ]] && source ".$(hostname).zshrc"
 
 #this snippet is required in your zshrc for TASKS
 [[ -n "$TASK" && -x ~/.zsh/tasks/$TASK.zsh ]] \
