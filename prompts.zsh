@@ -74,18 +74,22 @@ esac
 
 # Render the window title for virtual terminals
 function title {
+    local ROOT=
+    if [[ "$UID" = 0 ]]; then
+        ROOT="* "
+    fi
     case $TERM in
         (screen)
             # Use these two for GNU Screen:
-            print -nP $'\ek'$1$'\e'\\
+            print -nP $'\ek'${ROOT}$1$'\e'\\
             print -nP $'\e]0;'$2$'\a'
             ;;
         (xterm*|rxvt*)
             # Use this one instead for XTerms:
-            print -nP $'\e]0;'$*$'\a'
+            print -nP $'\e]0;'${ROOT}$*$'\a'
             ;;
         (screen.rxvt)
-            print -nR $'\ek'$1$'\e'\\
+            print -nR $'\ek'${ROOT}$1$'\e'\\
             print -nP $'\e]0;'$*$'\a'
             ;;
     esac
