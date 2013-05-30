@@ -17,7 +17,7 @@ zstyle ':completion::complete:*' cache-path ~/.zsh/cache
 
 bindkey -e
 
-autoload -U compinit; compinit
+autoload -U compinit; compinit -d ~/.zsh/compdump
 
 setopt pushd_ignore_dups \
     pushd_to_home \
