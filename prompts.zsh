@@ -1,42 +1,5 @@
 # prompts.zsh
 
-# History {
-# Mon May 13 21:40:25 MDT 2013
-# Add tty in RPROMPTs
-#
-# Wed Jul 18 14:27:05 MDT 2012
-# Fix titlebar for xterm-256color
-#
-# Thu Jun 28 09:59:46 MDT 2012
-# Fix xterm/GNU Screen titlebar
-# Add colors for viking
-#
-# Version 1.3
-# Tue Jun  5 10:01:46 MDT 2012
-# Add porterage stuff to screen prompt
-# Incorporate changes from EFALOR-WKS.sti
-#
-# Version 1.2.1
-# Thu Jun 16 10:54:57 MDT 2011
-# turn off prompt_subst option - it was breaking
-# commands with echo within $() such as
-# echo $(echo 1; echo 2; echo 3)
-#
-# Version 1.2
-# Thu Jun 9 11:05:11 MDT 2011
-# augment regex in git prompt to work with git >=1.7.4 and <1.7.4
-#
-# Version 1.1
-# Mon Apr 11 12:11:26 MDT 2011
-# Set xterm/GNU Screen titlebar
-#
-# Version 1.0
-# Tue Aug 10
-# Initial version
-#}
-
-THIS_FILE=$0
-
 #Choose color for host and username #{
 case $OSTYPE in
     hpux*)
@@ -102,7 +65,12 @@ function precmd {
 
 function preexec() {
     emulate -L zsh
-    local -a cmd; cmd=(${(z)1})             # Re-parse the command line
+    # reset console video attribs to null
+    print -nP "\e[0;0m"
+
+    # Re-parse the command line
+    local -a cmd;
+    cmd=(${(z)1})
 
     # Construct a command that will output the desired job number.
     case $cmd[1] in
@@ -113,22 +81,25 @@ function preexec() {
             else
                 # Replace the command name, ignore extra args.
                 cmd=(builtin jobs -l ${(Q)cmd[2]})
-            fi;;
-        %*) cmd=(builtin jobs -l ${(Q)cmd[1]});; # Same as "else" above
+            fi ;;
+
+        %*) cmd=(builtin jobs -l ${(Q)cmd[1]}) ;; # Same as "else" above
+
         exec) shift cmd;& # If the command is 'exec', drop that, because
                           # we'd rather just see the command that is being
                           # exec'd. Note the ;& to fall through.
+                          #
         *)  title $cmd[1]:t "$cmd[2,-1]"    # Not resuming a job,
-            return;;                        # so we're all done
-      esac
+            return ;;                        # so we're all done
+    esac
 
-      local -A jt; jt=(${(kv)jobtexts})       # Copy jobtexts for subshell
+    local -A jt; jt=(${(kv)jobtexts})       # Copy jobtexts for subshell
 
-      # Run the command, read its output, and look up the jobtext.
-      # Could parse $rest here, but $jobtexts (via $jt) is easier.
-      $cmd >>(read num rest
-          cmd=(${(z)${(e):-\$jt$num}})
-          title $cmd[1]:t "$cmd[2,-1]") 2>/dev/null
+    # Run the command, read its output, and look up the jobtext.
+    # Could parse $rest here, but $jobtexts (via $jt) is easier.
+    $cmd >>(read num rest
+    cmd=(${(z)${(e):-\$jt$num}})
+    title $cmd[1]:t "$cmd[2,-1]") 2>/dev/null
 }
 
 function plain() {
@@ -137,15 +108,15 @@ function plain() {
 
 #The jobcount is colored red if non-zero.
 function colorful() {
-    PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# "
-    RPROMPT="[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
+    PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# %F{green}"
+    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
 }
 
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() {
-    PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# "
-    RPROMPT="[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
+    PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# %F{green}"
+    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
 }
 
 function _git_branch_details() {
@@ -222,29 +193,31 @@ function git() {
     #
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
-    PROMPT="[%1(j.%F{red}%%%j%f .)%(?..%F{red}%?%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') %F{default}"
-    RPROMPT="[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
+    PROMPT="[%1(j.%F{red}%%%j%f .)%(?..%F{red}%?%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') %F{green}"
+    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
 }
 
-function gitprompt() {
-    source $THIS_FILE git
+
+# functions to quickly change between my prompts
+eval "gitprompt() {
+    source $0 git
     setopt prompt_subst
-}
+}"
 
-function plainprompt() {
-    source $THIS_FILE plain
+eval "plainprompt() {
+    source $0 plain
     unsetopt prompt_subst
-}
+}"
 
-function colorfulprompt() {
-    source $THIS_FILE colorful
+eval "colorfulprompt() {
+    source $0 colorful
     setopt prompt_subst
-}
+}"
 
-function screenprompt() {
-    source $THIS_FILE screen
+eval "screenprompt() {
+    source $0 screen
     unsetopt prompt_subst
-}
+}"
 
 if [[ $# -gt 0 ]]; then
     eval "$1"
