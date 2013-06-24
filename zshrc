@@ -75,7 +75,7 @@ source ~/.zsh/functions.zsh
 HISTFILE=~/.zsh/history
 HISTSIZE=1337
 SAVEHIST=1337
-export PATH=$PATH:/usr/sbin:$HOME/scripts:/usr/local/tasks
+export PATH=$PATH:/usr/sbin:$HOME/scripts:~/.zsh/tasks
 export MANPATH=$MANPATH:/var/lib/share/man
 if declare -F uniquify >/dev/null; then
     #remove duplicate entries from PATH, MANPATH
