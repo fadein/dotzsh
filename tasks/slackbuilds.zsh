@@ -1,8 +1,8 @@
-#!/bin/zsh
+#!/bin/env zsh
 
 PURPOSE="Set up environment to work on SlackBuilds"
-VERSION="0.2"
-   DATE="Sat Jan 12 00:12:29 MST 2013"
+VERSION=1.0
+   DATE="Fri Feb 15 14:36:37 MST 2013"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
@@ -13,7 +13,7 @@ NICE=/usr/bin/nice
 
 #spawn a (nice) child root shell
 spawn() {
-	exec $SUDO TASK=$TASKNAME $NICE -n 10 $ZSH
+	exec $SUDO TASK=$TASKNAME $NICE $ZSH_NAME
 }
 
 # Set output directory to preserve completed SlackBuilds
@@ -85,5 +85,6 @@ MESSAGE
 
 }
 
-# Tie it all together
 source $0:h/__TASKS.zsh
+
+# vim:set foldenable foldmethod=indent filetype=sh tabstop=4 expandtab:

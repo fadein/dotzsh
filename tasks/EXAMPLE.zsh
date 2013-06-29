@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/env zsh
 
 PURPOSE="EXAMPLE Zsh task"
 VERSION="***"
@@ -42,15 +42,15 @@ spawn() {
 	print "EXAMPLE spawn()"
 
 	# spawn a (nice) root child shell
-	#$SUDO TASK=$TASKNAME $NICE -n 10 $ZSH
+	#$SUDO TASK=$TASKNAME $NICE -n 10 $ZSH_NAME
 
 	# this is the default action taken by TASKS.zsh if you
 	# don't define this function
-	TASK=$TASKNAME $ZSH
+	TASK=$TASKNAME $ZSH_NAME
 }
 
 #
-# Add 
+# Add
 env() {
 	print "EXAMPLE env()"
 
@@ -129,8 +129,12 @@ cleanup() {
 		print "\tCleaning up $_TASK_TMPFIL"
 		$RM -f $_TASK_TMPFIL
 	fi
+
+	print You hacked on that for $( prettySeconds $SECONDS )
 }
 
 #
 # Tie it all together
 source $0:h/__TASKS.zsh
+
+# vim:set foldenable foldmethod=indent filetype=sh tabstop=4 expandtab:

@@ -1,22 +1,22 @@
-#!/bin/zsh
+#!/bin/env zsh
 
-#Program: porterage.sh
 PURPOSE='Shell into an environment where all Portage areas are re-mounted as ramdisks.'
-VERSION=1.3
-   DATE="Wed Oct 10 10:51:59 MDT 2012"
+VERSION=1.4
+   DATE="Fri Feb 15 14:34:59 MST 2013"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
 TASKNAME=$0:t:r
 
-#external program paths should go here
+# external program paths should go here
 RAMDIR=/usr/local/bin/ramdir.sh
 SUDO=/usr/bin/sudo
 NICE=/usr/bin/nice
+IONICE=/usr/bin/ionice
 
 AREAS=(/var/tmp/portage /usr/portage)
 
-#set up areas
+# copy contents of AREAS into ramdisk
 setup() {
 	for AREA in $AREAS; do
 		if ! [[ -d $AREA ]]; then
@@ -28,12 +28,12 @@ setup() {
 	done
 }
 
-#spawn a (nice) child root shell
+# spawn a nice child root shell
 spawn() {
-	$SUDO TASK=$TASKNAME $NICE -n 10 $ZSH
+	$SUDO TASK=$TASKNAME $IONICE $NICE $ZSH_NAME
 }
 
-#sync areas back to disk
+# sync areas back to disk
 cleanup() {
 	echo "Please wait while the Portage areas are synced back to disk..."
 	for AREA in $AREAS; do
@@ -51,15 +51,17 @@ cleanup() {
 # chdir into portage workspace
 env() {
 	alias unmerge='emerge -Cva'
-	alias remerge='emerge -r'
+	alias remerge='emerge -rva'
 	alias depclean='emerge --depclean --ask'
 
 	_TODO=(
 		'$ eix-sync'
-		'$ emerge -DNauv @system'
-		'$ emerge -DNauv @world'
+		'$ emerge -DNauv --keep-going @system'
+		'$ emerge -DNauv --keep-going @world'
+		'$ dispatch-conf'
 		'$ emerge --depclean'
 		'$ revdep-rebuild')
+
 	cd /root/portage
 
 	>&1 <<MESSAGE
@@ -79,3 +81,5 @@ MESSAGE
 }
 
 source $0:h/__TASKS.zsh
+
+# vim:set foldenable foldmethod=indent filetype=sh tabstop=4 expandtab:

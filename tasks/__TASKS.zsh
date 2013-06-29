@@ -1,27 +1,14 @@
-#!/bin/zsh
+#!/bin/env zsh
 
-#
 # Instructions
 # This file is like a parent-class.  You don't want to mess with it.  To
 # create a new task called mytask:
 #
-# 1. $ cp TEMPLATE.zsh mytask.zsh
+# 1. $ cp EXAMPLE.zsh mytask.zsh
 # 2. $ chmod +x mytask.zsh
 # 3. $ vi mytask.zsh
 #
 # Inside mytask.zsh you can edit
-
-
-#
-# Program: TASKS.zsh
-PURPOSE='Support shelling into a convenient environment'
-VERSION=1.0
-   DATE="Thu Jan 24 13:41:41 MST 2013"
- AUTHOR="Erik Falor <ewfalor@gmail.com>"
-
-#
-# External program paths should go here
-ZSH=/bin/zsh
 
 # Define a die() function
 if ! functions die >/dev/null; then
@@ -32,6 +19,38 @@ if ! functions die >/dev/null; then
 		return 1
 	}
 fi
+
+# translate seconds into a timestamp "HH:MM:SS"
+prettySeconds() {
+    local seconds=${1:-$SECONDS}
+    local -a backwards
+    local i=1
+
+    #convert raw seconds into array=(seconds minutes hours)
+    while [[ $seconds -ne 0 ]]; do
+        backwards[$i]=$(( $seconds % 60 ))
+        let i++
+        let seconds=$(( $seconds / 60))
+    done
+
+    #reverse the array
+    local j=1
+    [[ $i -gt 0 ]] && let i--
+    local -a result
+    while [[ $i -gt 1 ]]; do
+        result[$j]=${backwards[$i]}
+        let j++
+        let i--
+    done
+    result[$j]=${backwards[$i]}
+
+    #print it out
+    case $#result in
+        3) printf '%02d:%02d:%02d' ${result[@]} ;;
+        2) printf '%02d:%02d' ${result[@]} ;;
+        1) printf '00:%02d' ${result[@]} ;;
+    esac
+}
 
 #
 # Define a todo() shell function that rocks
@@ -86,7 +105,6 @@ if ! functions todo >/dev/null; then
 	}
 fi
 
-
 #
 # Commands to execute when this script is run by the user
 if [[ 0 == "$#" && -z "$TASK" ]]; then
@@ -96,7 +114,7 @@ if [[ 0 == "$#" && -z "$TASK" ]]; then
 	if functions spawn >/dev/null; then
 		spawn
 	else
-		TASK=$TASKNAME $ZSH
+		TASK=$TASKNAME $ZSH_NAME
 	fi
 
 	if functions cleanup >/dev/null; then cleanup; fi
@@ -120,51 +138,48 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 	fi
 
 	#clean up the environment
-	unfunction setup spawn cleanup env die 2>/dev/null
+	unfunction setup spawn cleanup env die prettySeconds 2>/dev/null
 
 #
 # Do not allow tasks to be recursively entering into
 elif [[ -n "$TASK" ]]; then
-	function {
-		>&1 <<NORECURSION
-$1 error:
+	>&1 <<NORECURSION
+$TASKNAME error:
 	You can't recursively enter tasks!  This isn't like Inception!
 
 NORECURSION
-	} $TASKNAME
 
 	exit 2
 
 #
 # Usage information, such as it is...
 else
-	function {
-	   >&1 <<USAGE
-$1 v$VERSION
+   >&1 <<USAGE
+$TASKNAME v$VERSION
 $DATE
 by $AUTHOR
 
 $PURPOSE
 
 Usage:
-	$1.zsh (no arguments allowed)
+	$TASKNAME.zsh (no arguments allowed)
 
 This script sets up a custom environment and launches a child zsh within it.
 When the child zsh exits, your previous environment is restored.  In order
 for this to work, the child zsh process needs to run the following
 instructions on startup:
 
-[[ -n "\$TASK" && -x $2/\$TASK.zsh ]] \\
-	&& source $2/\$TASK.zsh \$TASK \\
+[[ -n "\$TASK" && -x $0:a:h/\$TASK.zsh ]] \\
+	&& source $0:a:h/\$TASK.zsh \$TASK \\
 	|| true  # don't let zsh think that your .zshrc failed!
 
-Be sure to add this snippet to the end of your .zshrc.  While you are within
-this task, the TASK environment variable will be populated with this task's
-name.
+Be sure to add this snippet to the end of your .zshrc; when it is not present
+the env() function will nod be executed.  While you are within this task, the
+TASK environment variable will be populated with this task's name.
 
 USAGE
-	} $TASKNAME $0:a:h
 
 	exit 1
 fi
 
+# vim:set foldenable foldmethod=indent filetype=sh tabstop=4 expandtab:
