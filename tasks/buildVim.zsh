@@ -1,16 +1,11 @@
 #!/bin/zsh
 
 PURPOSE='Rebuild Vim from Mercurial repos'
-VERSION="1.0"
-   DATE="Wed Oct 24 10:59:04 MDT 2012"
+VERSION="1.1"
+   DATE="Fri Feb 15 14:30:45 MST 2013"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
-PROGNAME=$0:t
 TASKNAME=$0:t:r
-
-spawn() {
-	TASK=$TASKNAME $ZSH
-}
 
 env() {
 	SHUSH=1
@@ -21,6 +16,7 @@ env() {
 
 	#Count number of CPUs in this system and add
 	MAKE_JOBS=-j$(( $($GREP processor /proc/cpuinfo | wc -l) + 1 ))
+
 
 	#Set up a TODO list
 	_TODO=(

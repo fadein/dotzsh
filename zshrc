@@ -33,7 +33,9 @@ setopt pushd_ignore_dups \
     auto_cd \
     extended_glob \
     notify no_beep \
-    cd_able_vars
+    cd_able_vars \
+    multios \
+    brace_ccl          # expand {a-d} into "a b c d"
 
 autoload zmv zargs zcalc
 
@@ -75,7 +77,7 @@ source ~/.zsh/functions.zsh
 HISTFILE=~/.zsh/history
 HISTSIZE=1337
 SAVEHIST=1337
-export PATH=$PATH:/usr/sbin:$HOME/scripts:/usr/local/tasks
+export PATH=$PATH:/usr/sbin:$HOME/scripts:~/.zsh/tasks
 export MANPATH=$MANPATH:/var/lib/share/man
 if declare -F uniquify >/dev/null; then
     #remove duplicate entries from PATH, MANPATH
@@ -164,6 +166,15 @@ alias deltree='rm -rf'
 alias move='mv -i'
 alias screen-r=screen\ -r
 alias screenr=screen\ -r
+
+#
+# suffix aliases
+#
+alias -s txt=vim
+alias -s conf=vim
+alias -s com=lynx
+alias -s org=lynx
+alias -s net=lynx
 
 #
 # Load custom stuff from local zshrc

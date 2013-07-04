@@ -109,14 +109,14 @@ function plain() {
 #The jobcount is colored red if non-zero.
 function colorful() {
     PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# %F{green}"
-    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
+    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() {
     PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# %F{green}"
-    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
+    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 function _git_branch_details() {
@@ -190,11 +190,10 @@ function git() {
     #and thereby not need to `setopt prompt_subst`
     #maybe add _git_branch_details as a precmd, and delete it when
     #switching to another prompt?
-    #
+    PROMPT="[%(?..%F{red}%?%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') %F{green}"
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
-    PROMPT="[%1(j.%F{red}%%%j%f .)%(?..%F{red}%?%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') %F{green}"
-    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%1(j.%F{red}%%%j%f .)%F{yellow}!%!%f %F{cyan}%y%f]"
+    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 
