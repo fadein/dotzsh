@@ -60,7 +60,7 @@ env() {
 		'$ emerge -DNauv --keep-going @world'
 		'$ dispatch-conf'
 		'$ emerge --depclean'
-		'$ revdep-rebuild')
+		'$ revdep-rebuild -ip')
 
 	cd /root/portage
 

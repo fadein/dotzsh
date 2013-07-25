@@ -97,12 +97,16 @@ if ! functions todo >/dev/null; then
 			add)  # add a new task to the end of the list
 				[[ -n $2 ]] && _TODO+=$argv[2,-1] ;;
 
+            clear) # delete the entire todo list
+                unset _TODO ;;
+
 			help)
 				>&1 <<-HELP
 					todo                Print the next task
 					todo list           List each task with its index
 					todo done [index]   Complete the next (or indexed) task
 					todo add TASK       Append TASK to list (quote it!)
+                    todo clear          Delete the list
 				HELP
 		esac
 	}
