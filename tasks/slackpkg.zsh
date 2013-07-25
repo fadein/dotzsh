@@ -7,20 +7,20 @@
 TASKNAME=$0:t:r
 SLACKPKG=/usr/sbin/slackpkg
 SUDO=/usr/bin/sudo
+NICE=/usr/bin/nice
 
 setup() {
-	$SLACKPKG update
+	$SUDO $SLACKPKG update
 }
 
 # spawn a (nice) root child shell
 spawn() {
-	$SUDO TASK=$TASKNAME $NICE -n 10 $ZSH
+	$SUDO TASK=$TASKNAME $NICE -n 10 $ZSH_NAME
 }
 
 env() {
-	_TODO=( "$ slackpkg upgrade-all")
+	$SLACKPKG upgrade-all
 
-	# Print a useful message to remind the user what to do next
 	>&1 <<MESSAGE
 
 ### package logs
