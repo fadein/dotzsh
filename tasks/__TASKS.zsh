@@ -22,36 +22,38 @@ if ! functions die >/dev/null; then
 fi
 
 # translate seconds into a timestamp "HH:MM:SS"
-prettySeconds() {
-    local seconds=${1:-$SECONDS}
-    local -a backwards
-    local i=1
+if ! function prettySeconds >/dev/null; then
+    prettySeconds() {
+        local seconds=${1:-$SECONDS}
+        local -a backwards
+        local i=1
 
-    #convert raw seconds into array=(seconds minutes hours)
-    while [[ $seconds -ne 0 ]]; do
-        backwards[$i]=$(( $seconds % 60 ))
-        let i++
-        let seconds=$(( $seconds / 60))
-    done
+        #convert raw seconds into array=(seconds minutes hours)
+        while [[ $seconds -ne 0 ]]; do
+            backwards[$i]=$(( $seconds % 60 ))
+            let i++
+            let seconds=$(( $seconds / 60))
+        done
 
-    #reverse the array
-    local j=1
-    [[ $i -gt 0 ]] && let i--
-    local -a result
-    while [[ $i -gt 1 ]]; do
+        #reverse the array
+        local j=1
+        [[ $i -gt 0 ]] && let i--
+        local -a result
+        while [[ $i -gt 1 ]]; do
+            result[$j]=${backwards[$i]}
+            let j++
+            let i--
+        done
         result[$j]=${backwards[$i]}
-        let j++
-        let i--
-    done
-    result[$j]=${backwards[$i]}
 
-    #print it out
-    case $#result in
-        3) printf '%02d:%02d:%02d' ${result[@]} ;;
-        2) printf '%02d:%02d' ${result[@]} ;;
-        1) printf '00:%02d' ${result[@]} ;;
-    esac
-}
+        #print it out
+        case $#result in
+            3) printf '%02d:%02d:%02d' ${result[@]} ;;
+            2) printf '%02d:%02d' ${result[@]} ;;
+            1) printf '00:%02d' ${result[@]} ;;
+        esac
+    }
+fi
 
 #
 # Define a todo() shell function that rocks
