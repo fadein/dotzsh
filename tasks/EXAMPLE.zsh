@@ -137,4 +137,4 @@ cleanup() {
 # Tie it all together
 source $0:h/__TASKS.zsh
 
-# vim:set foldenable foldmethod=indent filetype=sh tabstop=4 expandtab:
+# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 expandtab:
