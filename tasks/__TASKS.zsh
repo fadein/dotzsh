@@ -13,10 +13,11 @@
 # Define a die() function
 if ! functions die >/dev/null; then
 	die() {
+        exec 1>&2
 		for line in "$@"; do
-			echo -e $line 1>&2
+			echo -e ERROR: $line
 		done
-		return 1
+		exit 1
 	}
 fi
 
