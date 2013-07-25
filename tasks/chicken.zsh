@@ -15,7 +15,8 @@ env() {
 	alias vim=/usr/local/bin/vim
 	alias screen=/usr/local/bin/screen
 	echo "make is aliased to 'make\ PLATFORM=aix\ PREFIX=$HOME/.$(hostname)'"
-	#_TODO=("Figure out why modules built with chicken-install can't be loaded - see build.log files in eggs/base64 and build/chicken.*")
+
+	persistentTodo /home/efalor/build/chicken/.todo
 
 	cd /home/efalor/build/chicken
 }
