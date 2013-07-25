@@ -114,14 +114,18 @@ fi
 
 if ! functions persistentTodo >/dev/null; then
     persistentTodo() {
-        if [[ -r $1 ]]; then
-            typeset -g -a _TODO
-            if zmodload zsh/mapfile 2>/dev/null && [[ -f $1 ]]; then
-                _TODO=( ${(f)mapfile[$1]} )
+        if [[ -n $1 ]]; then
+            if [[ -r $1 ]]; then
+                typeset -g -a _TODO
+                if zmodload zsh/mapfile 2>/dev/null && [[ -f $1 ]]; then
+                    _TODO=( ${(f)mapfile[$1]} )
 
-                eval "storePersistentTodo() {; print \${(F)_TODO} > $1; }"
-                declare -a -g zshexit_functions
-                zshexit_functions+=storePersistentTodo
+                    eval "storePersistentTodo() {; print \${(F)_TODO} > $1; }"
+                    declare -a -g zshexit_functions
+                    zshexit_functions+=storePersistentTodo
+                fi
+            else
+                "persistentTodo() cannot read file '$1'"
             fi
         else
             print "Usage: persistentTodo(TODOLIST)" 1>&2
