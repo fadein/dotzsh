@@ -39,39 +39,6 @@ spawn() {
 
 env() {
 
-    # translate seconds into a timestamp "HH:MM:SS"
-    ppTime() {
-        local seconds=${1:-$SECONDS}
-        local -a backwards
-        local i=1
-
-        #convert raw seconds into array=(seconds minutes hours)
-        while [[ $seconds -ne 0 ]]; do
-            backwards[$i]=$(( $seconds % 60 ))
-            let i++
-            let seconds=$(( $seconds / 60))
-        done
-
-        #reverse the array
-        local j=1
-        [[ $i -gt 0 ]] && let i--
-        local -a result
-        while [[ $i -gt 1 ]]; do
-            result[$j]=${backwards[$i]}
-            let j++
-            let i--
-        done
-        result[$j]=${backwards[$i]}
-
-        #print it out
-        case $#result in
-            3) printf '%02d:%02d:%02d' ${result[@]} ;;
-            2) printf '%02d:%02d' ${result[@]} ;;
-            1) printf '00:%02d' ${result[@]} ;;
-        esac
-    }
-
-
     ongoing() {
         #reset probes hash
         PROBES=()
@@ -81,7 +48,7 @@ env() {
             P=${(z)$(fuser $F 2>&1 | cut -d: -f2)}
             if [[ $P =~ [0-9] ]]; then
                 # check the ages of active .nmon files in cwd
-                print "Probe $F($P) has been running for $( ppTime $(( $EPOCHSECONDS - $(strftime -r $PROBE_FMT $F ) )) )"
+                print "Probe $F($P) has been running for $( prettySeconds $(( $EPOCHSECONDS - $(strftime -r $PROBE_FMT $F ) )) )"
                 PROBES[$F]=$P
             fi
         done
@@ -147,6 +114,8 @@ FLAGS_MEANING
     typeset -g -A PROBES
     PROBE_FMT=$(hostname)_%m_%d_%Y_%H_%M.nmon
 
+    # don't unfunction prettySeconds - keep in in the namespace
+    _KEEP_FUNCTIONS=(prettySeconds)
     ongoing
 }
 
