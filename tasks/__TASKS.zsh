@@ -22,7 +22,7 @@ if ! functions die >/dev/null; then
 fi
 
 # translate seconds into a timestamp "HH:MM:SS"
-if ! function prettySeconds >/dev/null; then
+if ! functions prettySeconds >/dev/null; then
     prettySeconds() {
         local seconds=${1:-$SECONDS}
         local -a backwards
