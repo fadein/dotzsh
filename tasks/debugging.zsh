@@ -253,6 +253,7 @@ env() {
 
 	unset D
 
+    _KEEP_FUNCTIONS=(die)
 	# Print a useful message to remind the user what to do next
 	>&1 <<MESSAGE
 Type 'help' for a list of helper functions defined in this environment
@@ -261,14 +262,7 @@ MESSAGE
 }
 
 #
-# Undo any changes made by setup(), commit your work, upload a
-# file, etc.
-#  cleanup() {
-#  	print You hacked on that for $( prettySeconds $SECONDS )
-#  }
-
-#
 # Tie it all together
 source $0:h/__TASKS.zsh
 
-# vim:set foldenable foldmethod=indent filetype=sh tabstop=4 expandtab:
+# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 expandtab:
