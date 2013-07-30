@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Assist in debugging Spillman & pulling build from penguin.sti"
-VERSION="1.2"
-   DATE="Wed Apr 17 11:30:56 MDT 2013"
+VERSION="1.3"
+   DATE="Tue Jul 30 12:24:48 MDT 2013"
  AUTHOR="Erik Falor <efalor@spillman.com>"
 
 #
@@ -19,12 +19,11 @@ RSYNC=/usr/bin/rsync
 # rsync options
   RSYNC_MERGE=(-irlpDz --stats)
 RSYNC_REPLACE=(-irlpDz --stats --del -v)
-RSYNC_HOST=penguin.sti
-RSYNC_BASE=/sds/dev/rel63.git
+RSYNC_HOST=sds@linux-erik1
+RSYNC_BASE=/sti/development/spillman-6-3.git
 
 spawn() {
-	#TASK=$TASKNAME $SPILL -h -s $SHELL
-	TASK=$TASKNAME $SPILL -h -s $HOME/.zsh/$ZSH_NAME
+	TASK=$TASKNAME $SPILL -h -s $ZSH_NAME
 }
 
 #
@@ -49,6 +48,8 @@ env() {
     D="Run rsync and pull changes to INDB in from $RSYNC_HOST"
     rsyncINDB() {
         (
+		BASE=$BASE/app/stow/built
+
         #suppress directory notes
         SHUSH=1
 
@@ -68,6 +69,8 @@ env() {
     D="Run rsync and pull changes to INDB/util in from $RSYNC_HOST"
     rsyncINDButil() {
         (
+		BASE=$BASE/app/stow/built
+
         #suppress directory notes
         SHUSH=1
 
@@ -87,6 +90,8 @@ env() {
     D="Run rsync and pull changes to Force from $RSYNC_HOST"
     rsyncForce() {
         (
+		BASE=$BASE/app/stow/built
+
         #suppress directory notes
         SHUSH=1
 
@@ -251,7 +256,23 @@ env() {
 		echo
 	}
 
+    # Given a PID, attach GDB to that process
+	attach() {
+		if [[ -z "$1" ]]; then
+			print  "I need a PID to attach to, son" >&2
+			return
+		fi
+
+		if [[ ! -d /proc/$1 ]]; then
+			print "'$1' isn't a directory under /proc, son" >&2
+			return
+		fi
+
+		gdb $(readlink /proc/$1/exe) $1
+	}
+
 	unset D
+	LANG=C
 
     _KEEP_FUNCTIONS=(die)
 	# Print a useful message to remind the user what to do next
@@ -265,4 +286,4 @@ MESSAGE
 # Tie it all together
 source $0:h/__TASKS.zsh
 
-# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 expandtab:
+# vim:set foldenable foldmethod=indent filetype=sh tabstop=4 expandtab:
