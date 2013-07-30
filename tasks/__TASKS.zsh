@@ -166,7 +166,10 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 	fi
 
 	#clean up the environment
-	unfunction setup spawn cleanup env die prettySeconds persistentTodo 2>/dev/null
+    for F in setup spawn cleanup env die prettySeconds persistentTodo todo; do
+        [[ -z "$_KEEP_FUNCTIONS[(r)$F]" ]] && unfunction $F 2>/dev/null
+    done
+    unset _KEEP_FUNCTIONS
 
 #
 # Do not allow tasks to be recursively entering into
