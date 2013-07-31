@@ -267,8 +267,14 @@ env() {
 			print "'$1' isn't a directory under /proc, son" >&2
 			return
 		fi
-
-		gdb $(readlink /proc/$1/exe) $1
+        case $(uname) in
+            Linux)
+                gdb $(readlink /proc/$1/exe) $1 ;;
+            AIX)
+                gdb /proc/$1/object/a.out $1 ;;
+            *)
+                print "I don't know how to attach gdb to a PID in this OS" ;;
+        esac
 	}
 
 	unset D
