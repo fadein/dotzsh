@@ -17,30 +17,30 @@ zstyle :compinstall filename '/home/fadein/.zshrc'
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion::complete:*' cache-path ~/.zsh/cache
 
-bindkey -e
-
 autoload -U compinit; compinit -d ~/.zsh/compdump
 
 setopt pushd_ignore_dups \
-    pushd_to_home \
-    hist_ignore_space \
-    hist_save_no_dups \
-    auto_continue \
-    long_list_jobs \
-    hist_ignore_dups \
-    hist_no_store \
-    append_history \
-    auto_cd \
-    extended_glob \
-    notify no_beep \
-    cd_able_vars \
-    multios \
-    brace_ccl          # expand {a-d} into "a b c d"
+    pushd_to_home        \
+    hist_ignore_space    \
+    hist_save_no_dups    \
+    auto_continue        \
+    long_list_jobs       \
+    hist_ignore_dups     \
+    hist_no_store        \
+    append_history       \
+    auto_cd              \
+    extended_glob        \
+    notify no_beep       \
+    cd_able_vars         \
+    multios              \
+    brace_ccl            # expand {a-d} into "a b c d"
 
 autoload zmv zargs zcalc
 
 # enable edit-command-line functionality FTW
 autoload -U edit-command-line && zle -N edit-command-line
+
+bindkey -e
 bindkey "\C-X\C-E" edit-command-line
 
 #fix "delete emits a ~"
@@ -56,7 +56,7 @@ bindkey -s "\es" "\C-acsi -p '\C-e'\C-b"
 set ESC-P
 
 # stop background jobs that try to write to the terminal
-#stty tostop 
+#stty tostop
 
 # enable ctrl-s
 stty -ixon
@@ -77,12 +77,21 @@ source ~/.zsh/functions.zsh
 HISTFILE=~/.zsh/history
 HISTSIZE=1337
 SAVEHIST=1337
-export PATH=$PATH:/usr/sbin:$HOME/scripts:~/.zsh/tasks
-export MANPATH=$MANPATH:/var/lib/share/man
+
+#
+# Add to PATH, MANPATH, and cull out duplicates
+#
+for D in /usr/sbin ~/scripts ~/.zsh ~/.zsh/tasks; do
+    [[ -d $D ]] && PATH+=:$D
+done
+for D in /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
+    [[ -d $D ]] && MANPATH+=:$D
+done
+export PATH MANPATH
 if declare -F uniquify >/dev/null; then
     #remove duplicate entries from PATH, MANPATH
-    [[ -n "$PATH" ]] && PATH=$(uniquify $PATH)
-    [[ -n "$MANPATH" ]] && MANPATH=$(uniquify $MANPATH)
+    [[ -n $PATH    ]] && PATH=$(uniquify $PATH)
+    [[ -n $MANPATH ]] && MANPATH=$(uniquify $MANPATH)
 fi
 
 #
@@ -95,7 +104,7 @@ source ~/.zsh/prompts.zsh screen
 # boring, change the %j below to %s for seconds since epoch
 sengines=(https://ixquick.com/ https://duckduckgo.com/)
 zmodload zsh/datetime
-#add one because zsh arrays are 1-indexed: WTF?
+#add one because zsh arrays are 1-indexed
 export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
 unset sengines
 
@@ -183,7 +192,7 @@ alias -s net=lynx
 
 #this snippet is required in your zshrc for TASKS
 [[ -n "$TASK" && -x ~/.zsh/tasks/$TASK.zsh ]] \
-	&& source ~/.zsh/tasks/$TASK.zsh $TASK \
+    && source ~/.zsh/tasks/$TASK.zsh $TASK \
     || true
 
 # vim:set expandtab foldmethod=indent:
