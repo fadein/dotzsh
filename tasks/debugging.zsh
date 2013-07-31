@@ -172,7 +172,7 @@ env() {
             local PROC
             PROC=$1
             local PID
-            PID=$(ps -e | \grep "[${PROC:0:1}]${PROC:1}" | cut -c2-9 | tail -n1)
+            PID=$(ps -e | \grep "[${PROC:0:1}]${PROC:1}" | cut -c2-9)
             [[ -n "$PID" ]] && echo $PID
         }
         FUNC_HELP+=("pgrep(P)\t\t$D")
