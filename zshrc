@@ -17,8 +17,6 @@ zstyle :compinstall filename '/home/fadein/.zshrc'
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion::complete:*' cache-path ~/.zsh/cache
 
-autoload -U compinit; compinit -d ~/.zsh/compdump
-
 setopt pushd_ignore_dups \
     pushd_to_home        \
     hist_ignore_space    \
@@ -69,7 +67,7 @@ ulimit -c unlimited
 #source cool functions; needed for uniquify
 #TODO: see about making these functions autoloadable
 #TODO: checkout ~/build/Documentation/zsh/zshrc_mikachu for more functions to glean...
-source ~/.zsh/functions.zsh
+[[ -r ~/.zsh/functions.zsh ]] && source ~/.zsh/functions.zsh
 
 #
 # Global environment variables
@@ -79,10 +77,13 @@ HISTSIZE=1337
 SAVEHIST=1337
 
 #
-# Add to PATH, MANPATH, and cull out duplicates
+# Add to fpath, PATH, MANPATH; cull out duplicates
 #
+for D in ~/.zsh/Completion ~/.zsh/Functions; do
+    [[ -d $D ]] && fpath+=$D:a
+done
 for D in /usr/sbin ~/scripts ~/.zsh ~/.zsh/tasks; do
-    [[ -d $D ]] && PATH+=:$D
+    [[ -d $D ]] && PATH+=:$D:a
 done
 for D in /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
     [[ -d $D ]] && MANPATH+=:$D
@@ -93,6 +94,8 @@ if declare -F uniquify >/dev/null; then
     [[ -n $PATH    ]] && PATH=$(uniquify $PATH)
     [[ -n $MANPATH ]] && MANPATH=$(uniquify $MANPATH)
 fi
+
+autoload -U compinit; compinit -d ~/.zsh/compdump
 
 #
 # Set my cool, cool prompt
