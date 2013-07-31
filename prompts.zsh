@@ -19,7 +19,7 @@ case $OSTYPE in
             viking)
                 function hostcolor {echo "%B%F{magenta}$1%f%b"} ;;
             *)
-                function hostcolor {echo "%B%F{white}$1%f%b"} ;;
+                function hostcolor {echo "%B%F{black}$1%f%b"} ;;
         esac ;;
     cygwin*)
         function hostcolor {echo "%B%F{blue}$1%f%b"} ;;
@@ -51,7 +51,7 @@ function title {
             print -nP $'\ek'${ROOT}$2$'\e'\\
             print -nP $'\e]0;'${ROOT}$*$'\a'
             ;;
-        xterm*|rxvt*)
+        *xterm*|rxvt*)
             # Use this one instead for XTerms:
             print -nP $'\e]0;'${ROOT}$*$'\a'
             ;;
@@ -65,6 +65,13 @@ function title {
 # Window title: "[host] zsh tty cwd"
 function precmd {
     title '[%M] ' 'zsh' '%l %~'
+}
+
+# Get hub's version number if we're shelled out of Spillman
+function hubver() {
+	if [[ -n "$FORCEDIR" ]]; then
+		print "$(hostcolor ${${(z)$(hub -v 2>&1)}[2]}) "
+	fi
 }
 
 function preexec() {
