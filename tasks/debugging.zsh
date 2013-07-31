@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Assist in debugging Spillman & pulling build from penguin.sti"
-VERSION="1.3"
-   DATE="Tue Jul 30 12:24:48 MDT 2013"
+VERSION="1.4"
+   DATE="Wed Jul 31 17:24:08 MDT 2013"
  AUTHOR="Erik Falor <efalor@spillman.com>"
 
 #
@@ -17,10 +17,10 @@ RSYNC=/usr/bin/rsync
 
 #
 # rsync options
-  RSYNC_MERGE=(-irlpDz --stats)
-RSYNC_REPLACE=(-irlpDz --stats --del -v)
 RSYNC_HOST=sds@linux-erik1
 RSYNC_BASE=/sti/development/spillman-6-3.git
+  RSYNC_MERGE=(-irlpDz --stats --exclude=.svn --exclude=.git)
+RSYNC_REPLACE=(-irlpDz --stats --del -v --exclude=.svn --exclude=.git)
 
 spawn() {
 	TASK=$TASKNAME $SPILL -h -s $ZSH_NAME
@@ -29,6 +29,8 @@ spawn() {
 #
 # Set up the environment the way I like;
 env() {
+    NEWBASE=$BASE/app/stow/built
+
     # chdir into Spillman base area
     cd $BASE
 
@@ -48,19 +50,18 @@ env() {
     D="Run rsync and pull changes to INDB in from $RSYNC_HOST"
     rsyncINDB() {
         (
-		BASE=$BASE/app/stow/built
 
         #suppress directory notes
         SHUSH=1
 
         #sync sources
-        mkdir -p $BASE/src
-        cd $BASE/src
+        mkdir -p $NEWBASE/src
+        cd $NEWBASE/src
         $RSYNC $RSYNC_MERGE $RSYNC_HOST:$RSYNC_BASE/indb/src/ .
 
         #sync INDB binaries, libraries & files
-        mkdir -p $BASE/indb
-        cd $BASE/indb
+        mkdir -p $NEWBASE/indb
+        cd $NEWBASE/indb
         $RSYNC $RSYNC_REPLACE $RSYNC_HOST:$RSYNC_BASE/indb/{bin,lib,perllib,tools,util,xbin} .
         )
     }
@@ -69,19 +70,18 @@ env() {
     D="Run rsync and pull changes to INDB/util in from $RSYNC_HOST"
     rsyncINDButil() {
         (
-		BASE=$BASE/app/stow/built
 
         #suppress directory notes
         SHUSH=1
 
         #sync sources
-        mkdir -p $BASE/src
-        cd $BASE/src
+        mkdir -p $NEWBASE/src
+        cd $NEWBASE/src
         $RSYNC $RSYNC_MERGE $RSYNC_HOST:$RSYNC_BASE/indb/src/ .
 
         #sync INDB binaries, libraries & files
-        mkdir -p $BASE/indb
-        cd $BASE/indb
+        mkdir -p $NEWBASE/indb
+        cd $NEWBASE/indb
         $RSYNC $RSYNC_REPLACE $RSYNC_HOST:$RSYNC_BASE/indb/util .
         )
     }
@@ -90,19 +90,18 @@ env() {
     D="Run rsync and pull changes to Force from $RSYNC_HOST"
     rsyncForce() {
         (
-		BASE=$BASE/app/stow/built
 
         #suppress directory notes
         SHUSH=1
 
         #sync sources
-        mkdir -p $BASE/src
-        cd $BASE/src
+        mkdir -p $NEWBASE/src
+        cd $NEWBASE/src
         $RSYNC $RSYNC_MERGE $RSYNC_HOST:$RSYNC_BASE/force/src/ .
 
         #sync Force binaries, libraries & files
-        mkdir -p $BASE/force
-        cd $BASE/force
+        mkdir -p $NEWBASE/force
+        cd $NEWBASE/force
         $RSYNC $RSYNC_REPLACE $RSYNC_HOST:$RSYNC_BASE/force/{bin,perllib,prt,rpt,tools,util,xbin,xsl} .
         )
     }
