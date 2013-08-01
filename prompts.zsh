@@ -58,9 +58,9 @@ function title {
     esac
 }
 
-# Window title: "host tty cwd"
+# Window title: "[host] zsh tty cwd"
 function precmd {
-    title zsh "%M %l %~"
+    title '[%M] zsh' '%l %~'
 }
 
 function preexec() {
@@ -89,7 +89,7 @@ function preexec() {
                           # we'd rather just see the command that is being
                           # exec'd. Note the ;& to fall through.
                           #
-        *)  title $cmd[1]:t "$cmd[2,-1]"    # Not resuming a job,
+        *)  title "[%m] $cmd[1]:t" "$cmd[2,-1]"    # Not resuming a job,
             return ;;                        # so we're all done
     esac
 
@@ -99,7 +99,7 @@ function preexec() {
     # Could parse $rest here, but $jobtexts (via $jt) is easier.
     $cmd >>(read num rest
     cmd=(${(z)${(e):-\$jt$num}})
-    title $cmd[1]:t "$cmd[2,-1]") 2>/dev/null
+    title "[%m] $cmd[1]:t" "$cmd[2,-1]") 2>/dev/null
 }
 
 function plain() {
