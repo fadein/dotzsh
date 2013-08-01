@@ -6,8 +6,8 @@ VERSION="1.0"
 TASKNAME=$0:t:r
 
 env() {
-	# remove /usr/local/bin from PATH to use gcc 4.4.5 instead of the old 3.2.2
-	PATH=/home/efalor/.storm-dev/bin:/usr/bin:/etc:/usr/sbin:/usr/ucb:/home/efalor/bin:/usr/bin/X11:/sbin:/home/efalor/.zsh:/home/efalor/scripts
+	# move /usr/local/bin before /usr/bin in PATH to use gcc 4.4.5 instead of the old 3.2.2
+	PATH=/home/efalor/.storm-dev/bin:/usr/bin:/usr/local/bin:/usr/sbin:/usr/ucb:/home/efalor/bin:/usr/bin/X11:/sbin:/home/efalor/.zsh:/home/efalor/scripts
 
 	alias vim=/usr/local/bin/vim
 	alias screen=/usr/local/bin/screen
