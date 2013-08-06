@@ -1,9 +1,15 @@
-#!/usr/local/bin/zsh
+#!/bin/zsh
 PURPOSE='Build Chicken on AIX'
 VERSION="1.0"
    DATE="Tue Jul  9 22:51:16 MDT 2013"
  AUTHOR="Erik Falor <efalor@spillman.com>"
 TASKNAME=$0:t:r
+
+setup() {
+	if [[ `uname` != 'AIX' ]]; then
+		die "This task is for AIX"
+	fi
+}
 
 env() {
 	# use gcc 4.4.5, not the old 3.2.2
