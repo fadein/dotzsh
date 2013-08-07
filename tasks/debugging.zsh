@@ -1,35 +1,37 @@
 #!/bin/env zsh
 
 PURPOSE="Assist in debugging Spillman & pulling build from penguin.sti"
-VERSION="1.4"
-   DATE="Wed Jul 31 17:24:08 MDT 2013"
+VERSION="1.5"
+   DATE="Thu Aug  1 12:39:24 MDT 2013"
  AUTHOR="Erik Falor <efalor@spillman.com>"
 
-#
-# Don't change this assignment - it is very important
-# The name of this task shall be the name of this script, minus .zsh
 TASKNAME=$0:t:r
 
-#
-# refer to programs by absolute path for security.
 SPILL=/usr/local/bin/spillman
 RSYNC=/usr/bin/rsync
 
 #
 # rsync options
-RSYNC_HOST=sds@linux-erik1
-RSYNC_BASE=/sti/development/spillman-6-3.git
-  RSYNC_MERGE=(-irlpDz --stats --exclude=.svn --exclude=.git)
+
+case $(hostname) in
+    linux*|pingu*)
+        RSYNC_HOST=sds@linux-erik1
+        RSYNC_BASE=/sti/development/spillman-6-3.git
+        NEWBASE=$BASE/app/stow/built ;;
+    acfg*)
+        RSYNC_HOST=efalor@storm-dev
+        RSYNC_BASE=/opt/debug/efalor/development/spillman-6-3
+        NEWBASE=$BASE/app ;;
+esac
+
+RSYNC_MERGE=(-irlpDz --stats --exclude=.svn --exclude=.git)
 RSYNC_REPLACE=(-irlpDz --stats --del -v --exclude=.svn --exclude=.git)
 
 spawn() {
 	TASK=$TASKNAME $SPILL -h -s $ZSH_NAME
 }
 
-#
-# Set up the environment the way I like;
 env() {
-    NEWBASE=$BASE/app/stow/built
 
     # chdir into Spillman base area
     cd $BASE
@@ -255,7 +257,7 @@ env() {
 		echo
 	}
 
-    # Given a PID, attach GDB to that process
+    D="Given a PID, attach GDB to that process"
 	attach() {
 		if [[ -z "$1" ]]; then
 			print  "I need a PID to attach to, son" >&2
@@ -275,6 +277,7 @@ env() {
                 print "I don't know how to attach gdb to a PID in this OS" ;;
         esac
 	}
+	FUNC_HELP+=("attach\t\t\t$D")
 
 	unset D
 	LANG=C
@@ -287,8 +290,29 @@ Type 'help' for a list of helper functions defined in this environment
 MESSAGE
 }
 
-#
-# Tie it all together
+
+setup() {
+    # install a .gdbinit if one isn't already present
+    if [[ ! -f $HOME/.gdbinit ]]; then
+        >$HOME/.gdbinit <<GDBINIT
+# clear the screen
+define cls
+    echo 
+end
+document cls
+Clear screen.
+end
+
+# don't page output
+set height 0
+set width 0
+
+# colorful prompt to stand out against text output
+set prompt \033[32m((\033[1;32m(\033[1;33mgdb\033[1;32m)\033[32m)) \033[0m
+GDBINIT
+    fi
+}
+
 source $0:h/__TASKS.zsh
 
-# vim:set foldenable foldmethod=indent filetype=sh tabstop=4 expandtab:
+# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 shiftwidth=4 expandtab:
