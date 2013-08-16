@@ -7,7 +7,7 @@ TASKNAME=$0:t:r
 
 env() {
 
-	BUILDDIR=
+	export BUILDDIR=
 	case $(hostname) in
 		storm*)
 			# move /usr/local/bin before /usr/bin in PATH to use gcc 4.4.5
