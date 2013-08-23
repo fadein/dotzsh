@@ -42,25 +42,25 @@ function title {
         ROOT="* "
     fi
     case $TERM in
-        (screen)
+        screen)
             # Use these two for GNU Screen:
-            print -nP $'\ek'${ROOT}$1$'\e'\\
-            print -nP $'\e]0;'$2$'\a'
+            print -nP $'\ek'${ROOT}$2$'\e'\\
+            print -nP $'\e]0;'${ROOT}$*$'\a'
             ;;
-        (xterm*|rxvt*)
+        xterm*|rxvt*)
             # Use this one instead for XTerms:
             print -nP $'\e]0;'${ROOT}$*$'\a'
             ;;
-        (screen.rxvt)
-            print -nR $'\ek'${ROOT}$1$'\e'\\
-            print -nP $'\e]0;'$*$'\a'
+        screen.rxvt)
+            print -nR $'\ek'${ROOT}$2$'\e'\\
+            print -nP $'\e]0;'${ROOT}$*$'\a'
             ;;
     esac
 }
 
 # Window title: "[host] zsh tty cwd"
 function precmd {
-    title '[%M] zsh' '%l %~'
+    title '[%M] ' 'zsh' '%l %~'
 }
 
 function preexec() {
@@ -89,7 +89,7 @@ function preexec() {
                           # we'd rather just see the command that is being
                           # exec'd. Note the ;& to fall through.
                           #
-        *)  title "[%m] $cmd[1]:t" "$cmd[2,-1]"    # Not resuming a job,
+        *)  title '[%m] ' $cmd[1]:t $cmd[2,-1]    # Not resuming a job,
             return ;;                        # so we're all done
     esac
 
@@ -98,8 +98,8 @@ function preexec() {
     # Run the command, read its output, and look up the jobtext.
     # Could parse $rest here, but $jobtexts (via $jt) is easier.
     $cmd >>(read num rest
-    cmd=(${(z)${(e):-\$jt$num}})
-    title "[%m] $cmd[1]:t" "$cmd[2,-1]") 2>/dev/null
+        cmd=(${(z)${(e):-\$jt$num}})
+        title '[%m] ' $cmd[1]:t $cmd[2,-1]) 2>/dev/null
 }
 
 function plain() {
