@@ -26,6 +26,7 @@ setup() {
 			exit $(die "failed to mount $AREA as ramfs")
 		fi
 	done
+    $SUDO eix-sync
 }
 
 # spawn a nice child root shell
@@ -55,7 +56,6 @@ env() {
 	alias depclean='emerge --depclean --ask'
 
 	_TODO=(
-		'$ eix-sync'
 		'$ emerge -DNauv --keep-going @system'
 		'$ emerge -DNauv --keep-going @world'
 		'$ dispatch-conf'
