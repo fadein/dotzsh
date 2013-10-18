@@ -29,8 +29,12 @@ esac
 
 case $UID in
     "0")
+        _UTEXT="%B%F{red}"
+        _UEND='%f%b'
         function usercolor {echo "%B%F{red}$1%f%b"} ;;
     *)
+        _UTEXT="%B%F{green}"
+        _UEND='%f%b'
         function usercolor {echo "%B%F{green}$1%f%b"} ;;
 esac
 #}
@@ -108,15 +112,20 @@ function plain() {
 
 #The jobcount is colored red if non-zero.
 function colorful() {
-    PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# %F{green}"
-    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
+    PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# $_UTEXT"
+    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() {
-    PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# %F{green}"
-    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
+    PROMPT="[%(?..%F{red}%?%f )$(usercolor %n)@$(hostcolor %M) %~]%# $_UTEXT"
+    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
+}
+
+function phosphor() {
+    unset RPROMPT
+    PROMPT='[%n@%M %~]%# '
 }
 
 function _git_branch_details() {
@@ -190,10 +199,10 @@ function git() {
     #and thereby not need to `setopt prompt_subst`
     #maybe add _git_branch_details as a precmd, and delete it when
     #switching to another prompt?
-    PROMPT="[%(?..%F{red}%?%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') %F{green}"
+    PROMPT="[%(?..%F{red}%?%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') ${_UTEXT}"
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
-    RPROMPT="%f[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
+    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 
@@ -218,7 +227,15 @@ eval "screenprompt() {
     unsetopt prompt_subst
 }"
 
-if [[ $# -gt 0 ]]; then
+eval "phosphorprompt() {
+    source $0 phosphor
+    unsetopt prompt_subst
+}"
+
+if [[ $TERM = 'vt100' ]]; then
+    #just playin'
+    phosphor
+elif [[ $# -gt 0 ]]; then
     eval "$1"
 else
     plain
@@ -227,6 +244,7 @@ fi
 # Try to keep environment pollution down, EPA loves us.
 unfunction plain screen colorful 2>/dev/null
 unfunction git 2>/dev/null
+unset _UTEXT _UEND
 
 # excerpt from man zshmisc
 : <<'{'
