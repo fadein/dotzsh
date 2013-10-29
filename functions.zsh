@@ -23,11 +23,13 @@ uniquify() {
 
 #this little gem lets me say .. .. .. to go back three directories
 ..() {
+	#TODO: what were these variables for?
 	local SAVEOLDPWD="$PWD"
 	local SAVESHUSH=$SHUSH
 
 	#join given arguments with /
 	local IFS=/
+	#TODO: could the -q argument to cd be useful to keep things quiet here?
 	cd "../$*"
 }
 
@@ -108,7 +110,6 @@ undosubdirs() {
 	fi
 }
 
-#THIS ONE WORKS IN ZSH!
 # Make and chdir into <dirname>
 mcdir() {
 	if [ -z "$1" ]; then
@@ -122,11 +123,19 @@ mcdir() {
 	cd "$1"
 }
 
+# report on the amount of entropy in the system
+entropy() {
+	local AVAIL=$(cat /proc/sys/kernel/random/entropy_avail)
+	local PSIZE=$(cat /proc/sys/kernel/random/poolsize)
+	printf "(%d/%d) %.2f%%\n" $AVAIL $PSIZE $(( $AVAIL / $PSIZE.0 * 100 ))
+}
+
 # re-source this file
 #TODO: port this to zsh
 #eval "function reload() { source ${BASH_ARGV[0]}; }"
 
-#THIS ONE WORKS IN ZSH!
+# Split an environment variable on a delimiter (default ':')
+# and return the nth item
 nth () {
 	if [ "$#" -lt 2 ]; then
 		echo Too few arguments to nth: "$*";
@@ -175,6 +184,7 @@ offtherecord() {
 		HISTSIZE=0
 	fi
 }
+alias otr=offtherecord
 
 # turn on history recording
 function ontherecord()
