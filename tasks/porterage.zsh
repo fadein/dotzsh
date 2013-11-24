@@ -56,8 +56,8 @@ env() {
 	alias depclean='emerge --depclean --ask'
 
 	_TODO=(
-		'$ emerge -DNauv --keep-going @system'
-		'$ emerge -DNauv --keep-going @world'
+		'$ emerge -DNauv --keep-going --tree --unordered-display @system'
+		'$ emerge -DNauv --keep-going --tree --unordered-display @world'
 		'$ dispatch-conf'
 		'$ emerge --depclean'
 		'$ revdep-rebuild -ip')
