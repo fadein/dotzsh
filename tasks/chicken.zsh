@@ -29,6 +29,7 @@ case `uname` in
 
 			alias make=make\ PLATFORM=linux\ PREFIX=$HOME/.$(hostname)
 			echo "make is aliased to 'make\ PLATFORM=linux\ PREFIX=$HOME/.$(hostname)'"
+			PATH=$HOME/.$(hostname)/bin:$PATH
 
 			persistentTodo ~/chicken/.todo
 
