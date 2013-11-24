@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE='Shell into an environment where all Portage areas are re-mounted as ramdisks.'
-VERSION=1.4
-   DATE="Fri Feb 15 14:34:59 MST 2013"
+VERSION=1.5
+   DATE="Sat Nov 23 22:51:32 MST 2013"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
