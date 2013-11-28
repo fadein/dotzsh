@@ -59,7 +59,11 @@ env() {
 		SB=${INFO%.info}.SlackBuild
 		[[ -f $SB ]] || { echo 1>&2 ohai u can haz $SB; return 1 }
 		chmod +x $SB
-		./$SB
+		if ./$SB ; then
+            echo -e "\a"
+        else
+            echo -e "\a\a\a"
+        fi
 	}
 
 	# Print a useful message to help this old fogie remember what
