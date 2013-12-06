@@ -1,4 +1,5 @@
-#!/usr/local/bin/zsh
+#!/bin/env zsh
+
 PURPOSE='Build Spillman 6.3 on AIX'
 VERSION="1.0"
    DATE="Wed Jul 31 23:37:56 MDT 2013"

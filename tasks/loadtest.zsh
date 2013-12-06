@@ -1,4 +1,4 @@
-#!/usr/local/bin/zsh
+#!/bin/env zsh
 
 PURPOSE="Spillman Loadtest Zsh task"
 VERSION="1.0"

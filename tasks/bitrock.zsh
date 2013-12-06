@@ -1,4 +1,4 @@
-#!/usr/local/bin/zsh
+#!/bin/env zsh
 
 PURPOSE="Build BitRock installers"
 VERSION="1.0"

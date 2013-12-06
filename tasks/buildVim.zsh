@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/env zsh
 
 PURPOSE='Rebuild Vim from Mercurial repos'
 VERSION="1.1"
