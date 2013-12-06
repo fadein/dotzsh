@@ -1,7 +1,5 @@
 # fadein's zshrc
 
-[[ -r ~/.dir_colors ]] && eval "$(dircolors ~/.dir_colors -b)"
-
 zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-prompt %SAt %l: Hit TAB for more, or the character to insert%s
@@ -11,7 +9,7 @@ zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p
 zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
-zstyle :compinstall filename '/home/fadein/.zshrc'
+zstyle :compinstall filename '~/.zshrc'
 
 # enable cache for the completions
 zstyle ':completion::complete:*' use-cache 1
@@ -70,13 +68,6 @@ ulimit -c unlimited
 [[ -r ~/.zsh/functions.zsh ]] && source ~/.zsh/functions.zsh
 
 #
-# Global environment variables
-#
-HISTFILE=~/.zsh/history
-HISTSIZE=1337
-SAVEHIST=1337
-
-#
 # Add to fpath, PATH, MANPATH; cull out duplicates
 #
 for D in ~/.zsh/Completion ~/.zsh/Functions; do
@@ -95,7 +86,16 @@ if declare -F uniquify >/dev/null; then
     [[ -n $MANPATH ]] && MANPATH=$(uniquify $MANPATH)
 fi
 
+# now that fpath is set, we can init command-line completion
 autoload -U compinit; compinit -d ~/.zsh/compdump
+
+#
+# Global environment variables
+#
+HISTFILE=~/.zsh/history
+HISTSIZE=1337
+SAVEHIST=1337
+[[ -r ~/.dir_colors ]] && eval "$(dircolors ~/.dir_colors -b)"
 
 #
 # Set my cool, cool prompt
@@ -114,33 +114,61 @@ unset sengines
 #
 # User-specific aliases
 #
-alias cp='cp -i'
-alias ctags='ctags --fields=+iaS --extra=+fq'
-alias curl='curl -A "Mozilla/4.0"'
-alias date='date +"%a, %b %e %Y  %r %Z"'
-alias df='df -h'
-alias du='du -h'
-alias free='free -m'
-alias grep='grep -n --color=auto'
-alias l='ls --color=auto -F'
-alias la='ls --color=auto -Fa'
-alias ll='ls --color=auto -Flh'
-alias lla='ls --color=auto -Flha'
-alias lld='ls --color=auto -Flhd'
-alias ls='ls --color=auto -F'
-alias lsd='ls --color=auto -Fd'
-alias lt='ls --color=auto --full-time -Ft'
-alias lynx='lynx -use_mouse'
-alias mc='export TERM=xterm; mc -a'
-alias mv='mv -i'
-alias niceme='renice -n 10 -p $$'
-alias nl='nl -ba'
-alias pd='pushd'
-alias pgrep='pgrep -l'
-alias pwd='pwd -P'
-alias rm='rm -i'
-alias which="which -p"
-alias topu="top -u $USER"
+case $(uname) in
+    Linux)
+        alias cp='cp -i'
+        alias ctags='ctags --fields=+iaS --extra=+fq'
+        alias curl='curl -A "Mozilla/4.0"'
+        alias date='date +"%a, %b %e %Y  %r %Z"'
+        alias df='df -h'
+        alias du='du -h'
+        alias free='free -m'
+        alias grep='grep -n --color=auto'
+        alias l='ls --color=auto -F'
+        alias la='ls --color=auto -Fa'
+        alias ll='ls --color=auto -Flh'
+        alias lla='ls --color=auto -Flha'
+        alias lld='ls --color=auto -Flhd'
+        alias ls='ls --color=auto -F'
+        alias lsd='ls --color=auto -Fd'
+        alias lt='ls --color=auto --full-time -Ft'
+        alias lynx='lynx -use_mouse'
+        alias mc='export TERM=xterm; mc -a'
+        alias mv='mv -i'
+        alias niceme='renice -n 10 -p $$'
+        alias nl='nl -ba'
+        alias pd='pushd'
+        alias pgrep='pgrep -l'
+        alias pwd='pwd -P'
+        alias rm='rm -i'
+        alias which="which -p"
+        alias topu="top -u $USER"
+        ;;
+    AIX)
+        alias cp='cp -i'
+        alias curl='curl -A "Mozilla/4.0"'
+        alias date='date +"%a, %b %e %Y  %r %Z"'
+        alias df='df -h'
+        alias du='du -h'
+        alias grep='grep -n'
+        alias l='ls -F'
+        alias la='ls -Fa'
+        alias ll='ls -Fl'
+        alias lla='ls -Fla'
+        alias lld='ls -Fld'
+        alias ls='ls -F'
+        alias lsd='ls -Fd'
+        alias lt='ls -Ft'
+        alias mv='mv -i'
+        alias niceme='renice -n 10 -p $$'
+        alias nl='nl -ba'
+        alias pd='pushd'
+        alias pwd='pwd -P'
+        alias rm='rm -i'
+        alias which="which -p"
+        alias topu="topas -U $USER"
+        ;;
+esac
 
 #
 # because I can't spell...
