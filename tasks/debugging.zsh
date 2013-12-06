@@ -39,6 +39,7 @@ env() {
 
     # GLOBAL VARS
     TERM=xterm
+    screenprompt
     INTERFACES_HOME=${CATALINA_HOME/tomcat/interfaces-server}
 
     # GLOBAL FOR HELP FUNCTION
