@@ -1,23 +1,24 @@
 #!/bin/env zsh
 
 PURPOSE="Assist in debugging Spillman & pulling build from penguin.sti"
-VERSION="1.5"
-   DATE="Thu Aug  1 12:39:24 MDT 2013"
+VERSION="1.6"
+   DATE="Wed Nov 27 14:41:55 MST 2013"
  AUTHOR="Erik Falor <efalor@spillman.com>"
 
 TASKNAME=$0:t:r
 
 SPILL=/usr/local/bin/spillman
 RSYNC=/usr/bin/rsync
+SSH=/usr/bin/ssh
 
 #
 # rsync options
 
 case $(hostname) in
     linux*|pingu*)
-        RSYNC_HOST=sds@linux-erik1
+        RSYNC_HOST=sds@linux-erik0
         RSYNC_BASE=/sti/development/spillman-6-3.git
-        NEWBASE=$BASE/app/stow/built ;;
+        NEWBASE=$BASE/app ;;
     acfg*)
         RSYNC_HOST=efalor@storm-dev
         RSYNC_BASE=/opt/debug/efalor/development/spillman-6-3
@@ -42,7 +43,7 @@ env() {
 
     # GLOBAL FOR HELP FUNCTION
     FUNC_HELP=()
- 
+
     # LITTLE FUNCTIONS
     pause() { read -p "Press [Enter] to continue "; }
 
@@ -104,7 +105,7 @@ env() {
         #sync Force binaries, libraries & files
         mkdir -p $NEWBASE/force
         cd $NEWBASE/force
-        $RSYNC $RSYNC_REPLACE $RSYNC_HOST:$RSYNC_BASE/force/{bin,perllib,prt,rpt,tools,util,xbin,xsl} .
+        $RSYNC $RSYNC_REPLACE $RSYNC_HOST:$RSYNC_BASE/force/{bin,lib,perllib,prt,rpt,tools,util,xbin,xsl} .
         )
     }
     FUNC_HELP+=("rsyncForce\t\t$D")
@@ -115,6 +116,28 @@ env() {
         rsyncForce
     }
     FUNC_HELP+=("rsyncSds\t\t$D")
+
+
+    D="Rebuild INDB then Rsync the changes back here"
+    buildSyncINDB() {
+        $SSH $RSYNC_HOST "cd $RSYNC_BASE/indb/build && make" \
+            && rsyncINDB
+    }
+    FUNC_HELP+=("buildSyncINDB\t\t$D")
+
+    D="Rebuild Force then Rsync the changes back here"
+    buildSyncForce() {
+        $SSH $RSYNC_HOST "cd $RSYNC_BASE/force/build && make" \
+            && rsyncForce
+    }
+    FUNC_HELP+=("buildSyncForce\t\t$D")
+
+    D="Rebuild entire application then Rsync the changes back here"
+    buildSyncSds() {
+        $SSH $RSYNC_HOST "(cd $RSYNC_BASE/indb/build && make) && (cd $RSYNC_BASE/force/build && make)" \
+            && rsyncSds
+    }
+    FUNC_HELP+=("buildSyncSds\t\t$D")
 
     D="Follow CTSTATUS.FCS while stripping timestamps"
     ctstatusTail() {
@@ -132,34 +155,34 @@ env() {
     sqli() {
         isql -u ADMIN -a ADMIN $FORCEDLIST:t:r
     }
-    FUNC_HELP+=("sqli\t\t$D")
+    FUNC_HELP+=("sqli\t\t\t$D")
 
 	D="dbdump tables and delete outputs which contain 0 rows"
 	coolDump() {
-		if [[ -z "$1" ]]; then
-			echo "Please provide at least one tablename to dump"
-			return 1
-		fi
-		until [[ -z "$1" ]]; do
-			echo -n "Dumping $1..."
-		local RES
-			RES=$(dbdump $1 2>&1 >$1.txt | \grep records)
+        if [[ -z "$1" ]]; then
+            echo "Please provide at least one tablename to dump"
+            return 1
+        fi
+        until [[ -z "$1" ]]; do
+            echo -n "Dumping $1..."
+            local RES
+            RES=$(dbdump $1 2>&1 >$1.txt | \grep records)
 
-			#trim down stderr until we're left with the count of tables dumped
-			RES=${RES##*}
-			RES=${RES%% *}
+            #trim down stderr until we're left with the count of tables dumped
+            RES=${RES##*}
+            RES=${RES%% *}
 
-			if [[ 0 = $RES ]]; then
-				\rm -f $1.txt
-				echo -e "\tEmpty"
-			elif [[ -z "$RES" ]]; then
-				\rm -f $1.txt
-				echo -e "\tNon-existent table"
-			else
-				echo -e "\tDumped"
-			fi
-			shift
-		done
+            if [[ 0 = $RES ]]; then
+                \rm -f $1.txt
+                echo -e "\tEmpty"
+            elif [[ -z "$RES" ]]; then
+                \rm -f $1.txt
+                echo -e "\tNon-existent table"
+            else
+                echo -e "\tDumped"
+            fi
+            shift
+        done
 		}
 	FUNC_HELP+=("coolDump([TAB ...])\t$D")
 
@@ -247,6 +270,26 @@ env() {
 	}
 	FUNC_HELP+=("restartCtree\t\t$D")
 
+	D="Delete tables and re-create empty copies"
+	blowTabs() {
+        if [[ -z "$1" ]]; then
+            echo "Please provide at least one tablename to blow away"
+            return 1
+        fi
+        ( cd $FORCEDLIST
+        until [[ -z "$1" ]]; do
+            echo -n "Replacing $1..."
+            for O in -D -c; do
+                echo dattool $O $1
+                dattool $O $1
+            done
+
+            shift
+        done)
+	}
+	FUNC_HELP+=("blowTabs\t\t$D")
+
+
 	help() {
 		#builtin help; echo
 		print The following convenience functions are defined:
@@ -283,6 +326,7 @@ env() {
 	LANG=C
 
     _KEEP_FUNCTIONS=(die)
+
 	# Print a useful message to remind the user what to do next
 	>&1 <<MESSAGE
 Type 'help' for a list of helper functions defined in this environment
@@ -308,7 +352,7 @@ set height 0
 set width 0
 
 # colorful prompt to stand out against text output
-set prompt \033[32m((\033[1;32m(\033[1;33mgdb\033[1;32m)\033[32m)) \033[0m
+set prompt \033[0;32m(\033[1;32m(\033[0;33m(\033[1;33mgdb\033[0;33m)\033[1;32m)\033[0;32m) \033[0m
 GDBINIT
     fi
 }
