@@ -52,7 +52,12 @@ env() {
 			fi
 		done
 
-		SUM=$(wget -O - $PKG | tee ${PKG:t} | md5sum | cut -d' ' -f1)
+        ## if the package is already here, don't re-download it!
+        if [[ -f ${PKG:t} ]]; then
+            SUM=$(md5sum ${PKG:t} | cut -d' ' -f1)
+        else
+            SUM=$(wget -O - $PKG | tee ${PKG:t} | md5sum | cut -d' ' -f1)
+        fi
 
 		[[ "$MD5" = "$SUM" ]] || { echo 1>&2 "Checksum of ${PKG:t} does not match that specified in $INFO"; return 1 }
 
@@ -65,6 +70,29 @@ env() {
             echo -e "\a\a\a"
         fi
 	}
+
+    # run slackbuild() in a loop, scanning its output looking for the name
+    # of the package
+    #
+    # then run upgradepkg --install-new --reinstall $PACKAGENAME
+    slackinstall() {
+        local RX_CREATED="^Slackware package (.+) created"
+        local IFS=$'\x0A'$'\x0D'
+        local LINE=
+        local PACKAGE=
+        for LINE in $( slackbuild 2>&1 )
+        do
+            if [[ ${LINE} =~ ${RX_CREATED} ]]; then
+                PACKAGE=$match[1]
+            fi
+            print $LINE
+        done
+
+        if [[ -n "$PACKAGE" && -f "$PACKAGE" ]]; then
+            upgradepkg --install-new --reinstall $PACKAGE
+        fi
+
+    }
 
 	# Print a useful message to help this old fogie remember what
 	# to do next
@@ -80,6 +108,10 @@ slackbuild
 
 to download, verify checksum and build it
 
+slackinstall
+
+do the above and install the new package
+
 #########################################
 ########################
 ############
@@ -91,4 +123,4 @@ MESSAGE
 
 source $0:h/__TASKS.zsh
 
-# vim:set foldenable foldmethod=indent filetype=sh tabstop=4 expandtab:
+# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 expandtab:
