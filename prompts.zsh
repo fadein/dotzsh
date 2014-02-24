@@ -19,7 +19,7 @@ case $OSTYPE in
             viking)
                 function hostcolor {echo "%B%F{magenta}$1%f%b"} ;;
             *)
-                function hostcolor {echo "%B%F{black}$1%f%b"} ;;
+                function hostcolor {echo "%F{yellow}%K{black}$1%k%f"} ;;
         esac ;;
     cygwin*)
         function hostcolor {echo "%B%F{blue}$1%f%b"} ;;
