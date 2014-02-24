@@ -5,20 +5,22 @@ VERSION="1.1"
  AUTHOR="Erik Falor <efalor@spillman.com>"
 TASKNAME=$0:t:r
 
-<<<<<<< HEAD
 case `uname` in
 	AIX)
 		env() {
-			export CHICKENDIR=/work/efalor/chicken-core.git/
-			# use gcc 4.4.5, not the old 3.2.2
-			PATH=$HOME/.$(hostname)/bin:/usr/bin:/etc:/usr/sbin:/usr/ucb:$HOME/bin:/usr/bin/X11:/sbin:$HOME/.zsh:$HOME/scripts
+			#export CHICKENDIR=/work/efalor/chicken-core.git/
+			export CHICKENDIR=/home/efalor/build/chicken/chicken-core.git/
+
+			# Remove /usr/local/bin from $PATH, via the tied array $path.
+			# We need to use gcc 4.4.7 instead of 3.2.2 which is found under /usr/local/bin
+			path[(r)/usr/local/bin]=()
+
+			# When running Chicken programs, look for libchicken.so under $CUSTOMDIR, which is
+			# where I install Chicken by default
 			export LIBRARY_PATH=$CUSTOMDIR/lib
 
 			#export CSC_OPTIONS='-vv -C -maix64 -L -maix64 -Wl,-R"." -Wl,-bsvr4 -Wl,-bbigtoc'
 			#echo "CSC_OPTIONS is exported as a work-around for chicken-install"
-			alias make=make\ PLATFORM=aix\ PREFIX=$HOME/.$(hostname)
-			alias vim=/usr/local/bin/vim
-			alias screen=/usr/local/bin/screen
 
 			# back up a copy of an installed (and known-to-work) Chicken
 			chicken-lifeboat() {
@@ -54,22 +56,29 @@ case `uname` in
 				local SHUSH=1
 				cd $CHICKENDIR
 				touch build-version.c
-				if make PLATFORM=aix PREFIX=$HOME/.$(hostname) distclean boot-chicken; then
+				if make PLATFORM=aix PREFIX=$CUSTOMDIR distclean boot-chicken; then
 					touch build-version.c
-					make PLATFORM=aix PREFIX=$HOME/.$(hostname) CHICKEN=./chicken-boot
+					make PLATFORM=aix PREFIX=$CUSTOMDIR CHICKEN=./chicken-boot
 				fi
 				)
 			}
 
+			alias make=make\ PLATFORM=aix\ PREFIX=$CUSTOMDIR
+			alias vim=/usr/local/bin/vim
+			alias screen=/usr/local/bin/screen
+
+			# object dump convenience function
 			dump() {
 				[[ -n "$1" ]] && /usr/bin/dump -Xany -n $1 | head -20
 			}
 
 			# persistentTodo $CHICKENDIR/.todo
 
-			echo "make is aliased to 'make\ PLATFORM=aix\ PREFIX=$HOME/.$(hostname)'"
-			echo "dump() is 'dump -X64 -n \$1 | head -20'"
-			echo "use chicken-lifeboat() to back up a copy of an installed (and known-to-work) Chicken"
+			print "make is aliased to 'make\ PLATFORM=aix\ PREFIX=$CUSTOMDIR'"
+			print "dump is 'dump -Xany -n \$1 | head -20'"
+			print "use chicken-lifeboat() to back up a copy of an installed (and known-to-work) Chicken"
+			print 'If you re-build Chicken, note that the version number reported by `./csi -v` comes'
+			print 'libchicken.so, which is installed under $CUSTOMDIR'
 			cd $CHICKENDIR
 		}
 		;;
