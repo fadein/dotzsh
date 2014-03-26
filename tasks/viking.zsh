@@ -13,9 +13,9 @@ SSH=/usr/bin/ssh
 #spawn our task shell
 spawn() {
     if [[ $TERM != 'linux' ]]; then
-        TERM=xterm TASK=$TASKNAME $SSH -t viking "exec screen -dr"
+        LANG=C TERM=xterm TASK=$TASKNAME $SSH -t viking "exec screen -dr"
     else
-        TASK=$TASKNAME $SSH -t viking "exec screen -dr"
+        LANG=C TASK=$TASKNAME $SSH -t viking "exec screen -dr"
     fi
 }
 
