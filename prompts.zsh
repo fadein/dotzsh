@@ -62,7 +62,8 @@ function title {
     esac
 }
 
-# Window title: "[host] zsh tty cwd"
+# Set the XTerm window title property
+# The default value appears as "[host] zsh tty cwd"
 function precmd {
     title '[%M] ' 'zsh' '%l %~'
 }
@@ -222,6 +223,14 @@ elif [[ $# -gt 0 ]]; then
     eval "$1"
 else
     plain
+fi
+
+# if we're rockin' MidnightCommander, drop the precmd() and preexec()
+# functionss as they screw the GNU Screen window title up.  Also drop
+# the RPROMPT, since it doesn't look right in there.
+if [[ -n "$MC_SID" ]]; then
+    unfunction precmd preexec
+    unset RPROMPT
 fi
 
 # Try to keep environment pollution down, EPA loves us.
