@@ -30,7 +30,7 @@ spawn() {
 }
 
 env() {
-	export OUTPUT=/mnt/rasp/build/SBo/install/
+    export OUTPUT=/mnt/rasp/build/SBo/install/
     export SBODIR=/mnt/rasp/build/SBo/slackbuilds.git
     cd $SBODIR
     gitprompt
@@ -123,7 +123,7 @@ env() {
     #
     # git update the slackbuilds repository
     sbo.git() {
-        cd $SBODIR
+        SHUSH=1 cd $SBODIR
         if $GIT checkout master; then
             $GIT pull
         fi
