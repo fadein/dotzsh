@@ -162,7 +162,6 @@ function _git_branch_details() {
         elif [[ ${LINE} =~ ${rx_unmerged} ]]; then
 			let unmerged++
         elif [[ ${LINE} =~ ${rx_fatal} ]]; then
-            print "_git_branch_details(): fatal git error '${LINE}'"
             return
         fi
     done
