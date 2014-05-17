@@ -24,44 +24,45 @@ spawn() {
 }
 
 env() {
-    export OUTPUT=/root/pkg/SBo/install/
-    export SBODIR=/mnt/rasp/build/slackbuilds.git
+	export OUTPUT=/root/pkg/SBo/install/
+    export SBODIR=/root/pkg/SBo/slackbuilds.git
     cd $SBODIR
+    gitprompt
 
     #
     # fetch the package (if needed), return true if the MD5 checksum matches
-    slackfetch() {
-        # look for the 1st .info in the CWD
-        INFO=( *.info ) || return
+	slackfetch() {
+		# look for the 1st .info in the CWD
+		INFO=( *.info ) || return
 
-        # determine which package to download from the .info
-        ARCH=$( uname -m )
+		# Determine which package to download from the .info
+		ARCH=$( uname -m )
 
         # set BASH_RE_MATCH for the duration of this function only
         setopt LOCAL_OPTIONS BASH_RE_MATCH
 
-        # parse out the DOWNLOAD lines
-        local RX_DOWNLOAD="^DOWNLOAD_?(x86_64)?=\"([^\"]+)\""
-        local RX_MD5SUM="^MD5SUM_?(x86_64)?=\"([^\"]+)\""
-        local LINE=
-        local PKG=
-        local MD5=
-        for LINE in $(< $INFO )
-        do
-            if [[ ${LINE} =~ ${RX_DOWNLOAD} ]]; then
-                if [[ "$ARCH" = 'x86_64' && "${BASH_REMATCH[2]}" = 'x86_64' ]]; then
-                    PKG=${BASH_REMATCH[-1]}
-                elif [[ "${BASH_REMATCH[2]}" != x86_64 ]]; then
-                    PKG=${BASH_REMATCH[-1]}
-                fi
-            elif [[ ${LINE} =~ ${RX_MD5SUM} ]]; then
-                if [[ "$ARCH" = 'x86_64' && "${BASH_REMATCH[2]}" = 'x86_64' ]]; then
-                    MD5=${BASH_REMATCH[-1]}
-                elif [[ "${BASH_REMATCH[2]}" != x86_64 ]]; then
-                    MD5=${BASH_REMATCH[-1]}
-                fi
-            fi
-        done
+		# parse out the DOWNLOAD lines
+		local RX_DOWNLOAD="^DOWNLOAD_?(x86_64)?=\"([^\"]+)\""
+		local RX_MD5SUM="^MD5SUM_?(x86_64)?=\"([^\"]+)\""
+		local LINE=
+		local PKG=
+		local MD5=
+		for LINE in $(< $INFO )
+		do
+			if [[ ${LINE} =~ ${RX_DOWNLOAD} ]]; then
+				if [[ "$ARCH" = 'x86_64' && "${BASH_REMATCH[2]}" = 'x86_64' ]]; then
+					PKG=${BASH_REMATCH[-1]}
+				elif [[ "${BASH_REMATCH[2]}" != x86_64 ]]; then
+					PKG=${BASH_REMATCH[-1]}
+				fi
+			elif [[ ${LINE} =~ ${RX_MD5SUM} ]]; then
+				if [[ "$ARCH" = 'x86_64' && "${BASH_REMATCH[2]}" = 'x86_64' ]]; then
+					MD5=${BASH_REMATCH[-1]}
+				elif [[ "${BASH_REMATCH[2]}" != x86_64 ]]; then
+					MD5=${BASH_REMATCH[-1]}
+				fi
+			fi
+		done
 
         ## if the package is already here, don't re-download it!
         if [[ -f ${PKG:t} ]]; then
