@@ -138,7 +138,7 @@ function _git_branch_details() {
 
 	local  rx_detached="^## HEAD \(no branch\)"
 	local    rx_branch="^## ((([^.[:space:]]+)\.?)+)(\.\.\..+)?"
-    local   rx_inIndex="^[MAD] "
+    local   rx_inIndex="^[MAD][MAD ]"
     local    rx_inWork="^ [MAD]"
     local rx_untracked="^\?\?"
     local  rx_unmerged="^UU"
