@@ -84,7 +84,9 @@ env() {
             if ./$SB "$@"; then
                 echo -e "\a"
             else
+                local R=$?
                 echo -e "\a\a\a"
+                return $R
             fi
         fi
     }
@@ -121,6 +123,34 @@ env() {
         fi
     }
 
+    #
+    # create a new slackbuild directory and copy template files over
+    slackcreate() {
+        local SBNAME=$1
+        if [[ -z "$1" ]]; then
+            read "SBNAME?What will you call this SlackBuild? "
+        fi
+
+        echo $SBNAME  #DELETE ME
+        if [[ -d $SBODIR/$SBNAME ]]; then
+            echo "Warning: directory $SBNAME already exists!"
+        else
+            echo "Creating directory '$SBNAME'"
+            mkdir -p $SBODIR/$SBNAME
+        fi
+
+        if ! cd $SBODIR/$SBNAME; then
+            die "Couldn't cd into '$SBNAME'"
+        fi
+
+        # Copy template files from $SBODIR/../templates.git
+        cp $SBODIR/../templates.git/README . || echo "Failed to copy template README"
+        cp $SBODIR/../templates.git/template.info ${SBNAME#*/}.info || echo "Failed to copy template template.info"
+        cp $SBODIR/../templates.git/autotools-template.SlackBuild ${SBNAME#*/}.SlackBuild || echo "Failed to copy template autotools-template.SlackBuild"
+        cp $SBODIR/../templates.git/doinst.sh . || echo "Failed to copy template doinst.sh"
+        cp $SBODIR/../templates.git/slack-desc . || echo "Failed to copy template slack-desc"
+    }
+
     # Print a useful message to help this old fogie remember what
     # to do next
     >&1 <<MESSAGE
@@ -142,6 +172,10 @@ env() {
 
     # sbo.git
     git updates the slackbuilds
+
+    # slackcreate [category/package]
+    create a directory for a new SlackBuild and
+    copies template files over
 
     #########################################
     ########################
