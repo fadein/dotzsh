@@ -14,7 +14,6 @@ TASKNAME=$0:t:r
 # I like to refer to programs by absolute path for security.  You
 # can do this too, or not.
 BASE64=/usr/bin/base64
-DATE=/usr/bin/date
 DD=/usr/bin/dd
 NICE=/usr/bin/nice
 RM=/usr/bin/rm
@@ -55,8 +54,8 @@ spawn() {
 # etc.
 env() {
 	print "EXAMPLE env()"
-
-	export _FOR_EXAMPLE="This task was entered into @ $DATE"
+	export _FOR_EXAMPLE="This task was created on $DATE"
+    export _WHEN_STARTED="This task was begun at $(date)"
 
 	if [[ -d /dev/shm && -x /dev/shm ]]; then
 		cd /dev/shm
@@ -64,7 +63,7 @@ env() {
 	else
 		print "\tY U NO /dev/shm??"
 	fi
-
+ 
 	#
 	# A todo list.  If this variable isn't instantiated, there
 	# will be no todo() function in your task environment.
@@ -82,15 +81,92 @@ env() {
 	fi
 	_TODO+="This is the last todo list item"
 
+	# GLOBAL FOR HELP FUNCTION
+    # Put into this association the name of a function followed by a brief description;
+    # The user will then be able to run a function 'help' that will show defined functions
+    # along with your provided descripion
+	typeset -gA _HELP
+
 	#
 	# a private, task-specific helper function
+    _HELP+=("example" "a private, task-specific helper function")
 	example() {
 		print "For example, $_FOR_EXAMPLE"
+        print $_WHEN_STARTED
+
 		if [[ -n $_TASK_TMPFIL ]]; then
 			print "Here is your personalized noise"
 			cat $_TASK_TMPFIL
 		fi
 	}
+
+    _HELP+=("colors" "See if your terminal renders all of the ANSI terminal color codes")
+    colors() {
+        # Copyright (C) 2011 by Yu-Jie Lin
+        #
+        # Permission is hereby granted, free of charge, to any person obtaining a copy
+        # of this software and associated documentation files (the "Software"), to deal
+        # in the Software without restriction, including without limitation the rights
+        # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        # copies of the Software, and to permit persons to whom the Software is
+        # furnished to do so, subject to the following conditions:
+        #
+        # The above copyright notice and this permission notice shall be included in
+        # all copies or substantial portions of the Software.
+        #
+        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+        # THE SOFTWARE.
+
+        fmt="%3d \e[%dmSGR \e[31mSGR \e[44mSGR\e[49m \e[39m\e[44mSGR\e[0m"
+        echo
+        echo "SGR ($fmt)"
+        echo
+        for i in {1..25} ; do
+                a=()
+                for j in {0..75..25}; do
+                        a=("${a[@]}" "$((i+j))" "$((i+j))")
+                done
+                printf "$fmt $fmt $fmt $fmt\n" "${a[@]}"
+        done
+        echo
+        for i in {100..110..4} ; do
+                a=()
+                for j in {0..3}; do
+                        a=("${a[@]}" "$((i+j))" "$((i+j))")
+                done
+                printf "$fmt $fmt $fmt $fmt\n" "${a[@]}"
+        done
+
+        fmt="\e[48;5;%dm   \e[0m"
+        echo
+        echo "256 Colors ($fmt)"
+        echo
+        for i in {0..7} ; do printf "%3d " "$i" ; done
+        for i in {232..243} ; do printf "%3d " "$i" ; done ; echo
+        for i in {0..7} ; do printf "$fmt " "$i" ; done
+        for i in {232..243} ; do printf "$fmt " "$i" ; done ; echo
+
+        for i in {8..15} ; do printf  "%3d " "$i" ; done ;
+        for i in {244..255} ; do printf "%3d " "$i" ; done ; echo
+        for i in {8..15} ; do printf "$fmt " "$i" ; done ;
+        for i in {244..255} ; do printf "$fmt " "$i" ; done ; echo
+        echo
+
+        fmt="%3d \e[38;5;0m\e[48;5;%dm___\e[0m"
+        for i in {16..51} ; do
+                a=()
+                for j in {0..196..36}; do
+                        a=("${a[@]}" "$((i+j))" "$((i+j))")
+                done
+                printf "$fmt $fmt $fmt $fmt $fmt $fmt\n" "${a[@]}"
+        done
+    }
+
 
     #
     # The utility functions defined in __TASKS.zsh are removed from the
@@ -118,6 +194,9 @@ shell.
 The text appearing above your prompt is your todo
 list.  You can interact with it through the todo()
 shell function.  Run 'todo help' for instructions.
+
+Run 'help' for usage information regarding commands
+within this environment.
 
 #########################################
 ########################
