@@ -1,5 +1,8 @@
 #!/bin/env zsh
 
+#TODO: adjust oom_score_adj before shelling out...
+#      how best to do this?  in env?  I'd like to be able to do it in setup(), but
+#      I don't think that'll be possible
 PURPOSE="Set up environment to work on SlackBuilds"
 VERSION=1.1
    DATE="Wed Mar 12 21:46:02 MDT 2014"
