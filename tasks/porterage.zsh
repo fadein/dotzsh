@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE='Shell into an environment where all Portage areas are re-mounted as ramdisks.'
-VERSION=1.5
-   DATE="Sat Nov 23 22:51:32 MST 2013"
+VERSION=1.6
+   DATE="Wed Mar 26 17:22:10 MDT 2014"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
@@ -56,11 +56,13 @@ env() {
 	alias depclean='emerge --depclean --ask'
 
 	_TODO=(
-		'$ emerge -DNauv --keep-going --tree --unordered-display @system'
-		'$ emerge -DNauv --keep-going --tree --unordered-display @world'
+		'$ setsid emerge -DNauv --keep-going --tree --unordered-display @system'
+		'$ setsid emerge -DNauv --keep-going --tree --unordered-display @world'
+		'$ setsid emerge -DNauv --keep-going --tree --unordered-display @module-rebuild'
 		'$ dispatch-conf'
 		'$ emerge --depclean'
-		'$ revdep-rebuild -ip')
+        '$ setsid emerge --autounmask @preserved-rebuild'
+		'$ setsid revdep-rebuild -ip')
 
 	cd /root/portage
 

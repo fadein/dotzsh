@@ -62,7 +62,8 @@ function title {
     esac
 }
 
-# Window title: "[host] zsh tty cwd"
+# Set the XTerm window title property
+# The default value appears as "[host] zsh tty cwd"
 function precmd {
     title '[%M] ' 'zsh' '%l %~'
 }
@@ -129,69 +130,52 @@ function phosphor() {
 }
 
 function _git_branch_details() {
-    _GITS=
+    local IFS=$'\x00'
     local branch=
-    local IFS=$'\x0A'$'\x0D'
     local staged=
     local dirty=
-    local state=
-    local unmerged=
     local untracked=
+    local unmerged=
 
-    local rx_branch="^# On branch (.+)"
-    local rx_changed="^#[[:space:]]+(new file|both modified|modified|deleted|renamed)"
-    local rx_inIndex="^# Changes to be committed:"
-    local rx_inWork="^# Changed but not updated:|^# Changes not staged for commit:" #prior to v1.7.4
-    local rx_fatal="^fatal:"
-    local rx_unmerged="^# Unmerged paths:"
-    local rx_untracked="^# Untracked files:"
-    local rx_filename="^#[[:blank:]][[:alnum:]_#.]+"
+	local  rx_detached="^## HEAD \(no branch\)"
+	local    rx_branch="^## ((([^.[:space:]]+)\.?)+)(\.\.\..+)?"
+    local   rx_inIndex="^[MAD][MAD ]"
+    local    rx_inWork="^ [MAD]"
+    local rx_untracked="^\?\?"
+    local  rx_unmerged="^UU"
+    local     rx_fatal="^fatal:"
 
     local LINE=
-    for LINE in $( git status 2>&1 )
+    for LINE in $( git status --branch -z 2>&1 )
     do
-        if [[ ${LINE} =~ ${rx_branch} ]]; then
+        if [[ ${LINE} =~ ${rx_detached} ]]; then
+			# get SHA1 of current commit when in detached HEAD state
+			# indicate detached head by prepending with *
+			branch="*"$(git rev-parse --short HEAD 2>/dev/null)
+        elif [[ ${LINE} =~ ${rx_branch} ]]; then
             branch=$match[1]
         elif [[ ${LINE} =~ ${rx_inIndex} ]]; then
-            state=index
+			let staged++
         elif [[ ${LINE} =~ ${rx_inWork} ]]; then
-            state=work
+			let dirty++
         elif [[ ${LINE} =~ ${rx_untracked} ]]; then
-            state=untracked
+            let untracked++
         elif [[ ${LINE} =~ ${rx_unmerged} ]]; then
-            state=unmerge
-        elif [[ ${LINE} =~ ${rx_changed} ]]; then
-            case $state in
-                index)
-                    let staged++;;
-                work)
-                    let dirty++;;
-                unmerge)
-                    let unmerged++;;
-            esac
-        elif [[ $state == 'untracked' ]]; then
-            if [[ ${LINE} =~ ${rx_filename} ]]; then
-                let untracked++
-            fi
+			let unmerged++
         elif [[ ${LINE} =~ ${rx_fatal} ]]; then
             return
         fi
     done
 
-    # get SHA1 of current commit when in detached HEAD state
-    # indicate detached head by prepending with *
-    if [[ -z "${branch}" ]]; then
-        branch="*"$(git rev-parse --short HEAD 2>/dev/null)
-    fi
-
     # show number of non-indexed changes in red
     # and number of indexed changes in green
     if [[ -n "${staged}${dirty}${unmerged}${untracked}" ]]; then
-        echo " %F{green}${staged}%F{red}${dirty}%U${unmerged}%u%F{yellow}${untracked}%F{red} ${branch}%f"
+        print " %F{green}${staged}%F{red}${dirty}%U${unmerged}%u%F{yellow}${untracked}%F{red} ${branch}%f"
     else
-        echo " %F{green}${branch}%f"
+        print " %F{green}${branch}%f"
     fi
 }
+
 
 # git prompt main entry point
 function git() {
@@ -239,6 +223,14 @@ elif [[ $# -gt 0 ]]; then
     eval "$1"
 else
     plain
+fi
+
+# if we're rockin' MidnightCommander, drop the precmd() and preexec()
+# functionss as they screw the GNU Screen window title up.  Also drop
+# the RPROMPT, since it doesn't look right in there.
+if [[ -n "$MC_SID" ]]; then
+    unfunction precmd preexec
+    unset RPROMPT
 fi
 
 # Try to keep environment pollution down, EPA loves us.

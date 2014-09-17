@@ -2,6 +2,8 @@
 
 [[ -r ~/.dir_colors ]] && eval "$(dircolors ~/.dir_colors -b)"
 
+[[ -r /etc/zsh/zprofile ]] && source /etc/zsh/zprofile
+
 zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-prompt %SAt %l: Hit TAB for more, or the character to insert%s
