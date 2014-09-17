@@ -27,6 +27,15 @@ if ! functions die >/dev/null; then
 	}
 fi
 
+if ! functions warn >/dev/null; then
+	warn() {
+		
+		for line in "$@"; do
+			echo -e ERROR: $line 1>&2
+		done
+		return 1
+	}
+fi
 
 #
 # Wait for user to press [Enter]
@@ -191,7 +200,7 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 	fi
 
 	#clean up the environment
-	for F in setup spawn cleanup env die prettySeconds persistentTodo pause; do
+	for F in setup spawn cleanup env die prettySeconds persistentTodo pause warn; do
 		[[ -z "$_KEEP_FUNCTIONS[(r)$F]" ]] && unfunction $F 2>/dev/null
 	done
 	unset _KEEP_FUNCTIONS
