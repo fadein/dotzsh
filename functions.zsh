@@ -1,8 +1,7 @@
 #!/bin/zsh
 
+# remove duplicate entries from colon separated string while preserving order
 uniquify() {
-    #remove duplicate entries from colon separated string while
-    #preserving order
     local IFS=:
     local -a OUT_A
 	local i j
@@ -21,7 +20,7 @@ uniquify() {
     echo "$OUT_A"
 }
 
-#this little gem lets me say .. .. .. to go back three directories
+# this little gem lets me say .. .. .. to go back three directories
 ..() {
 	#TODO: what were these variables for?
 	local SAVEOLDPWD="$PWD"
@@ -51,12 +50,18 @@ _dotdotcomp() {
 	return 0
 }
 
+# this hook function decides which commands are added to the shell's history
+zshaddhistory() {
+	[[ "$1" =~ '^(fg|bg)\s+$' ]] && return 1
+	return 0
+}
+
 # -o filenames tells complete to backslash escape certain chars in
 # some directory/filenames
 #TODO: port this to zsh
 #complete -o filenames -F _dotdotcomp ..
 
-#display directory notes
+# display directory notes
 notes() {
 	if [[ -r .notes && -z "$SHUSH" ]]; then
 		fmt -s -w ${COLUMNS:-80} .notes
@@ -64,7 +69,7 @@ notes() {
 	fi
 }
 
-#if entering a directory with a special .notes file echo its contents
+# if entering a directory with a special .notes file echo its contents
 [[ 0 == ${+chpwd_functions} || 0 == $chpwd_functions[(I)notes] ]] \
 	&& chpwd_functions+=(notes)
 
@@ -200,68 +205,11 @@ function ontherecord()
 	fi
 }
 
-# Create an empty Perl source file, and open it in $EDITOR
-_pl() {
-[ -z $1 ] && echo Usage: ${FUNCNAME[0]} FILENAME [-s] && return 127
-#strip .pl extension (if any) and add again
-FILENAME=${1%\.pl}.pl
-	
-cat >$FILENAME <<PERLPROG
-#!`which perl`
-#Name:     $FILENAME
-#Date:     `/usr/bin/date '+%a %b %-d, %Y'`
-#Author:   Erik Falor
-#Purpose:  
-#Usage:    
-#Copyright (c) `/usr/bin/date +%Y` Erik Falor.
-#All rights reserved.
-#
-#Version \$Id\$
-
-use warnings;
-use strict;
-use Benchmark;
-use Data::Dumper;
-
-die "Please specify a filename\\n" unless @ARGV;
-open my \$FH, "<\$ARGV[0]"
-	or die "Cannot open \$ARGV[0] because: \$!\\n";
-
-
-
-
-close \$FH;
-PERLPROG
-
-#set the exacutable bit
-chmod 755 $FILENAME
-#open in my favorite editor on line 21, and start in insert mode
-[ "$2" != "-s" ] && gvim +21 -c start $FILENAME 
-}
-
 ## BELOW ARE FUNCTIONS WHICH ARE ONLY USEFUL ON BOXES I OWN
 
 # Escalate privileges, Hollywood style
 override() {
 	eval "sudo $(history | cut -c 8- | tail -1)"
-}
-
-# scp files from gnu.mtveurope.org
-gnuget () {
-	if [ -z "$1" ]; then
-		echo A file name, please
-		return
-	fi
-	scp -P 443 fadein@gnu.mtveurope.org:"$1" .
-}
-
-# scp files to gnu.mtveurope.org
-gnuput () {
-	if [ -z "$1" ]; then
-		echo A file name, please
-		return
-	fi
-	scp -P 443 "$1" fadein@gnu.mtveurope.org:
 }
 
 # mount a filesystem to a directory and chdir into it
@@ -272,37 +220,6 @@ mountc() {
 		return
 	fi
 	mount $1 && cd $1
-}
-
-# Create an empty Mzscheme source file, and open it in $EDITOR
-scm() {
-	[ -z $1 ] && echo Usage: ${FUNCNAME[0]} FILENAME [-s] && return 127
-	#strip .scm extension (if any) and add again
-	FILENAME=${1%\.scm}.scm
-	DATE=/bin/date
-cat >$FILENAME <<SCHEMEPROG
-#!/usr/local/bin/csi -s
-;Name:     $FILENAME
-;Date:     $($DATE '+%a %b %-d, %Y')
-;Author:   Erik Falor
-;Purpose:  
-;Usage:    
-;Copyright (c) $($DATE +%Y) Erik Falor.
-;All rights reserved.
-
-
-
-; vim:filetype=chicken expandtab tabstop=4:
-SCHEMEPROG
-
-	#set the exacutable bit
-	chmod 755 $FILENAME
-	#open in my favorite editor on line 14, and start in insert mode
-	if [[ -n "$STY" ]]; then
-		[[ "$2" != "-s" ]] && screen $EDITOR +10 -c start $FILENAME 
-	else
-		[[ "$2" != "-s" ]] && $EDITOR +10 -c start $FILENAME 
-	fi
 }
 
 
