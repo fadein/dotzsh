@@ -63,10 +63,7 @@ zshaddhistory() {
 
 # display directory notes
 notes() {
-	if [[ -r .notes && -z "$SHUSH" ]]; then
-		fmt -s -w ${COLUMNS:-80} .notes
-		echo
-	fi
+	[[ -r .notes && -z "$SHUSH" ]] && { fmt -${COLUMNS:-80} -s .notes; echo; }
 }
 
 # if entering a directory with a special .notes file echo its contents
@@ -188,6 +185,7 @@ offtherecord() {
 		OLDHISTSIZE=$HISTSIZE
 		HISTSIZE=0
 	fi
+	[[ -n "$@" ]] && $@
 }
 alias otr=offtherecord
 
