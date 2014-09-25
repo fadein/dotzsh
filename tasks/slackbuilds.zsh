@@ -18,18 +18,15 @@ UPGRADEPKG=/sbin/upgradepkg
 WGET=/usr/bin/wget
 
 setup() {
-    print "slackbuilds.zsh $0()"
     raisePrivs
 }
 
 #spawn a (nice) child root shell
 spawn() {
-    print "slackbuilds.zsh $0()"
 	TASK=$TASKNAME $NICE $ZSH_NAME
 }
 
 env() {
-    print "slackbuilds.zsh $0()"
 	export OUTPUT=/mnt/rasp/build/SBo/install/
     export SBODIR=/mnt/rasp/build/SBo/slackbuilds.git
     cd $SBODIR
