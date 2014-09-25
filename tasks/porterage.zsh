@@ -5,7 +5,7 @@ VERSION=1.7
    DATE="Wed Sep 24 15:05:11 MDT 2014"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
-PROGNAME=$0:t
+PROGNAME=$0
 TASKNAME=$0:t:r
 
 # external program paths should go here
