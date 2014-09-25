@@ -11,7 +11,6 @@ TASKNAME=$0:t:r
 
 # Report on time spent on this task
 cleanup() {
-
 	echo You hacked on that for $( prettySeconds )
 }
 

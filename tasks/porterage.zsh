@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE='Shell into an environment where all Portage areas are re-mounted as ramdisks.'
-VERSION=1.6
-   DATE="Wed Mar 26 17:22:10 MDT 2014"
+VERSION=1.7
+   DATE="Wed Sep 24 15:05:11 MDT 2014"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
@@ -10,7 +10,6 @@ TASKNAME=$0:t:r
 
 # external program paths should go here
 RAMDIR=/usr/local/bin/ramdir.sh
-SUDO=/usr/bin/sudo
 NICE=/usr/bin/nice
 IONICE=/usr/bin/ionice
 
@@ -18,6 +17,7 @@ AREAS=(/var/tmp/portage /usr/portage)
 
 # copy contents of AREAS into ramdisk
 setup() {
+    raisePrivs
 	for AREA in $AREAS; do
 		if ! [[ -d $AREA ]]; then
 			mkdir $AREA;
@@ -26,12 +26,12 @@ setup() {
 			exit $(die "failed to mount $AREA as ramfs")
 		fi
 	done
-    $SUDO eix-sync
+    eix-sync
 }
 
 # spawn a nice child root shell
 spawn() {
-	$SUDO TASK=$TASKNAME $IONICE $NICE $ZSH_NAME
+	TASK=$TASKNAME $IONICE $NICE $ZSH_NAME
 }
 
 # sync areas back to disk

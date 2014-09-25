@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.2
-# Date:    Wed Sep 17 08:19:49 MDT 2014
+# Version: 1.3
+# Date:    Wed Sep 24 18:31:31 MDT 2014
 # Author:  Erik Falor <efalor@spillman.com>
 
 # Instructions
@@ -14,6 +14,30 @@
 #
 # Inside mytask.zsh you can edit ... TODO: finish this thought
 
+if ! functions raisePrivs >/dev/null; then
+	raisePrivs() {
+		[[ $UID != '0' ]] && \
+			exec sudo _TASK_UID=$UID $PROGNAME
+	}
+fi
+
+if ! functions dropPrivsAndSpawn >/dev/null; then
+	dropPrivsAndSpawn() {
+		if [[ $UID == '0' ]]; then
+			if [[ -n "$@" ]]; then
+				sudo TASK=$TASKNAME -u \#$_TASK_UID $@
+			else
+				sudo TASK=$TASKNAME -u \#$_TASK_UID $ZSH_NAME
+			fi
+		else
+			if [[ -n "$@" ]]; then
+				TASK=$TASKNAME $@
+			else
+				TASK=$TASKNAME $ZSH_NAME
+			fi
+		fi
+	}
+fi
 
 #
 # Print a message to stderr and exit with a failure code
@@ -200,7 +224,8 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 	fi
 
 	#clean up the environment
-	for F in setup spawn cleanup env die prettySeconds persistentTodo pause warn; do
+	for F in setup spawn cleanup env die prettySeconds persistentTodo \
+		pause warn raisePrivs dropPrivsAndSpawn; do
 		[[ -z "$_KEEP_FUNCTIONS[(r)$F]" ]] && unfunction $F 2>/dev/null
 	done
 	unset _KEEP_FUNCTIONS

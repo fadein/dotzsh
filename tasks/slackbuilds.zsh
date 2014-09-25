@@ -5,7 +5,7 @@ VERSION=1.1
    DATE="Wed Mar 12 21:46:02 MDT 2014"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
-PROGNAME=$0:t
+PROGNAME=$0
 TASKNAME=$0:t:r
 
 CHMOD=/usr/bin/chmod
@@ -13,19 +13,25 @@ CUT=/usr/bin/cut
 GIT=/usr/bin/git
 MD5SUM=/usr/bin/md5sum
 NICE=/usr/bin/nice
-SUDO=/usr/bin/sudo
 TEE=/usr/bin/tee
 UPGRADEPKG=/sbin/upgradepkg
 WGET=/usr/bin/wget
 
+setup() {
+    print "slackbuilds.zsh $0()"
+    raisePrivs
+}
+
 #spawn a (nice) child root shell
 spawn() {
-	exec $SUDO TASK=$TASKNAME $NICE $ZSH_NAME
+    print "slackbuilds.zsh $0()"
+	TASK=$TASKNAME $NICE $ZSH_NAME
 }
 
 env() {
-	export OUTPUT=/root/pkg/SBo/install/
-    export SBODIR=/root/pkg/SBo/slackbuilds.git
+    print "slackbuilds.zsh $0()"
+	export OUTPUT=/mnt/rasp/build/SBo/install/
+    export SBODIR=/mnt/rasp/build/SBo/slackbuilds.git
     cd $SBODIR
     gitprompt
 
