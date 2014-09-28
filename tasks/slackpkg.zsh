@@ -19,6 +19,7 @@ spawn() {
 }
 
 env() {
+	$SLACKPKG update
 	$SLACKPKG upgrade-all
 
 	>&1 <<MESSAGE
