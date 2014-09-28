@@ -4,18 +4,18 @@
  VERSION="1.0"
     DATE="Thu Jul  4 12:57:06 MDT 2013"
   AUTHOR="Erik Falor"
+PROGNAME=$0
 TASKNAME=$0:t:r
 SLACKPKG=/usr/sbin/slackpkg
-SUDO=/usr/bin/sudo
 NICE=/usr/bin/nice
 
 setup() {
-	$SUDO $SLACKPKG update
+	raisePrivs
 }
 
 # spawn a (nice) root child shell
 spawn() {
-	$SUDO TASK=$TASKNAME $NICE -n 10 $ZSH_NAME
+	TASK=$TASKNAME $NICE -n 10 $ZSH_NAME
 }
 
 env() {
