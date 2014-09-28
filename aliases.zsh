@@ -38,6 +38,7 @@ alias grpe=grep
 alias gti=git
 alias jods=jobs
 alias les=less
+alias pgerp='pgrep -l'
 alias lss=less
 alias mak=make
 alias mor=more
