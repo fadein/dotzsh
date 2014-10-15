@@ -16,6 +16,10 @@
 
 if ! functions raisePrivs >/dev/null; then
 	raisePrivs() {
+		if [[ -z "$PROGNAME" ]]; then
+			warn "PROGNAME variable is not set in this task!"
+			die  "Please put 'PROGNAME=\$0' near the top of this task"
+		fi
 		[[ $UID != '0' ]] && \
 			exec sudo _TASK_UID=$UID $PROGNAME
 	}
