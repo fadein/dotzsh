@@ -41,6 +41,7 @@ alias les=less
 alias pgerp='pgrep -l'
 alias lss=less
 alias mak=make
+alias maek=make
 alias mor=more
 alias mroe=more
 alias scd='cd'
