@@ -6,8 +6,12 @@ VERSION="***"
  AUTHOR="***"
 
 #
-# Don't change this assignment - it is very important
-# The name of this task shall be the name of this script, minus .zsh
+# Don't change these assignments - they are very important to the functioning
+# of tasks, and they must be made at the toplevel of this script.
+# PROGNAME captures the value of $0 right here since it varies depending upon
+# which function you're in, or which script you've just `source`d
+# TASKNAME is the name of this script, minus .zsh
+PROGNAME=$0
 TASKNAME=$0:t:r
 
 #
