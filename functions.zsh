@@ -132,6 +132,10 @@ entropy() {
 	printf "(%d/%d) %.2f%%\n" $AVAIL $PSIZE $(( $AVAIL / $PSIZE.0 * 100 ))
 }
 
+sec2time() {
+	perl -e "print scalar localtime $1, \"\n\""
+}
+
 # re-source this file
 #TODO: port this to zsh
 #eval "function reload() { source ${BASH_ARGV[0]}; }"
