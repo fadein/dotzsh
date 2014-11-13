@@ -141,7 +141,8 @@ function _git_branch_details() {
 
     # branch status patterns
     local  rx_detached="^## HEAD \(no branch\)"
-    local    rx_branch="^## ([^.[:space:]]+)(\.\.\.(([^[:space:]]+)( \[ahead|behind \d+\])))?"
+    local    rx_branch="^## ([^.[:space:]]+)(\.\.\.(([^[:space:]]+)( \[(ahead|behind) [0-9]+\])))?"
+
     # file status counters
     local    staged=""
     local     dirty=""
@@ -181,6 +182,14 @@ function _git_branch_details() {
 
         elif [[ ${LINE} =~ ${rx_branch} ]]; then
             branch=$match[1] upstream=$match[4] diverged=$match[5]
+            if [[ ! -z $match[6] ]]; then
+                if [[ $match[6] = 'ahead' ]]; then
+                    diverged=+
+                else
+                    diverged=-
+                fi
+            fi
+            #print "\nmatch[1]='$match[1]' match[2]='$match[2]' match[3]='$match[3]' match[4]='$match[4]' match[5]='$match[5]' match[6]='$match[6]'\n"
 
         elif [[ ${LINE} =~ ${rx_changedAndUnstaged} ]]; then
             let staged++
@@ -206,9 +215,9 @@ function _git_branch_details() {
     # show number of non-indexed changes in red
     # and number of indexed changes in green
     if [[ -n "${staged}${dirty}${unmerged}${untracked}" ]]; then
-        print " %F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u ${branch}%F{green}${upstream+ }${diverged+%F{red}}${upstream}%f"
+        print " %F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u ${branch}%F{green}${upstream:+ }${diverged+%F{red\}$diverged}${upstream}%f"
     else
-        print " %F{green}${branch}${upstream+ }${diverged+%F{red}}${upstream}%f"
+        print " %F{green}${branch}${upstream:+ }${diverged+%F{red\}$diverged}${upstream}%f"
     fi
 }
 
