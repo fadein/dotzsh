@@ -137,11 +137,11 @@ function _git_branch_details() {
     #branch status
     local branch=
     local upstream=
+    local diverged=
 
     # branch status patterns
     local  rx_detached="^## HEAD \(no branch\)"
-    local    rx_branch="^## ((([^.[:space:]]+)\.?)+)(\.\.\.(.+))?"
-
+    local    rx_branch="^## ((([^.[:space:]]+)\.?)+)(\.\.\.(.+)( \[ahead|behind \d+\]))?" 
     # file status counters
     local    staged=""
     local     dirty=""
@@ -165,8 +165,7 @@ function _git_branch_details() {
     local         rx_unmergedBothAdded="^AA"
     local      rx_unmergedBothModified="^UU"
     local                 rx_untracked="^\?\?"
-
-
+    local        rx_changedAndUnstaged="^[MADRC]M"
     local                     rx_fatal="^fatal:"
     local rx_inIndex="${rx_updatedIdx}|${rx_addedToIdx}|${rx_deletedFromIdx}|${rx_renamedInIdx}|${rx_copiedInIdx}"
     local rx_inWork=${rx_notUpdated}
@@ -181,9 +180,9 @@ function _git_branch_details() {
             branch="*"$(git rev-parse --short HEAD 2>/dev/null)
 
         elif [[ ${LINE} =~ ${rx_branch} ]]; then
-            branch=$match[1] upstream=$match[5]
+            branch=$match[1] upstream=$match[5] diverged=$match[6]
 
-        elif [[ ${LINE} =~ ${rx_workTreeChangedSinceIndex} ]]; then
+        elif [[ ${LINE} =~ ${rx_changedAndUnstaged} ]]; then
             let staged++
             let dirty++
 
@@ -207,9 +206,9 @@ function _git_branch_details() {
     # show number of non-indexed changes in red
     # and number of indexed changes in green
     if [[ -n "${staged}${dirty}${unmerged}${untracked}" ]]; then
-        print " %F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u ${branch}%F{green}${upstream+ }${upstream}%f"
+        print " %F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u ${branch}%F{green}${upstream+ }${diverged+%F{red}}${upstream}%f"
     else
-        print " %F{green}${branch}${upstream+ }${upstream}%f"
+        print " %F{green}${branch}${upstream+ }${diverged+%F{red}}${upstream}%f"
     fi
 }
 
