@@ -141,7 +141,7 @@ function _git_branch_details() {
 
     # branch status patterns
     local  rx_detached="^## HEAD \(no branch\)"
-    local    rx_branch="^## ((([^.[:space:]]+)\.?)+)(\.\.\.(.+)( \[ahead|behind \d+\]))?" 
+    local    rx_branch="^## ([^.[:space:]]+)(\.\.\.(([^[:space:]]+)( \[ahead|behind \d+\])))?"
     # file status counters
     local    staged=""
     local     dirty=""
@@ -180,7 +180,7 @@ function _git_branch_details() {
             branch="*"$(git rev-parse --short HEAD 2>/dev/null)
 
         elif [[ ${LINE} =~ ${rx_branch} ]]; then
-            branch=$match[1] upstream=$match[5] diverged=$match[6]
+            branch=$match[1] upstream=$match[4] diverged=$match[5]
 
         elif [[ ${LINE} =~ ${rx_changedAndUnstaged} ]]; then
             let staged++
