@@ -27,6 +27,7 @@ case $OSTYPE in
         function hostcolor {echo "%B%F{red}$1%f%b"} ;;
 esac
 
+# Make the color of typed text be green for a regular user and red for root
 case $UID in
     "0")
         _UTEXT="%B%F{red}"
@@ -130,38 +131,74 @@ function phosphor() {
 }
 
 function _git_branch_details() {
-    local IFS=$'\x00'
-    local branch=
-    local staged=
-    local dirty=
-    local untracked=
-    local unmerged=
+    # split input on newlines
+    local IFS=$'\n'
 
-	local  rx_detached="^## HEAD \(no branch\)"
-	local    rx_branch="^## ((([^.[:space:]]+)\.?)+)(\.\.\..+)?"
-    local   rx_inIndex="^[MAD][MAD ]"
-    local    rx_inWork="^ [MAD]"
-    local rx_untracked="^\?\?"
-    local  rx_unmerged="^UU"
-    local     rx_fatal="^fatal:"
+    #branch status
+    local branch=
+    local upstream=
+
+    # branch status patterns
+    local  rx_detached="^## HEAD \(no branch\)"
+    local    rx_branch="^## ((([^.[:space:]]+)\.?)+)(\.\.\.(.+))?"
+
+    # file status counters
+    local    staged=""
+    local     dirty=""
+    local untracked=""
+    local  unmerged=""
+
+    local                rx_notUpdated="^ [MD]"
+    local                rx_updatedIdx="^M[ MD]"
+    local                rx_addedToIdx="^A[ MD]"
+    local            rx_deletedFromIdx="^D[ M]"
+    local              rx_renamedInIdx="^R[ MD]"
+    local               rx_copiedInIdx="^C[ MD]"
+    local      rx_indexWorkTreeMatches="^[MARC] "
+    local rx_workTreeChangedSinceIndex="^[ MARC]M"
+    local         rx_deletedInWorkTree="^[ MARC]D"
+    local       rx_unmergedBothDeleted="^DD"
+    local         rx_unmergedAddedByUs="^AU"
+    local     rx_unmergedDeletedByThem="^UD"
+    local       rx_unmergedAddedByThem="^UA"
+    local       rx_unmergedDeletedByUs="^DU"
+    local         rx_unmergedBothAdded="^AA"
+    local      rx_unmergedBothModified="^UU"
+    local                 rx_untracked="^\?\?"
+
+
+    local                     rx_fatal="^fatal:"
+    local rx_inIndex="${rx_updatedIdx}|${rx_addedToIdx}|${rx_deletedFromIdx}|${rx_renamedInIdx}|${rx_copiedInIdx}"
+    local rx_inWork=${rx_notUpdated}
+    local rx_unmerged="${rx_unmergedBothDeleted}|${rx_unmergedAddedByUs}|${rx_unmergedDeletedByThem}|${rx_unmergedAddedByThem}|${rx_unmergedDeletedByUs}|${rx_unmergedBothAdded}|${rx_unmergedBothModified}"
 
     local LINE=
-    for LINE in $( git status --branch -z 2>&1 )
+    for LINE in $( git status --branch --porcelain 2>&1 )
     do
         if [[ ${LINE} =~ ${rx_detached} ]]; then
-			# get SHA1 of current commit when in detached HEAD state
-			# indicate detached head by prepending with *
-			branch="*"$(git rev-parse --short HEAD 2>/dev/null)
+            # get SHA1 of current commit when in detached HEAD state
+            # indicate detached head by prepending with *
+            branch="*"$(git rev-parse --short HEAD 2>/dev/null)
+
         elif [[ ${LINE} =~ ${rx_branch} ]]; then
-            branch=$match[1]
+            branch=$match[1] upstream=$match[5]
+
+        elif [[ ${LINE} =~ ${rx_workTreeChangedSinceIndex} ]]; then
+            let staged++
+            let dirty++
+
         elif [[ ${LINE} =~ ${rx_inIndex} ]]; then
-			let staged++
+            let staged++
+
         elif [[ ${LINE} =~ ${rx_inWork} ]]; then
-			let dirty++
+            let dirty++
+
         elif [[ ${LINE} =~ ${rx_untracked} ]]; then
             let untracked++
+
         elif [[ ${LINE} =~ ${rx_unmerged} ]]; then
-			let unmerged++
+            let unmerged++
+
         elif [[ ${LINE} =~ ${rx_fatal} ]]; then
             return
         fi
@@ -170,9 +207,9 @@ function _git_branch_details() {
     # show number of non-indexed changes in red
     # and number of indexed changes in green
     if [[ -n "${staged}${dirty}${unmerged}${untracked}" ]]; then
-        print " %F{green}${staged}%F{red}${dirty}%U${unmerged}%u%F{yellow}${untracked}%F{red} ${branch}%f"
+        print " %F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u ${branch}%F{green}${upstream+ }${upstream}%f"
     else
-        print " %F{green}${branch}%f"
+        print " %F{green}${branch}${upstream+ }${upstream}%f"
     fi
 }
 
