@@ -5,7 +5,7 @@ VERSION=1.7
    DATE="Wed Sep 24 15:05:11 MDT 2014"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
-PROGNAME=$0:t
+PROGNAME=$0
 TASKNAME=$0:t:r
 
 # external program paths should go here
@@ -54,6 +54,12 @@ env() {
 	alias unmerge='emerge -Cva'
 	alias remerge='emerge -rva'
 	alias depclean='emerge --depclean --ask'
+
+    # Messages for package sys-boot/grub-2.02_beta2-r2:
+    # 
+    # To avoid automounting and auto(un)installing with /boot,
+    # just export the DONT_MOUNT_BOOT variable.
+    export DONT_MOUNT_BOOT=1
 
 	_TODO=(
 		'$ setsid emerge -DNauv --keep-going --tree --unordered-display @system'
