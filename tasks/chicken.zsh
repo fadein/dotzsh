@@ -1,11 +1,12 @@
 #!/bin/zsh
 PURPOSE='Build Chicken on AIX'
-VERSION="1.0"
-   DATE="Tue Jul  9 22:51:16 MDT 2013"
+VERSION="1.1"
+   DATE="Mon Dec  8 09:46:42 MST 2014"
  AUTHOR="Erik Falor <efalor@spillman.com>"
+PROGNAME=$0
 TASKNAME=$0:t:r
 
-case `uname` in
+case $(uname) in
 	AIX)
 		env() {
 			# use gcc 4.4.5, not the old 3.2.2
@@ -26,7 +27,6 @@ case `uname` in
 
 	Linux)
 		env() {
-
 			alias make=make\ PLATFORM=linux\ PREFIX=$HOME/.$(hostname)
 			echo "make is aliased to 'make\ PLATFORM=linux\ PREFIX=$HOME/.$(hostname)'"
 			PATH=$HOME/.$(hostname)/bin:$PATH
@@ -37,9 +37,17 @@ case `uname` in
 			cd ~/chicken/chicken-core.git/
 		}
 		;;
+
+	CYGWIN_NT*)
+		env() {
+			alias make=make\ PLATFORM=cygwin\ PREFIX=/usr/local
+			echo "make is aliased to 'make\ PLATFORM=cygwin\ PREFIX=/usr/local'"
+
+			cd ~/build/chicken/
+			gitprompt
+		}
+		;;
 esac
-
-
 
 
 source $0:h/__TASKS.zsh
