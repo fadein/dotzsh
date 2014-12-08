@@ -71,6 +71,7 @@ alias deltree='rm -rf'
 alias move='mv -i'
 alias screen-r=screen\ -r
 alias screenr=screen\ -r
+alias screern=screen\ -r
 
 #
 # suffix aliases
