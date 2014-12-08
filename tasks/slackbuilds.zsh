@@ -33,7 +33,6 @@ env() {
     export OUTPUT=/mnt/rasp/build/SBo/install/
     export SBODIR=/mnt/rasp/build/SBo/slackbuilds.git
     cd $SBODIR
-    gitprompt
 
     #
     # fetch the package (if needed), return true if the MD5 checksum matches
