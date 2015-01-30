@@ -211,7 +211,10 @@ function ontherecord()
 
 # Escalate privileges, Hollywood style
 override() {
-	eval "sudo $(history | cut -c 8- | tail -1)"
+	local _cmd
+	_cmd=($(history -1))
+	shift _cmd
+	eval "sudo $_cmd"
 }
 
 # mount a filesystem to a directory and chdir into it

@@ -33,18 +33,20 @@ alias which="which -p"
 #
 # because I can't spell...
 #
+alias cs=cd
+alias ehco=echo
 alias fiel=file
 alias grpe=grep
 alias gti=git
 alias jods=jobs
 alias les=less
-alias pgerp='pgrep -l'
 alias lss=less
-alias mak=make
 alias maek=make
+alias mak=make
 alias mor=more
 alias mroe=more
-alias scd='cd'
+alias pgerp='pgrep -l'
+alias scd=cd
 alias sl=ls
 alias sls=ls
 
