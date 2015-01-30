@@ -34,6 +34,7 @@ alias which="which -p"
 # because I can't spell...
 #
 alias cs=cd
+alias ecoh=echo
 alias ehco=echo
 alias fiel=file
 alias grpe=grep
