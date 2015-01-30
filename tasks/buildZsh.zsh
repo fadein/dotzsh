@@ -4,6 +4,7 @@
  VERSION="1.1"
     DATE="Wed Sep 17 08:14:30 MDT 2014"
   AUTHOR="efalor@spillman.com"
+PROGNAME=$0
 TASKNAME=$0:t:r
 
 env() {
