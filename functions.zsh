@@ -192,10 +192,12 @@ offtherecord() {
 	[[ -n "$@" ]] && $@
 }
 alias otr=offtherecord
+otx() {
+	[[ -n "$@" ]] && otr exec $@
+}
 
 # turn on history recording
-function ontherecord()
-{
+ontherecord() {
 	umask 022
 	if [[ -n "$OLDHISTFILE" ]]; then
 		HISTFILE=$OLDHISTFILE
