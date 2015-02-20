@@ -8,8 +8,8 @@ alias curl='curl -A "Mozilla/4.0"'
 alias date='date +"%a, %b %e %Y  %r %Z"'
 alias df='df -h'
 alias du='du -h'
-alias findd='find . -type d'
-alias findf='find . -type f'
+alias findd='find . -type d -name'
+alias findf='find . -type f -name'
 alias free='free -m'
 alias grep='grep -n --color=auto'
 alias l='ls --color=auto -F'
@@ -52,6 +52,8 @@ alias pgerp='pgrep -l'
 alias scd=cd
 alias sl=ls
 alias sls=ls
+
+alias vim=nvim
 
 #
 # vi commands
