@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
  PURPOSE="Build Zsh like a boss"
- VERSION="1.1"
-    DATE="Wed Sep 17 08:14:30 MDT 2014"
+ VERSION="1.2"
+    DATE="Thu Mar  5 09:53:23 MST 2015"
   AUTHOR="efalor@spillman.com"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -114,18 +114,17 @@ env() {
 
 	_HELP+=('pluginsZsh' 'Copy appropriate plugins from build area to bundle')
 	pluginsZsh() {
-		local BUNDLE=/opt/debug/efalor/zsh_bundle/.zsh
 		if [[ ! -d $BUNDLE ]]; then
-			return $( warn "Bundle area optdbg/zsh_bundle/.zsh not present or not a dir" )
+			return $( warn "Bundle area '$BUNDLE' is not present or is not a dir" )
 		fi
 
 		# Cleanup & install Completion plugins
 		if [[ ! -d Completion ]]; then 
 			return $( warn "Completion/ plugins dir not found!" )
 		else
-			print Copying Completion plugins...
+			print Replacing Completion plugins...
 			( cd $BUNDLE; rm -rf Completion; mkdir Completion )
-			cp -R Completion/{AIX,Base,Linux,Redhat,Unix,Zsh} $BUNDLE/Completion
+			cp Completion/{AIX,Base,Linux,Redhat,Unix,Zsh}/**/* $BUNDLE/Completion
 			cp Completion/{README,bashcompinit,compaudit,compdump,compinit,compinstall} $BUNDLE/Completion
 		fi
 
@@ -133,9 +132,37 @@ env() {
 		if [[ ! -d Functions ]]; then
 			return $( warn "Functions/ dir not found!" )
 		else
-			print Copying Functions...
+			print Replacing Functions...
 			( cd $BUNDLE; rm -rf Functions ; mkdir Functions )
-			cp -R Functions/{Calendar,Chpwd,Compctl,Example,Exceptions,MIME,Misc,Prompts,Zle} $BUNDLE/Functions
+			cp Functions/{Calendar,Chpwd,Compctl,Example,Exceptions,MIME,Misc,Prompts,Zle}/**/* $BUNDLE/Functions
+		fi
+	}
+
+	_HELP+=('installZsh' 'Copy binary Src/zsh into bundle, naming it for the platform and version')
+	installZsh() {
+		# the version number is found in Src/version.h
+		if [[ -z "$NEWVER" ]]; then
+			if ! getNewVer; then
+				warn "I can't install Zsh w/o knowing the version"
+				retunr
+			fi
+		fi
+		case $(uname) in
+			AIX)   OS=aix ;;
+			Linux) OS=linux ;;
+		esac
+		cp Src/zsh $BUNDLE/zsh-${NEWVER}-${OS}
+
+		print "Be sure to update the version in $BUNDLE/zsh"
+	}
+
+	_HELP+=('getNewVer' 'Get the vesion number of this build of Zsh from version.h')
+	getNewVer() {
+		if [[ -f Src/version.h ]]; then
+			NEWVER=$( sed -ne 's/#define ZSH_VERSION "\([^"]*\)"/\1/p' Src/version.h)
+		else
+			warn "I can't find Src/version.h. Am I in the base Zsh directory?"
+			NEWVER=
 		fi
 	}
 
@@ -144,7 +171,7 @@ env() {
 		"$ modulesZsh"
 		"$ makeZsh"
 		"$ pluginsZsh"
-		"Copy the newly build Src/zsh into the bundle")
+		"$ installZsh")
 
 	# Print a useful message to remind the user what to do next
 	>&1 <<-MESSAGE
@@ -172,6 +199,8 @@ env() {
 
 	_KEEP_FUNCTIONS=(warn)
 
+	BUNDLE=/opt/debug/efalor/zsh_bundle/.zsh
+	NEWVER=
 
 	[[ -d ~/build ]] && SHUSH=1 cd ~/build
 }

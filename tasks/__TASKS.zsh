@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.3
-# Date:    Wed Sep 24 18:31:31 MDT 2014
+# Version: 1.5
+# Date:    Thu Mar  5 11:23:06 MST 2015
 # Author:  Erik Falor <efalor@spillman.com>
 
 # Instructions
@@ -151,7 +151,7 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 
 	# If a _TODO array was defined in the user's env() function,
 	# set up some fun todolist helpers...
-	if [[ $parameters[_TODO] =~ 'array' && 0 != $#_TODO ]]; then
+	if [[ $parameters[_TODO] == 'array' && $#_TODO != 0 ]]; then
 		# Remind of the next task with each prompt
 		[[ 0 == ${+precmd_functions} || 0 == $precmd_functions[(I)todo] ]] \
 			&& precmd_functions+=(todo)
