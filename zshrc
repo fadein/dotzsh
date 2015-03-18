@@ -23,11 +23,15 @@ setopt pushd_ignore_dups \
     pushd_to_home        \
     hist_ignore_space    \
     hist_save_no_dups    \
-    auto_continue        \
-    long_list_jobs       \
+    hist_reduce_blanks   \
     hist_ignore_dups     \
     hist_no_store        \
     append_history       \
+    inc_append_history   \
+    share_history        \
+    extended_history     \
+    auto_continue        \
+    long_list_jobs       \
     auto_cd              \
     extended_glob        \
     notify no_beep       \
