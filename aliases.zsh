@@ -53,8 +53,6 @@ alias scd=cd
 alias sl=ls
 alias sls=ls
 
-alias vim=nvim
-
 #
 # vi commands
 #
