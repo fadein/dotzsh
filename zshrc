@@ -19,25 +19,27 @@ zstyle :compinstall filename '/home/fadein/.zshrc'
 zstyle ':completion::complete:*' use-cache 1
 zstyle ':completion::complete:*' cache-path ~/.zsh/cache
 
-setopt pushd_ignore_dups \
-    pushd_to_home        \
-    hist_ignore_space    \
-    hist_save_no_dups    \
-    hist_reduce_blanks   \
-    hist_ignore_dups     \
-    hist_no_store        \
+setopt                   \
     append_history       \
-    inc_append_history   \
-    share_history        \
-    extended_history     \
-    auto_continue        \
-    long_list_jobs       \
     auto_cd              \
-    extended_glob        \
-    notify no_beep       \
+    auto_continue        \
+    brace_ccl            \
     cd_able_vars         \
+    extended_glob        \
+    extended_history     \
+    hist_ignore_dups     \
+    hist_ignore_space    \
+    hist_no_store        \
+    hist_reduce_blanks   \
+    hist_save_no_dups    \
+    inc_append_history   \
+    long_list_jobs       \
     multios              \
-    brace_ccl            # expand {a-d} into "a b c d"
+    notify no_beep       \
+    pushd_ignore_dups    \
+    pushd_to_home        \
+    share_history        \
+    # end of options
 
 # enable esc-p command search, which completes on the beginning of the line
 # typed so far
