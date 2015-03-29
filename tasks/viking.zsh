@@ -9,13 +9,14 @@ PROGNAME=$0:t
 TASKNAME=$0:t:r
 
 SSH=/usr/bin/ssh
+HOST=viking2.falor
 
 #spawn our task shell
 spawn() {
     if [[ $TERM != 'linux' ]]; then
-        LANG=C TERM=xterm TASK=$TASKNAME $SSH -t viking "exec screen -dr"
+        LANG=C TERM=xterm TASK=$TASKNAME $SSH -t $HOST "exec screen -dr"
     else
-        LANG=C TASK=$TASKNAME $SSH -t viking "exec screen -dr"
+        LANG=C TASK=$TASKNAME $SSH -t $HOST "exec screen -dr"
     fi
 }
 
