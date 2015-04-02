@@ -1,8 +1,8 @@
 #!/bin/env zsh
 #
-# Version: 1.5
-# Date:    Thu Mar  5 11:23:06 MST 2015
-# Author:  Erik Falor <efalor@spillman.com>
+# Version: 1.6
+# Date:    Wed Apr  1 23:06:35 MDT 2015
+# Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
 # This file is like a parent-class.  You don't want to mess with it.  To
@@ -151,7 +151,7 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 
 	# If a _TODO array was defined in the user's env() function,
 	# set up some fun todolist helpers...
-	if [[ $parameters[_TODO] == 'array' && $#_TODO != 0 ]]; then
+	if [[ $parameters[_TODO] =~ 'array' && 0 != $#_TODO ]]; then
 		# Remind of the next task with each prompt
 		[[ 0 == ${+precmd_functions} || 0 == $precmd_functions[(I)todo] ]] \
 			&& precmd_functions+=(todo)
@@ -221,7 +221,9 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 	if [[ ($parameters[_HELP] =~ 'association') || 0 -lt $#_HELP ]]; then
 		if ! functions help >/dev/null; then
 			help() {
-				print -aC 2 ${(@kva)_HELP}
+				print $TASKNAME task help
+				print ${(r:${#TASKNAME}::=:)}==========
+				print -aC 2 ${(kva)_HELP}
 				print
 			}
 		fi
