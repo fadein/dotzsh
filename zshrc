@@ -37,8 +37,7 @@ setopt                   \
     multios              \
     notify no_beep       \
     pushd_ignore_dups    \
-    pushd_to_home        \
-    share_history        \
+    pushd_to_home
     # end of options
 
 # enable esc-p command search, which completes on the beginning of the line
