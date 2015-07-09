@@ -223,7 +223,7 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 			help() {
 				print $TASKNAME task help
 				print ${(r:${#TASKNAME}::=:)}==========
-				print -aC 2 ${(kva)_HELP}
+				print -aC 2 ${(kva)_HELP} | sort
 				print
 			}
 		fi
