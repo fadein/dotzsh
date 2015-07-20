@@ -18,14 +18,14 @@ AREAS=(/var/tmp/portage /usr/portage)
 # copy contents of AREAS into ramdisk
 setup() {
     raisePrivs
-	for AREA in $AREAS; do
-		if ! [[ -d $AREA ]]; then
-			mkdir $AREA;
-		fi
-		if ! $RAMDIR mount $AREA; then
-			exit $(die "failed to mount $AREA as ramfs")
-		fi
-	done
+#	for AREA in $AREAS; do
+#		if ! [[ -d $AREA ]]; then
+#			mkdir $AREA;
+#		fi
+#		if ! $RAMDIR mount $AREA; then
+#			exit $(die "failed to mount $AREA as ramfs")
+#		fi
+#	done
     eix-sync
 }
 
@@ -35,18 +35,18 @@ spawn() {
 }
 
 # sync areas back to disk
-cleanup() {
-	echo "Please wait while the Portage areas are synced back to disk..."
-	for AREA in $AREAS; do
-		if ! $RAMDIR umount $AREA; then
-			exit $(die "\nfailed to sync $AREA back to disk" \
-				"You should make sure each of the following are synced back:" \
-				$AREAS)
-		fi
-	done
-
-	echo "Done"
-}
+# cleanup() {
+# 	echo "Please wait while the Portage areas are synced back to disk..."
+# 	for AREA in $AREAS; do
+# 		if ! $RAMDIR umount $AREA; then
+# 			exit $(die "\nfailed to sync $AREA back to disk" \
+# 				"You should make sure each of the following are synced back:" \
+# 				$AREAS)
+# 		fi
+# 	done
+# 
+# 	echo "Done"
+# }
 
 # Add portage aliases to environment,
 # chdir into portage workspace

@@ -1,8 +1,8 @@
 #!/bin/zsh
 
-PURPOSE='Rebuild Vim from Mercurial repos'
-VERSION="1.1"
-   DATE="Fri Feb 15 14:30:45 MST 2013"
+PURPOSE='Rebuild Vim from GitHub'
+VERSION="1.4"
+   DATE="Mon Jul 20 10:30:40 MDT 2015"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 TASKNAME=$0:t:r
@@ -24,7 +24,9 @@ env() {
 		'$ hg update'
 		'$ cd src/'
 		'run emergencyVim() to build a minimal /bin/vi'
-		'run makeVim() to build vim & gvim')
+		'run makeVim() to build vim & gvim'
+		'run `sudo make install` to install the suite of runtime files'
+		)
 
 	#Build emergency vim (only requires glibc and ncurses)
 	function emergencyVim() {
@@ -65,7 +67,7 @@ env() {
 		if ! nice $SUDO make installvimbin; then return; fi
 		echo "${DEST}/bin/vim is not stripped"
 		echo
-		echo 'Run `make install` if you want to install the entire'
+		echo 'Run `sudo make install` if you want to install the entire'
 		echo 'updated Vim suite of runtime files.'
 	}
 
