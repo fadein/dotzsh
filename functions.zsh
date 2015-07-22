@@ -1,5 +1,21 @@
 #!/bin/zsh
 
+# ding is a command-modifier:
+# ring the bell once when the supplied command succeeds, thrice when it has failed
+ding() {
+    # run the supplied commandline, preserving its return code
+    $@
+    local retval=$?
+
+    if [[ $retval == 0 ]]; then
+        print "\a"
+    else
+        for (( dings=0; dings < 3; dings++ )) { print -n "\a"; sleep 1 }
+    fi
+
+    return $retval
+}
+
 # remove duplicate entries from colon separated string while preserving order
 uniquify() {
     local IFS=:
