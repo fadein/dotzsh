@@ -120,14 +120,14 @@ function plain() {
 #The jobcount is colored red if non-zero.
 function colorful() {
     PROMPT="[%(?..%F{white}%K{red}%?%k%f )$(usercolor %n)@$(hostcolor %M) %~]%# $_UTEXT"
-    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG }\$(dim)%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
+    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }\$(dim)%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() {
     PROMPT="[%(?..%F{white}%K{red}%?%k%f )$(usercolor %n)@$(hostcolor %M) %~]%# $_UTEXT"
-    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG }\$(dim)%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
+    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }\$(dim)%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 function phosphor() {
@@ -236,7 +236,7 @@ function git() {
     PROMPT="[%(?..%F{white}%K{red}%?%k%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') ${_UTEXT}"
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
-    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG }\$(dim)%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
+    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }\$(dim)%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 
