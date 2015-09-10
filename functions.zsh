@@ -205,7 +205,7 @@ offtherecord() {
 		OLDHISTSIZE=$HISTSIZE
 		HISTSIZE=0
 	fi
-	[[ -n "$@" ]] && $@
+	[[ -n "$@" ]] && $@ || true
 }
 alias otr=offtherecord
 otx() {
