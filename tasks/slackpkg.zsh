@@ -23,6 +23,7 @@ env() {
 	print Updating package lists...
 	$SLACKPKG update
 
+	print These new packages have been added to the repo:
 	local last_update="Thu Sep 17 20:15:00 UTC 2015"
 	sed -n -e '/Added.$/p' -e "/^$last_update/q" /var/lib/slackpkg/ChangeLog.txt
 
