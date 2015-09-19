@@ -1,11 +1,12 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.0"
-    DATE="Thu Jul  4 12:57:06 MDT 2013"
+ VERSION="1.1"
+    DATE="Fri Sep 18 23:46:58 MDT 2015"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
+
 SLACKPKG=/usr/sbin/slackpkg
 NICE=/usr/bin/nice
 
@@ -19,9 +20,14 @@ spawn() {
 }
 
 env() {
-	$SLACKPKG upgrade-all
+	print Updating package lists...
+	$SLACKPKG update
+
+	local last_update="Thu Sep 17 20:15:00 UTC 2015"
+	sed -n -e '/Added.$/p' -e "/^$last_update/q" /var/lib/slackpkg/ChangeLog.txt
 
 	>&1 <<MESSAGE
+
 
 ### package logs
 /var/log/packages
@@ -29,9 +35,14 @@ env() {
 
 ### slackpkg ChangeLog location:
 /var/lib/slackpkg/ChangeLog.txt
+
+
+Run this command to install new packages added since last update:
+	\$ $SLACKPKG install-new
+
+Run this command when you're ready to upgrade the set of installed packages:
+	\$ $SLACKPKG upgrade-all
 MESSAGE
 }
 
-#
-# Tie it all together
 source $0:h/__TASKS.zsh
