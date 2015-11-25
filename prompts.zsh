@@ -3,24 +3,24 @@
 #Choose color for host and username #{
 case $OSTYPE in
     aix*)
-        function hostcolor { echo "%F{cyan}$1%f"; } ;;
+        function hostcolor { print "%F{cyan}$1%f"; } ;;
     linux*)
         case $HOST in
             gemini)
-                function hostcolor { echo "%B%F{cyan}$1%f%b"; } ;;
+                function hostcolor { print "%B%F{cyan}$1%f%b"; } ;;
             voyager)
-                function hostcolor { echo "%B%F{white}$1%f%b"; } ;;
+                function hostcolor { print "%B%F{white}$1%f%b"; } ;;
             explorer)
-                function hostcolor { echo "%B%F{blue}$1%f%b"; } ;;
+                function hostcolor { print "%B%F{blue}$1%f%b"; } ;;
             viking*)
-                function hostcolor { echo "%B%F{magenta}$1%f%b"; } ;;
+                function hostcolor { print "%B%F{magenta}$1%f%b"; } ;;
             *)
-                function hostcolor { echo "%F{yellow}%K{black}$1%k%f"; } ;;
+                function hostcolor { print "%F{yellow}%K{black}$1%k%f"; } ;;
         esac ;;
     cygwin*)
-        function hostcolor { echo "%B%F{blue}$1%f%b"; } ;;
+        function hostcolor { print "%B%F{blue}$1%f%b"; } ;;
     *)
-        function hostcolor { echo "%B%F{red}$1%f%b"; } ;;
+        function hostcolor { print "%B%F{red}$1%f%b"; } ;;
 esac
 
 # Make the color of typed text be green for a regular user and red for root
