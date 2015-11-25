@@ -90,7 +90,7 @@ SAVEHIST=1337
 # Add to PATH, MANPATH, and cull out duplicates
 #
 for D in /usr/sbin ~/scripts ~/.zsh ~/.zsh/tasks; do
-    [[ -d $D ]] && PATH+=:$D
+    [[ -d $D ]] && path+=$D:a
 done
 for D in /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
     [[ -d $D ]] && MANPATH+=:$D
