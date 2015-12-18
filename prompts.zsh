@@ -2,29 +2,25 @@
 
 #Choose color for host and username #{
 case $OSTYPE in
-    hpux*)
-        function hostcolor {echo "%F{magenta}$1%f"} ;;
     aix*)
-        function hostcolor {echo "%F{cyan}$1%f"} ;;
-    solaris*)
-        function hostcolor {echo "%F{yellow}$1%f"} ;;
+        function hostcolor { print "%F{cyan}$1%f"; } ;;
     linux*)
         case $HOST in
             gemini)
-                function hostcolor {echo "%B%F{cyan}$1%f%b"} ;;
+                function hostcolor { print "%B%F{cyan}$1%f%b"; } ;;
             voyager)
-                function hostcolor {echo "%B%F{white}$1%f%b"} ;;
+                function hostcolor { print "%B%F{white}$1%f%b"; } ;;
             explorer)
-                function hostcolor {echo "%B%F{blue}$1%f%b"} ;;
+                function hostcolor { print "%B%F{blue}$1%f%b"; } ;;
             viking*)
-                function hostcolor {echo "%B%F{magenta}$1%f%b"} ;;
+                function hostcolor { print "%B%F{magenta}$1%f%b"; } ;;
             *)
-                function hostcolor {echo "%B%F{white}$1%f%b"} ;;
+                function hostcolor { print "%F{yellow}%K{black}$1%k%f"; } ;;
         esac ;;
     cygwin*)
-        function hostcolor {echo "%B%F{blue}$1%f%b"} ;;
+        function hostcolor { print "%B%F{blue}$1%f%b"; } ;;
     *)
-        function hostcolor {echo "%B%F{red}$1%f%b"} ;;
+        function hostcolor { print "%B%F{red}$1%f%b"; } ;;
 esac
 
 # Make the color of typed text be green for a regular user and red for root
@@ -32,17 +28,17 @@ case $UID in
     "0")
         _UTEXT="%B%F{red}"
         _UEND='%f%b'
-        function usercolor {echo "%B%F{red}$1%f%b"} ;;
+        function usercolor { print "%B%F{red}$1%f%b"; } ;;
     *)
         _UTEXT="%B%F{green}"
         _UEND='%f%b'
-        function usercolor {echo "%B%F{green}$1%f%b"} ;;
+        function usercolor { print "%B%F{green}$1%f%b"; } ;;
 esac
 #}
 
 setopt prompt_subst
 function dim {
-    print $COLUMNS,$LINES
+    print "${COLUMNS}x${LINES} "
 }
 
 # Render the window title for virtual terminals
@@ -120,14 +116,14 @@ function plain() {
 #The jobcount is colored red if non-zero.
 function colorful() {
     PROMPT="[%(?..%F{white}%K{red}%?%k%f )$(usercolor %n)@$(hostcolor %M) %~]%# $_UTEXT"
-    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }\$(dim)%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
+    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() {
     PROMPT="[%(?..%F{white}%K{red}%?%k%f )$(usercolor %n)@$(hostcolor %M) %~]%# $_UTEXT"
-    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }\$(dim)%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
+    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 function phosphor() {
@@ -236,7 +232,7 @@ function git() {
     PROMPT="[%(?..%F{white}%K{red}%?%k%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') ${_UTEXT}"
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
-    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }\$(dim)%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
+    RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 
@@ -248,7 +244,7 @@ eval "gitprompt() {
 
 eval "plainprompt() {
     source $0 plain
-    setopt prompt_subst
+    unsetopt prompt_subst
 }"
 
 eval "colorfulprompt() {
@@ -258,7 +254,7 @@ eval "colorfulprompt() {
 
 eval "screenprompt() {
     source $0 screen
-    setopt prompt_subst
+    unsetopt prompt_subst
 }"
 
 eval "phosphorprompt() {
@@ -288,7 +284,12 @@ unfunction plain screen colorful 2>/dev/null
 unfunction git 2>/dev/null
 unset _UTEXT _UEND
 
-# excerpt from man zshmisc
+
+
+
+
+
+# Excerpt on Prompt expansion from 'man zshmisc', reproduced for convenience
 : <<'{'
 EXPANSION OF PROMPT SEQUENCES
  Prompt sequences undergo a special form of expansion. This type of
