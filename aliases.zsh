@@ -77,6 +77,7 @@ alias move='mv -i'
 alias screen-r=screen\ -r
 alias screenr=screen\ -r
 alias screern=screen\ -r
+alias epoch='strftime %c'
 
 #
 # suffix aliases
