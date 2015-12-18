@@ -225,14 +225,12 @@ ontherecord() {
 	fi
 }
 
-## BELOW ARE FUNCTIONS WHICH ARE ONLY USEFUL ON BOXES I OWN
-
 # Escalate privileges, Hollywood style
-override() {
-	local _cmd
-	 _cmd=($(history -1))
-	eval "sudo ${_cmd[2,-1]}"
+override () {
+	sudo $(fc -lLn -1)
 }
+
+## BELOW ARE FUNCTIONS WHICH ARE ONLY USEFUL ON BOXES I OWN
 
 # mount a filesystem to a directory and chdir into it
 mountc() {
