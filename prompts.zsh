@@ -42,7 +42,7 @@ esac
 
 setopt prompt_subst
 function dim {
-    print $COLUMNS,$LINES
+    print "${COLUMNS}x$LINES "
 }
 
 # Render the window title for virtual terminals
