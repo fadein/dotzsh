@@ -202,12 +202,14 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 						unset _TODO ;;
 
 					help)
-						>&1 <<-HELP
+						>&1 <<-'HELP'
 						todo                Print the next task
 						todo list           List each task with its index
-						todo done [index]   Complete the next (or indexed) task
+						todo done [index]   Remove the current (or numbered) task from the list
 						todo add TASK       Append TASK to list (quote it!)
-						todo clear          Delete the list
+						todo clear          Delete the entire list
+						todo it             Execute the next task if it begins with '$'
+						todo help           Show this message
 						HELP
 						;;
 				esac
