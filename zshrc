@@ -32,7 +32,6 @@ setopt                   \
     hist_no_store        \
     hist_reduce_blanks   \
     hist_save_no_dups    \
-    inc_append_history   \
     long_list_jobs       \
     multios              \
     notify no_beep       \
