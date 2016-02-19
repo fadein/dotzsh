@@ -1,5 +1,17 @@
 #!/bin/zsh
 
+#TODO: see about making these functions autoloadable
+#TODO: checkout ~/build/Documentation/zsh/zshrc_mikachu for more functions to glean...
+
+# enable the completion system
+autoload -U compinit; compinit -d ~/.zsh/compdump
+
+# enable edit-command-line functionality
+autoload -U edit-command-line && zle -N edit-command-line
+
+# other misc. helpful functions
+autoload zmv zargs zcalc
+
 # ding is a command-modifier:
 # ring the bell once when the supplied command succeeds, thrice when it has failed
 ding() {
@@ -229,8 +241,6 @@ ontherecord() {
 override () {
 	sudo $(fc -lLn -1)
 }
-
-## BELOW ARE FUNCTIONS WHICH ARE ONLY USEFUL ON BOXES I OWN
 
 # mount a filesystem to a directory and chdir into it
 mountc() {

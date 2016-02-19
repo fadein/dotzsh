@@ -265,10 +265,10 @@ eval "phosphorprompt() {
 if [[ $TERM = 'vt100' ]]; then
     #just playin'
     phosphor
-elif [[ $# -gt 0 ]]; then
+elif [[ $# -gt 0 && $1 != 'ESC-P' ]]; then
     eval "$1"
 else
-    plain
+    screen
 fi
 
 # if we're rockin' MidnightCommander, drop the precmd() and preexec()
