@@ -12,7 +12,16 @@
 # 2. $ chmod +x mytask.zsh
 # 3. $ vi mytask.zsh
 #
-# Inside mytask.zsh you can edit ... TODO: finish this thought
+# Within mytask.zsh add variables, functions and aliases that will
+# be useful to you within the context of that task. There are four
+# optional functions which you can modify to achieve your environment:
+#
+#   * setup()
+#   * spawn()
+#   * env()
+#   * cleanup()
+#
+# Explore EXAMPLE.zsh to see the role each of these functions play.
 
 if ! functions raisePrivs >/dev/null; then
 	raisePrivs() {

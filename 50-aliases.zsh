@@ -1,4 +1,3 @@
-
 #
 # User-specific aliases
 #
@@ -25,7 +24,7 @@ alias mc='export TERM=xterm; mc -a'
 alias mv='mv -i'
 alias niceme='renice -n 10 -p $$'
 alias nl='nl -ba'
-alias pd='pushd'
+alias pd=pushd
 alias pgrep='pgrep -l'
 alias pwd='pwd -P'
 alias rm='rm -i'
@@ -57,22 +56,23 @@ alias sls=ls
 # vi commands
 #
 alias :close='echo Cannot close last window'
-alias :e='vim'
-alias :q!='exit'
-alias :q='exit'
-alias :qa='exit'
+alias :e=vim
+alias :q!=exit
+alias :q=exit
+alias :qa=exit
 alias :r='<'
 alias :w="echo Th15 1Sn\'7 vi, 5Uc\|\<4\!"
-alias :wq='exit'
-alias :x='exit'
+alias :wq=exit
+alias :x=exit
 
 #
 # 1337 h4X0r 4L14535
 #
-alias bye='exit'
+alias bye=exit
 alias copy='cp -i'
 alias del='rm -i'
 alias deltree='rm -rf'
+alias epoch 'strftime %c'
 alias move='mv -i'
 alias screen-r=screen\ -r
 alias screenr=screen\ -r
@@ -87,4 +87,3 @@ alias -s conf=vim
 alias -s net=lynx
 alias -s org=lynx
 alias -s txt=vim
-

@@ -238,22 +238,22 @@ function git() {
 
 # functions to quickly change between my prompts
 eval "gitprompt() {
-    source $0 git
+    source '$0' git
     setopt prompt_subst
 }"
 
 eval "plainprompt() {
-    source $0 plain
+    source '$0' plain
     unsetopt prompt_subst
 }"
 
 eval "colorfulprompt() {
-    source $0 colorful
+    source '$0' colorful
     setopt prompt_subst
 }"
 
 eval "screenprompt() {
-    source $0 screen
+    source '$0' screen
     unsetopt prompt_subst
 }"
 

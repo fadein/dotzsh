@@ -50,11 +50,8 @@ uniquify() {
 
 # this little gem lets me say .. .. .. to go back three directories
 ..() {
-	#TODO: what were these variables for?
-	local SAVEOLDPWD="$PWD"
-	local SAVESHUSH=$SHUSH
-
-	#join given arguments with /
+	#join given arguments with / and run the builtin "cd" once
+	#so as not to screw up "cd -"
 	local IFS=/
 	#TODO: could the -q argument to cd be useful to keep things quiet here?
 	cd "../$*"
@@ -80,7 +77,7 @@ _dotdotcomp() {
 
 # this hook function decides which commands are added to the shell's history
 zshaddhistory() {
-	[[ "$1" =~ '^(fg|bg)\s+' ]] && return 1
+	[[ "$1" =~ '^(fg|bg)\s+$' ]] && return 1
 	return 0
 }
 
@@ -217,7 +214,7 @@ offtherecord() {
 		OLDHISTSIZE=$HISTSIZE
 		HISTSIZE=0
 	fi
-	[[ -n "$@" ]] && $@
+	[[ -n "$@" ]] && $@ || true
 }
 alias otr=offtherecord
 otx() {
