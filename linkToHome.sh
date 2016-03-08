@@ -67,3 +67,4 @@ fi
 # Link these files and directories into $HOME
 linkToHome $HERE               .zsh
 linkToHome $HERE/zshrc         .zshrc
+linkToHome $HERE/zshenv        .zshenv
