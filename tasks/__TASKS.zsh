@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.6
-# Date:    Wed Apr  1 23:06:35 MDT 2015
+# Version: 1.7
+# Date:    Mon Apr  4 23:02:52 MDT 2016
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -191,9 +191,10 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 						[[ 0 == $#_TODO ]] && print "All done!" || true ;;
 
 					it) # if next task begins with '$', run it as a shell cmd
+						# any extra arguments are forwarded on to the command
 						if [[ 0 != $#_TODO && ${_TODO[1]#$ } != $_TODO[1] ]]; then
 							local cmd=${_TODO[1]#$ }
-							eval ${=~cmd}
+							eval ${=~cmd} $argv[2,$#argv]
 							local ret=$?
 							if [[ 0 == $ret ]]; then
 								_TODO[1]=()
@@ -217,7 +218,7 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 						todo done [index]   Remove the current (or numbered) task from the list
 						todo add TASK       Append TASK to list (quote it!)
 						todo clear          Delete the entire list
-						todo it             Execute the next task if it begins with '$'
+						todo it [args]      Execute the next task if begins with '$', with any args
 						todo help           Show this message
 						HELP
 						;;
