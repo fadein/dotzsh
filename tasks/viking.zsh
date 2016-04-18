@@ -16,12 +16,14 @@ CMD="exec /home/fadein/scripts/comms.tmux"
 #spawn our task shell
 spawn() {
     if [[ $TERM != 'linux' ]]; then
-        LANG=C TERM=xterm TASK=$TASKNAME $SSH -t $HOST $CMD
+        LANG=en_US.utf8
     else
-        LANG=C TASK=$TASKNAME $SSH -t $HOST $CMD
+        LANG=C
     fi
+    TASK=$TASKNAME $SSH -t $HOST "LANG=$LANG $CMD"
 }
 
 source $0:h/__TASKS.zsh
 
 # vim:set foldenable foldmethod=indent filetype=sh tabstop=4 expandtab:
+
