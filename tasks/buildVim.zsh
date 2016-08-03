@@ -1,34 +1,39 @@
 #!/bin/zsh
 
 PURPOSE='Rebuild Vim from GitHub'
-VERSION="1.4"
-   DATE="Mon Jul 20 10:30:40 MDT 2015"
+VERSION="1.5"
+   DATE="Wed Aug  3 10:01:22 MDT 2016"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 TASKNAME=$0:t:r
 
 env() {
 	SHUSH=1
-	SUDO=/usr/bin/sudo
-	DEST=/usr/local
+	if command -v sudo &>/dev/null; then
+		SUDO=$(command -v sudo)
+	else
+		SUDO=:
+	fi
+	DEST=/usr
 	EMERGENCY_DEST=/bin
-	GREP=/bin/grep
+	NPROC=/usr/bin/nproc
 
-	#Count number of CPUs in this system and add
-	MAKE_JOBS=-j$(( $($GREP processor /proc/cpuinfo | wc -l) + 1 ))
+	OPTS_EMERGENCY="--with-features=small --disable-gui --disable-gpm --disable-acl"
+	OPTS_REGULAR="--with-features=huge --enable-perlinterp --enable-pythoninterp --enable-termtruecolor"
 
+	#Count number of CPUs in this system and add one
+	MAKE_JOBS=-j$(( $(nproc) + 1 ))
 
 	#Set up a TODO list
 	_TODO=(
-		'$ hg pull'
-		'$ hg update'
+		'$ git pull'
 		'$ cd src/'
 		'run emergencyVim() to build a minimal /bin/vi'
 		'run makeVim() to build vim & gvim'
 		'run `sudo make install` to install the suite of runtime files'
 		)
 
-	#Build emergency vim (only requires glibc and ncurses)
+	#Build emergency Vim (only requires glibc and ncurses)
 	function emergencyVim() {
 		trap return SIGTERM SIGINT
 
@@ -36,7 +41,7 @@ env() {
 
 		if ! nice make distclean; then rm -f auto/config.cache; fi
 
-		if ! nice ./configure --prefix=$DEST --with-features=small --disable-gui --disable-gpm --disable-acl; then return; fi
+		if ! nice ./configure --prefix=$DEST $OPTS_EMERGENCY; then return; fi
 
 		if ! nice make $MAKE_JOBS; then return; fi
 
@@ -51,7 +56,7 @@ env() {
 		fi
 	}
 
-	#Build regular vim this way:
+	#Build regular Vim this way:
 	function makeVim() {
 		trap return SIGTERM SIGINT
 
@@ -59,7 +64,7 @@ env() {
 
 		if ! nice make distclean; then rm -f auto/config.cache; fi
 
-		if ! nice ./configure --prefix=$DEST --with-features=huge --enable-perlinterp --enable-pythoninterp; then return; fi
+		if ! nice ./configure --prefix=$DEST $OPTS_REGULAR; then return; fi
 
 		if ! nice make $MAKE_JOBS; then return; fi
 
@@ -85,7 +90,7 @@ env() {
 	###
 	MESSAGE
 
-	cd ~fadein/build/vim.hg
+	cd ~/build/vim.git
 }
 
 source $0:h/__TASKS.zsh
