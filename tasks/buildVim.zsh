@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 PURPOSE='Rebuild Vim from GitHub'
-VERSION="1.5"
-   DATE="Wed Aug  3 10:01:22 MDT 2016"
+VERSION="1.6"
+   DATE="Mon, Aug 08, 2016  1:55:00 PM"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 TASKNAME=$0:t:r
@@ -91,6 +91,14 @@ env() {
 	MESSAGE
 
 	cd ~/build/vim.git
+	if ! git status --branch --porcelain 2>&1 | grep -q '## master'; then
+		>&1 <<-MESSAGE
+		[1;31m
+		     !!! The current branch is not '[32mmaster[31m' !!!
+		Please checkout the master branch before continuing
+		[0m
+		MESSAGE
+	fi
 }
 
 source $0:h/__TASKS.zsh
