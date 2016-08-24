@@ -11,7 +11,7 @@ for F in ~/.zsh/[0-9][0-9]-*.zsh; do
 done
 
 # Load custom stuff from a local zshrc
-[[ -r ".$(hostname).zshrc" ]] && source ".$(hostname).zshrc"
+[[ -r "$HOME/.$(hostname).zshrc" ]] && source "$HOME/.$(hostname).zshrc"
 
 # this snippet is required in zshrc for TASKS
 [[ -n "$TASK" && -x ~/.zsh/tasks/$TASK.zsh ]] \
