@@ -1,74 +1,119 @@
 #!/bin/zsh
 
 PURPOSE='Rebuild Vim from GitHub'
-VERSION="1.4"
-   DATE="Mon Jul 20 10:30:40 MDT 2015"
+VERSION="1.7"
+   DATE="Thu, Aug 11, 2016  4:52:52 PM"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 TASKNAME=$0:t:r
 
 env() {
+	zmodload zsh/pcre
+
+	# Directory of Vim repository
+	BUILDDIR=~/build/vim.git
+
 	SHUSH=1
-	SUDO=/usr/bin/sudo
-	DEST=/usr/local
+	if command -v sudo &>/dev/null; then
+		SUDO=$(command -v sudo)
+	else
+		SUDO=
+	fi
+	DEST=/usr
 	EMERGENCY_DEST=/bin
-	GREP=/bin/grep
+	NPROC=/usr/bin/nproc
 
-	#Count number of CPUs in this system and add
-	MAKE_JOBS=-j$(( $($GREP processor /proc/cpuinfo | wc -l) + 1 ))
+	OPTS_EMERGENCY="--with-features=small --disable-gui --disable-gpm --disable-acl"
+	OPTS_REGULAR="--with-features=huge --enable-perlinterp --enable-pythoninterp --enable-termtruecolor"
 
-
-	#Set up a TODO list
+	#Count number of CPUs in this system and add one
+	MAKE_JOBS=-j$(( $(nproc) + 1 ))
 	_TODO=(
-		'$ hg pull'
-		'$ hg update'
-		'$ cd src/'
-		'run emergencyVim() to build a minimal /bin/vi'
+		'$ git pull'
 		'run makeVim() to build vim & gvim'
 		'run `sudo make install` to install the suite of runtime files'
+		'run emergencyVim() to build a minimal /bin/vi'
 		)
 
-	#Build emergency vim (only requires glibc and ncurses)
+	_KEEP_FUNCTIONS+=warn
+
+	#Build emergency Vim (only requires glibc and ncurses)
 	function emergencyVim() {
+		local STRIP=$1
 		trap return SIGTERM SIGINT
 
-		$SUDO -v
+		[[ -n $SUDO ]] && $SUDO -v
+
+		(
+		cd $BUILDDIR/src
 
 		if ! nice make distclean; then rm -f auto/config.cache; fi
 
-		if ! nice ./configure --prefix=$DEST --with-features=small --disable-gui --disable-gpm --disable-acl; then return; fi
+		if ! nice ./configure --prefix=$DEST $OPTS_EMERGENCY; then return; fi
+
+		if nice make auto/osdef.h && ! [[ -f auto/osdef.h ]]; then
+			warn "Failed to generate auto/osdef.h" "Bailing out"
+			return
+		fi
 
 		if ! nice make $MAKE_JOBS; then return; fi
 
-		#TODO: conditionally run `strip` based on presence of some $VAR
-		if ! nice strip vim; then return; fi
+		echo
+		if [[ -n $STRIP ]] && pcre_match $STRIP; then
+			echo Stripping output binary
+			if ! nice strip vim; then
+				warn FAILED to strip vim
+				return
+			fi
+		else
+			echo Not stripping output binary
+		fi
 
+		echo
 		echo "Installing vi binary to $EMERGENCY_DEST"
 		if ! $SUDO cp vim $EMERGENCY_DEST/vi; then
-			echo FAILED to copy ./vim to $EMERGENCY_DEST/vi
-		else
-			echo $EMERGENCY_DEST/vi is stripped
+			warn FAILED to copy vim to $EMERGENCY_DEST/vi
 		fi
+		)
 	}
 
-	#Build regular vim this way:
+	#Build regular Vim this way:
 	function makeVim() {
+		local STRIP=$1
 		trap return SIGTERM SIGINT
 
-		$SUDO -v
+		[[ -n $SUDO ]] && $SUDO -v
+
+		(
+		cd $BUILDDIR/src
 
 		if ! nice make distclean; then rm -f auto/config.cache; fi
 
-		if ! nice ./configure --prefix=$DEST --with-features=huge --enable-perlinterp --enable-pythoninterp; then return; fi
+		if ! nice ./configure --prefix=$DEST $OPTS_REGULAR; then return; fi
+
+		if nice make auto/osdef.h && ! [[ -f auto/osdef.h ]]; then
+			warn "Failed to generate auto/osdef.h" "Bailing out"
+			return
+		fi
 
 		if ! nice make $MAKE_JOBS; then return; fi
 
+		echo
 		echo "Installing Vim binary to $DEST"
-		if ! nice $SUDO make installvimbin; then return; fi
-		echo "${DEST}/bin/vim is not stripped"
+		pcre_compile -i '^(strip|1)$'
+		if [[ -n $STRIP ]] && pcre_match $STRIP; then
+			if ! nice $SUDO make STRIP=strip installvimbin; then return; fi
+			echo "${DEST}/bin/vim is not stripped"
+		else
+			echo Not stripping output binary
+			STRIP=true
+			if ! nice $SUDO make STRIP=true installvimbin; then return; fi
+			echo "${DEST}/bin/vim is not stripped"
+		fi
 		echo
 		echo 'Run `sudo make install` if you want to install the entire'
 		echo 'updated Vim suite of runtime files.'
+		)
 	}
 
 	>&1 <<-MESSAGE
@@ -77,15 +122,23 @@ env() {
 	############
 	########################
 	BuildVim functions defined:
-		makeVim()
-		emergencyVim()
+	    makeVim( STRIP=0 )
+	    emergencyVim( STRIP=0 )
 	########################
 	############
 	######
 	###
 	MESSAGE
 
-	cd ~fadein/build/vim.hg
+	cd $BUILDDIR
+	if ! git status --branch --porcelain 2>&1 | grep -q '## master'; then
+		>&1 <<-MESSAGE
+		[1;31m
+		     !!! The current branch is not '[32mmaster[31m' !!!
+		Please checkout the master branch before continuing
+		[0m
+		MESSAGE
+	fi
 }
 
 source $0:h/__TASKS.zsh

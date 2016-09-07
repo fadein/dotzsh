@@ -1,27 +1,29 @@
 # prompts.zsh
 
 #Choose color for host and username #{
-case $OSTYPE in
-    aix*)
-        function hostcolor { print "%F{cyan}$1%f"; } ;;
-    linux*)
-        case $HOST in
-            gemini)
-                function hostcolor { print "%B%F{cyan}$1%f%b"; } ;;
-            voyager)
-                function hostcolor { print "%B%F{white}$1%f%b"; } ;;
-            explorer)
-                function hostcolor { print "%B%F{blue}$1%f%b"; } ;;
-            viking*)
-                function hostcolor { print "%B%F{magenta}$1%f%b"; } ;;
-            *)
-                function hostcolor { print "%F{yellow}%K{black}$1%k%f"; } ;;
-        esac ;;
-    cygwin*)
-        function hostcolor { print "%B%F{blue}$1%f%b"; } ;;
-    *)
-        function hostcolor { print "%B%F{red}$1%f%b"; } ;;
-esac
+if ! functions hostcolor >/dev/null; then
+    case $OSTYPE in
+        aix*)
+            function hostcolor { print "%F{cyan}$1%f"; } ;;
+        linux*)
+            case $HOST in
+                gemini)
+                    function hostcolor { print "%B%F{cyan}$1%f%b"; } ;;
+                voyager)
+                    function hostcolor { print "%B%F{white}$1%f%b"; } ;;
+                explorer)
+                    function hostcolor { print "%B%F{blue}$1%f%b"; } ;;
+                viking*)
+                    function hostcolor { print "%B%F{magenta}$1%f%b"; } ;;
+                *)
+                    function hostcolor { print "%F{yellow}%K{black}$1%k%f"; } ;;
+            esac ;;
+        cygwin*)
+            function hostcolor { print "%B%F{blue}$1%f%b"; } ;;
+        *)
+            function hostcolor { print "%B%F{red}$1%f%b"; } ;;
+    esac
+fi
 
 # Make the color of typed text be green for a regular user and red for root
 case $UID in
@@ -115,14 +117,14 @@ function plain() {
 
 #The jobcount is colored red if non-zero.
 function colorful() {
-    PROMPT="[%(?..%F{white}%K{red}%?%k%f )$(usercolor %n)@$(hostcolor %M) %~]%# $_UTEXT"
+    PROMPT="[%(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~]%# $_UTEXT"
     RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() {
-    PROMPT="[%(?..%F{white}%K{red}%?%k%f )$(usercolor %n)@$(hostcolor %M) %~]%# $_UTEXT"
+    PROMPT="[%(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~]%# $_UTEXT"
     RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
 }
 
@@ -216,9 +218,9 @@ function _git_branch_details() {
     # show number of non-indexed changes in red
     # and number of indexed changes in green
     if [[ -n "${staged}${dirty}${unmerged}${untracked}" ]]; then
-        print " %F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u ${branch}%F{green}${upstream:+ }${diverged+%F{red\}$diverged}${upstream}%f"
+        print "%(?..%s) %(?..%S)%F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u%(?..%s) %(?..%S)${branch}%F{green}${upstream:+ }${diverged+%F{red\}$diverged}${upstream}%f"
     else
-        print " %F{green}${branch}${upstream:+ }${diverged+%F{red\}$diverged}${upstream}%f"
+        print "%(?..%s) %(?..%S)%F{green}${branch}${upstream:+ }${diverged+%F{red\}$diverged}${upstream}%f"
     fi
 }
 
@@ -229,7 +231,7 @@ function git() {
     #and thereby not need to `setopt prompt_subst`
     #maybe add _git_branch_details as a precmd, and delete it when
     #switching to another prompt?
-    PROMPT="[%(?..%F{white}%K{red}%?%k%f )$(hostcolor %4~)\$(_git_branch_details)]$(usercolor '%#') ${_UTEXT}"
+    PROMPT="[%(?..%F{white}%K{red}%?%k%f %S)$(hostcolor %4~)\$(_git_branch_details)%(?..%s)]$(usercolor '%#') ${_UTEXT}"
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
     RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
