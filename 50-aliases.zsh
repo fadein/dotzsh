@@ -78,6 +78,7 @@ alias screen-r=screen\ -r
 alias screenr=screen\ -r
 alias screern=screen\ -r
 alias epoch='strftime %c'
+alias gcc-defines='gcc -dM -E -x c - </dev/null | sort'
 
 #
 # suffix aliases
