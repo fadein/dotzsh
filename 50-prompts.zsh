@@ -7,6 +7,8 @@ if ! functions hostcolor >/dev/null; then
             function hostcolor { print "%F{cyan}$1%f"; } ;;
         linux*)
             case $HOST in
+                apollo)
+                    function hostcolor { print "%B%F{yellow}$1%f%b"; } ;;
                 gemini)
                     function hostcolor { print "%B%F{cyan}$1%f%b"; } ;;
                 voyager)
