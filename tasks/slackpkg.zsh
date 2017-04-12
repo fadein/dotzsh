@@ -23,6 +23,12 @@ env() {
 	$SLACKPKG update
 	$SLACKPKG upgrade-all
 
+	_TODO=(
+		"\$ $SLACKPKG install-new"
+		"\$ $SLACKPKG upgrade-all"
+	)
+
+
 	>&1 <<MESSAGE
 
 
