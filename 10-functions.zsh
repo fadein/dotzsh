@@ -158,7 +158,8 @@ entropy() {
 }
 
 sec2time() {
-	perl -e "print scalar localtime $1, \"\n\""
+	TZ=GMT perl -e "print scalar localtime $1, \" GMT\n\""
+	TZ=MST perl -e "print scalar localtime $1, \" MST\n\""
 }
 
 # re-source this file
