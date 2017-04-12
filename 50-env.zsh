@@ -31,7 +31,13 @@ fi
 #
 # Chose a search engine based on what day of the year it is if that gets
 # boring, change the %j below to %s for seconds since epoch
-sengines=(https://ixquick.com/ https://duckduckgo.com/)
+sengines=(https://ixquick.com/
+	https://duckduckgo.com/lite/
+	# https://privatelee.com/ # requires JS
+	https://yippy.com/
+	https://hulbee.com/
+	https://search.disconnect.me/
+	https://metager.de/en)
 zmodload zsh/datetime
 #add one because zsh arrays are 1-indexed
 export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
