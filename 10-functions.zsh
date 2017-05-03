@@ -236,8 +236,13 @@ ontherecord() {
 }
 
 # Escalate privileges, Hollywood style
-override () {
-	sudo $(fc -lLn -1)
+override() {
+	eval sudo $(fc -lLn -1)
+}
+
+# In case I fatfinger Ctrl-p
+p() {
+	eval $(fc -lLn -1)
 }
 
 # mount a filesystem to a directory and chdir into it
