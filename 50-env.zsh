@@ -8,10 +8,16 @@ ulimit -c unlimited
 stty -ixon
 
 #
-# Global environment variables
+# Zsh configuration variables
 HISTFILE=~/.zsh/history
 HISTSIZE=1337
 SAVEHIST=1337
+
+#
+# Global environment variables
+export PAGER='less -r'
+export EDITOR=/usr/bin/vim
+export EDIT=$EDITOR
 
 #
 # Add to PATH, MANPATH, and cull out duplicates
