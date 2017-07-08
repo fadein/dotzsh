@@ -8,10 +8,16 @@ ulimit -c unlimited
 stty -ixon
 
 #
-# Global environment variables
+# Zsh configuration variables
 HISTFILE=~/.zsh/history
 HISTSIZE=1337
 SAVEHIST=1337
+
+#
+# Global environment variables
+export PAGER='less -r'
+export EDITOR=/usr/bin/vim
+export EDIT=$EDITOR
 
 #
 # Add to PATH, MANPATH, and cull out duplicates
@@ -31,7 +37,13 @@ fi
 #
 # Chose a search engine based on what day of the year it is if that gets
 # boring, change the %j below to %s for seconds since epoch
-sengines=(https://ixquick.com/ https://duckduckgo.com/)
+sengines=(https://ixquick.com/
+	https://duckduckgo.com/lite/
+	# https://privatelee.com/ # requires JS
+	https://yippy.com/
+	https://hulbee.com/
+	https://search.disconnect.me/
+	https://metager.de/en)
 zmodload zsh/datetime
 #add one because zsh arrays are 1-indexed
 export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]

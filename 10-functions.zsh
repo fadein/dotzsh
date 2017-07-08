@@ -158,7 +158,8 @@ entropy() {
 }
 
 sec2time() {
-	perl -e "print scalar localtime $1, \"\n\""
+	TZ=GMT perl -e "print scalar localtime $1, \" GMT\n\""
+	TZ=MST perl -e "print scalar localtime $1, \" MST\n\""
 }
 
 # re-source this file
@@ -235,8 +236,13 @@ ontherecord() {
 }
 
 # Escalate privileges, Hollywood style
-override () {
-	sudo $(fc -lLn -1)
+override() {
+	eval sudo $(fc -lLn -1)
+}
+
+# In case I fatfinger Ctrl-p
+p() {
+	eval $(fc -lLn -1)
 }
 
 # mount a filesystem to a directory and chdir into it

@@ -31,6 +31,7 @@ alias pwd='pwd -P'
 alias rm='rm -i'
 alias topu="top -u $USER"
 alias which="which -p"
+alias dmesg="dmesg -H"
 
 #
 # because I can't spell...
