@@ -11,12 +11,14 @@ if ! functions hostcolor >/dev/null; then
                     function hostcolor { print "%B%F{yellow}$1%f%b"; } ;;
                 gemini)
                     function hostcolor { print "%B%F{cyan}$1%f%b"; } ;;
-                voyager)
+                voyager?)
                     function hostcolor { print "%B%F{white}$1%f%b"; } ;;
                 explorer)
                     function hostcolor { print "%B%F{blue}$1%f%b"; } ;;
                 viking*)
                     function hostcolor { print "%B%F{magenta}$1%f%b"; } ;;
+                mariner)
+                    function hostcolor { print "%B%F{cyan}%K{black}$1%k%f%b"; } ;;
                 *)
                     function hostcolor { print "%F{yellow}%K{black}$1%k%f"; } ;;
             esac ;;
