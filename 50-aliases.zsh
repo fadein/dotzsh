@@ -74,7 +74,7 @@ alias bye=exit
 alias copy='cp -i'
 alias del='rm -i'
 alias deltree='rm -rf'
-alias epoch 'strftime %c'
+alias epoch='strftime %c'
 alias move='mv -i'
 alias screen-r=screen\ -r
 alias screenr=screen\ -r
