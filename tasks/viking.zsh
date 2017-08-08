@@ -20,6 +20,12 @@ spawn() {
     else
         LANG=C
     fi
+
+    WIFI="$(iwconfig wlan0 | \grep ESSID | cut -d'"' -f2)"
+    if [[ $WIFI != "get your own internet" ]]; then
+        HOST=viking-dyn
+    fi
+
     TASK=$TASKNAME $SSH -t $HOST "LANG=$LANG $CMD"
 }
 
