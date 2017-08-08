@@ -20,8 +20,13 @@ spawn() {
 }
 
 env() {
-	print Updating package lists...
 	$SLACKPKG update
+	$SLACKPKG upgrade-all
+
+	_TODO=(
+		"\$ $SLACKPKG install-new"
+		"\$ $SLACKPKG upgrade-all"
+	)
 
 	# TODO: make this smart - save the latest update timestamp to some file,
 	# and use that for the comparison instead of this janky, hardcoded stamp.
@@ -53,18 +58,21 @@ Run this command when you're ready to upgrade the set of installed packages:
 	\$ $SLACKPKG upgrade-all
 
 
+!!!!!!!!!!!!!!!!!
 !!! IMPORTANT !!!
-If the kernel is one of the packages that is updated, be sure to copy the new
-kernel files into /boot/efi/EFI/Slackware/
+!!!!!!!!!!!!!!!!!
+
+After updating the kernel on LVM systems (Voyager2, Mariner), you must copy the
+new kernel files into /boot/efi/EFI/Slackware/
 
 Make sure that the vmlinuz file there is replaced by the vmlinuz-huge file.
 
--- OR --
+Next, re-create the initrd Run this command, inserting the version number of
+the new kernel:
 
-Try running /usr/share/mkinitrd/mkinitrd_command_generator.sh using the new
-kernel version number along with the -o output option pointing into
-/boot/efi/EFI/Slackware/. The kernels and initrds in /boot don't matter.
-It's what's in the EFI/Slackware directory that matter.
+	# /usr/share/mkinitrd/mkinitrd_command_generator.sh -k 4.4.75
+
+It should echo back a command including a big list of kernel modules
 MESSAGE
 }
 

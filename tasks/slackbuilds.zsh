@@ -30,10 +30,9 @@ spawn() {
 }
 
 env() {
-	export OUTPUT=/mnt/rasp/build/SBo/install/
+    export OUTPUT=/mnt/rasp/build/SBo/install/
     export SBODIR=/mnt/rasp/build/SBo/slackbuilds.git
     cd $SBODIR
-    gitprompt
 
     #
     # fetch the package (if needed), return true if the MD5 checksum matches
@@ -123,7 +122,7 @@ env() {
     #
     # git update the slackbuilds repository
     sbo.git() {
-        cd $SBODIR
+        SHUSH=1 cd $SBODIR
         if $GIT checkout master; then
             $GIT pull
         fi
