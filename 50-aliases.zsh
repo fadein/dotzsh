@@ -2,10 +2,12 @@
 # User-specific aliases
 #
 alias cp='cp -i'
+alias csi=csi\ -q
 alias ctags='ctags --fields=+iaS --extra=+fq'
 alias curl='curl -A "Mozilla/4.0"'
 alias date='date +"%a, %b %e %Y  %r %Z"'
 alias df='df -h'
+alias dmesg="dmesg -H"
 alias du='du -h'
 alias findd='find . -type d -name'
 alias findf='find . -type f -name'
@@ -31,7 +33,6 @@ alias pwd='pwd -P'
 alias rm='rm -i'
 alias topu="top -u $USER"
 alias which="which -p"
-alias dmesg="dmesg -H"
 
 #
 # because I can't spell...
