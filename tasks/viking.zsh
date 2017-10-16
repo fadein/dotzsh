@@ -24,15 +24,26 @@ spawn() {
         LANG=C
     fi
 
-    # If I'm not on my home wifi network, connect
-    for WIFI_IFS in /sys/class/net/w*; do
-        WIFI_IFS=$(basename $WIFI_IFS)
-        WIFI="$(iwconfig $WIFI_IFS | \grep ESSID | cut -d'"' -f2)"
-        if [[ $WIFI != $HOME_WIFI ]]; then
-            HOST=$INTERNET_HOST
-            break
-        fi
-    done
+    # set NULL_GLOB for the duration of this function only
+    setopt LOCAL_OPTIONS NULL_GLOB
+
+    case $HOSTNAME in
+            mariner*)
+                    HOST=$INTERNET_HOST
+                    ;;
+
+            *)
+                    # If I'm not on my home wifi network, connect
+                    for WIFI_IFS in /sys/class/net/w*; do
+                        WIFI_IFS=$(basename $WIFI_IFS)
+                        WIFI="$(iwconfig $WIFI_IFS | \grep ESSID | cut -d'"' -f2)"
+                        if [[ $WIFI != $HOME_WIFI ]]; then
+                            HOST=$INTERNET_HOST
+                            break
+                        fi
+                    done
+                    ;;
+    esac
 
     TASK=$TASKNAME $SSH -t $HOST "LANG=$LANG $CMD"
 }
