@@ -255,6 +255,11 @@ mountc() {
 	mount $1 && cd $1
 }
 
+# go out and get my IP address
+whatismyipaddress() {
+	curl http://checkip.dyndns.org 2>/dev/null | command grep -o -E '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
+}
+
 
 zle -N increase-char _increase_char
 zle -N decrease-char _increase_char
