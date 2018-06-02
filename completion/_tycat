@@ -1,0 +1,11 @@
+#compdef tycat
+local extns
+
+extns="aac|avi|bmp|flac|gif|ico|jpeg|jpg|m4a|m4p|m4v|mkv|mp3|mp4|mp4v|mpeg|mpg|ogg|ogv|pbm|pgm|png|ppm|svg|svgz|tga|tif|tiff|vob|wav|wma|wmv|xcf|xpm|xspf|xvid"
+
+_arguments \
+  '(-h --help)'{-h,--help}'[Display this help]' \
+  '(   -f -c)-s[Stretch file to fill nearest character cell size]' \
+  '(-s    -c)-f[Fill file to totally cover character cells with no gaps]' \
+  '(-s -f   )-c[Center file in nearest character cells but only scale down (default)]' \
+  "*:media file:_files -g '*.(#i)($extns)(-.)'"
