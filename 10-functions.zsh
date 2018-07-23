@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+
 #TODO: see about making these functions autoloadable
 #TODO: checkout ~/build/Documentation/zsh/zshrc_mikachu for more functions to glean...
 
@@ -86,14 +87,21 @@ zshaddhistory() {
 #TODO: port this to zsh
 #complete -o filenames -F _dotdotcomp ..
 
-# display directory notes
+
+# Display directory notes
+# When passed a filename as an argument, link that file to the name .notes
 notes() {
-	[[ -r .notes && -z "$SHUSH" ]] && { fmt -${COLUMNS:-80} -s .notes; echo; }
+    if [[ $# != 0 ]]; then
+        ln -fs $1 .notes
+    fi
+
+    [[ -r .notes && -z "$SHUSH" ]] && { fmt -${COLUMNS:-80} -s .notes; echo; }
 }
 
 # if entering a directory with a special .notes file echo its contents
 [[ 0 == ${+chpwd_functions} || 0 == $chpwd_functions[(I)notes] ]] \
 	&& chpwd_functions+=(notes)
+
 
 # Swap the contents of two files
 swap() {
