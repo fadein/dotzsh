@@ -4,9 +4,6 @@
 #TODO: see about making these functions autoloadable
 #TODO: checkout ~/build/Documentation/zsh/zshrc_mikachu for more functions to glean...
 
-# enable the completion system
-autoload -U compinit; compinit -d ~/.zsh/compdump
-
 # enable edit-command-line functionality
 autoload -U edit-command-line && zle -N edit-command-line
 

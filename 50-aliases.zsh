@@ -5,7 +5,7 @@ alias cp='cp -i'
 alias csi=csi\ -q
 alias ctags='ctags --fields=+iaS --extra=+fq'
 alias curl='curl -A "Mozilla/4.0"'
-alias date='date +"%a, %b %e %Y  %r %Z"'
+alias date='date +"%a, %b %e %Y  %R %Z"'
 alias df='df -h'
 alias dmesg="dmesg -H"
 alias du='du -h'

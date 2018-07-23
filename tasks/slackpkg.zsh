@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.3"
-    DATE="Sat Sep 23 15:11:35 MDT 2017"
+ VERSION="1.4"
+    DATE="Tue Jul  3 15:35:13 MDT 2018"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -25,6 +25,8 @@ env() {
 	_TODO=(
 		"\$ $SLACKPKG install-new"
 		"\$ $SLACKPKG upgrade-all"
+		"\$ $SLACKPKG upgrade multilib"
+		"\$ $SLACKPKG install multilib"
 	)
 
 	if [[ -f /tmp/slackpkg.last_update.txt ]]; then

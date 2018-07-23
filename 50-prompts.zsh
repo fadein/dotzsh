@@ -149,6 +149,7 @@ function _git_branch_details() {
     # branch status patterns
     local  rx_detached="^## HEAD \(no branch\)"
     local    rx_branch="^## ([^.[:space:]]+)(\.\.\.(([^[:space:]]+)( \[(ahead|behind) [0-9]+\])))?"
+    local rx_brand_new="^## No commits yet on master"
 
     # file status counters
     local    staged=""
@@ -182,7 +183,10 @@ function _git_branch_details() {
     local LINE=
     for LINE in $( git status --branch --porcelain 2>&1 )
     do
-        if [[ ${LINE} =~ ${rx_detached} ]]; then
+        if [[ ${LINE} =~ ${rx_brand_new} ]]; then
+            branch="Initial"
+
+        elif [[ ${LINE} =~ ${rx_detached} ]]; then
             # get SHA1 of current commit when in detached HEAD state
             # indicate detached head by prepending with *
             branch="*"$(git rev-parse --short HEAD 2>/dev/null)
