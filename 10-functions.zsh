@@ -73,16 +73,29 @@ _dotdotcomp() {
 	return 0
 }
 
+# -o filenames tells complete to backslash escape certain chars in
+# some directory/filenames
+#TODO: port this to zsh
+#complete -o filenames -F _dotdotcomp ..
+
+
 # this hook function decides which commands are added to the shell's history
 zshaddhistory() {
 	[[ "$1" =~ '^(fg|bg)\s+$' ]] && return 1
 	return 0
 }
 
-# -o filenames tells complete to backslash escape certain chars in
-# some directory/filenames
-#TODO: port this to zsh
-#complete -o filenames -F _dotdotcomp ..
+
+# geolocate an ip address with cURL and the ip-api.com service
+iplocate() {
+    if [[ $# < 1 ]]; then
+        print "Usage: gimme an IP address to geolocate"
+        return 1
+    else
+        curl -s http://ip-api.com/json/$1 | python3 -m json.tool
+    fi
+}
+
 
 
 # Display directory notes
