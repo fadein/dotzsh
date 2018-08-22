@@ -61,21 +61,42 @@ function title {
             ;;
         xterm*|rxvt*)
             # Use this one instead for XTerms:
+            # XXX here the -P flag causes junk to be printed when the
+            # command contains Zsh prompt escape sequences
+            #
+            # The trouble is that sometimes I'll want these prompt
+            # escapes to be expanded (in the case of title()), and
+            # other times I don't (in the case of `print %f{blue}`)...
             print -nP $'\e]0;'${ROOT}$*$'\a'
             ;;
         screen.rxvt)
+            # I'm not sure the -R flag is called for here; it enables
+            # emulation of the BSD echo command.
+            # http://zsh.sourceforge.net/Doc/Release/Shell-Builtin-Commands.html#Shell-Builtin-Commands
+            # Anyhow, it seems that this block can be rolled up with
+            # the screen case above
             print -nR $'\ek'${ROOT}$2$'\e'\\
             print -nP $'\e]0;'${ROOT}$*$'\a'
             ;;
     esac
 }
 
+# What's the difference between 'precmd' and 'preexec'?
+# I think precmd() happens right after the prompt is displayed, before a
+# command is input.
+#
+# preexec() must happen right after the user hits [Enter]
+
 # Set the XTerm window title property
 # The default value appears as "[host] zsh tty cwd"
+
 function precmd {
     title '[%M] ' 'zsh' '%l %~'
 }
 
+# Helper to set the terminal window's title to the running command,
+# even if that command is a job that has been returned to the
+# foreground.
 function preexec() {
     emulate -L zsh
     # reset console video attribs to null
@@ -94,16 +115,25 @@ function preexec() {
             else
                 # Replace the command name, ignore extra args.
                 cmd=(builtin jobs -l ${(Q)cmd[2]})
-            fi ;;
+            fi
+            ;;
 
-        %*) cmd=(builtin jobs -l ${(Q)cmd[1]}) ;; # Same as "else" above
+        %*)
+            cmd=(builtin jobs -l ${(Q)cmd[1]}) # Same as "else" above
+            ;;
 
-        exec) shift cmd;& # If the command is 'exec', drop that, because
-                          # we'd rather just see the command that is being
-                          # exec'd. Note the ;& to fall through.
-                          #
-        *)  title '[%m] ' $cmd[1]:t $cmd[2,-1]    # Not resuming a job,
-            return ;;                        # so we're all done
+        exec)
+            shift cmd    # If the command is 'exec', drop that, because
+            ;&           # we'd rather just see the command that is being
+                         # exec'd.
+                         #
+                         # Note the ;& case terminator to fall
+                         # through to the next case
+
+        *)
+            title '[%m] ' $cmd[1]:t $cmd[2,-1]    # Not resuming a job,
+            return                                # so we're all done
+            ;;
     esac
 
     local -A jt; jt=(${(kv)jobtexts})       # Copy jobtexts for subshell
