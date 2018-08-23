@@ -49,6 +49,7 @@ alias ehco=echo
 alias fiel=file
 alias grpe=grep
 alias gti=git
+alias ivm=vim
 alias jods=jobs
 alias les=less
 alias lss=less
