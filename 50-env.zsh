@@ -21,7 +21,7 @@ export EDIT=$EDITOR
 
 #
 # Add to PATH, MANPATH, and cull out duplicates
-for D in /usr/sbin ~/scripts ~/.zsh ~/.zsh/tasks; do
+for D in /usr/sbin ~/bin ~/.zsh ~/.zsh/tasks; do
     [[ -d $D ]] && PATH+=:$D
 done
 for D in /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
