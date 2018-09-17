@@ -9,7 +9,7 @@ PROGNAME=$0:t
 TASKNAME=$0:t:r
 
 SSH=/usr/bin/ssh
-CMD="exec /home/fadein/scripts/comms.tmux"
+CMD="exec /home/fadein/bin/comms.tmux"
 
 HOME_WIFI="get your own internet"
 INTRANET_HOST=viking2.falor
