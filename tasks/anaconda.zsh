@@ -16,6 +16,11 @@ setup() {
 env() {
     PATH=~/anaconda3/bin:$PATH
     [[ -n $PATH    ]] && PATH=$(uniquify $PATH)
+
+    # Anaconda's Python doesn't recognize TERM=rxvt-unicode
+    if [[ $TERM = rxvt-unicode ]]; then
+        TERM=xterm
+    fi
     echo "You're now using Anaconda python in this shell"
 }
 

@@ -58,6 +58,7 @@ alias mak=make
 alias mor=more
 alias mroe=more
 alias pgerp='pgrep -l'
+alias pyhton=python
 alias scd=cd
 alias sl=ls
 alias sls=ls
