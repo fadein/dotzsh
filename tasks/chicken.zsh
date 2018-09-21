@@ -27,14 +27,23 @@ case $(uname) in
 
 	Linux)
 		env() {
-			alias make=make\ PLATFORM=linux\ PREFIX=$HOME/.$(hostname)
-			echo "make is aliased to 'make\ PLATFORM=linux\ PREFIX=$HOME/.$(hostname)'"
-			PATH=$HOME/.$(hostname)/bin:$PATH
+			local BUILD=~/build/chicken-5.0.0rc2
+			local PREFIX=$BUILD/out
+			local MAKE="make PLATFORM=linux PREFIX=$PREFIX"
 
-			persistentTodo ~/chicken/.todo
-
+			PATH=$PREFIX/bin:$PATH
 			gitprompt
-			cd ~/chicken/chicken-core.git/
+
+			alias make=$MAKE
+			print "make is aliased to '$MAKE'"
+
+
+			cat <<- DERP
+			http://wiki.call-cc.org/man/5/The%20User%27s%20Manual
+			https://wiki.call-cc.org/porting-c4-to-c5
+			DERP
+
+			# cd $BUILD
 		}
 		;;
 
