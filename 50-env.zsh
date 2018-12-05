@@ -25,7 +25,7 @@ export EDIT=$EDITOR
 for D in /usr/sbin ~/bin ~/.zsh ~/.zsh/tasks; do
     [[ -d $D ]] && PATH+=:$D
 done
-for D in /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
+for D in /usr/local/share/man /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
     [[ -d $D ]] && MANPATH+=:$D
 done
 export PATH MANPATH
