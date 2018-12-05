@@ -4,8 +4,11 @@ ulimit -c unlimited
 # stop background jobs that try to write to the terminal
 #stty tostop
 
-# enable ctrl-s
+# Don't use Ctrl-S for scrollock; enable incremental history searching
 stty -ixon
+
+# set tabstops at 4 spaces
+tabs 4
 
 #
 # Zsh configuration variables
