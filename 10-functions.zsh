@@ -81,8 +81,8 @@ _dotdotcomp() {
 
 # this hook function decides which commands are added to the shell's history
 zshaddhistory() {
-	[[ "$1" =~ '^(fg|bg)\s+$' ]] && return 1
-	return 0
+    emulate -L zsh
+    [[ ! $1 =~ '^(fg|bg)\s*$' ]]
 }
 
 
