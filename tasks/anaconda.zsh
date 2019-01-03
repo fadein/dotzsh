@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/bin/zsh
 
 PURPOSE="Enable/disable Anaconda Python Distribution"
 VERSION="1.0"
