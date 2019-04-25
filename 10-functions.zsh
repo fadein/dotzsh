@@ -92,7 +92,10 @@ iplocate() {
         print "Usage: gimme an IP address to geolocate"
         return 1
     else
-        curl -s http://ip-api.com/json/$1 | python3 -m json.tool
+        until [[ $# < 1 ]]; do
+            curl -s http://ip-api.com/json/$1 | python3 -m json.tool
+            shift
+        done
     fi
 }
 
