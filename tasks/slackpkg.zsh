@@ -77,7 +77,7 @@ Make sure that the vmlinuz file there is replaced by the vmlinuz-generic file.
 Next, re-create the initrd Run this command, inserting the version number of
 the new kernel:
 
-	# /usr/share/mkinitrd/mkinitrd_command_generator.sh -k 4.4.75
+	# /usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k 4.4.75
 
 It should echo back a command including a big list of kernel modules"
 
@@ -98,7 +98,7 @@ case $HOSTNAME in
 		_TODO+=(
 			'$ cd /boot/efi/EFI/Slackware/'
 			'$ cp /boot/vmlinuz*(.) .'
-			'run $(/usr/share/mkinitrd/mkinitrd_command_generator.sh -k <KERNEL-VER> -r)'
+			'run $(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k <KERNEL-VER>)'
 			'run cp /boot/initrd.gz initrd-<KERNEL-VER>.gz'
 			'edit elilo.conf to point to the new kernel (make it be the 1st entry)'
 		)
