@@ -38,6 +38,7 @@ alias pgrep='pgrep -l'
 alias pwd='pwd -P'
 alias rm='rm -i'
 alias topu="top -u $USER"
+alias vimdiff='vim -d'
 alias which="which -p"
 
 #
