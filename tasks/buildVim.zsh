@@ -1,14 +1,14 @@
 #!/bin/zsh
 
 PURPOSE='Rebuild Vim from GitHub'
-VERSION="1.7"
-   DATE="Thu, Aug 11, 2016  4:52:52 PM"
+VERSION="1.8"
+   DATE="Thu Jun 13 08:32:35 MDT 2019"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 TASKNAME=$0:t:r
 
 env() {
-	zmodload zsh/pcre
+	zmodload zsh/regex
 
 	# Directory of Vim repository
 	BUILDDIR=~/build/vim.git
@@ -59,7 +59,7 @@ env() {
 		if ! nice make $MAKE_JOBS; then return; fi
 
 		echo
-		if [[ -n $STRIP ]] && pcre_match $STRIP; then
+		if [[ -n $STRIP ]] && $STRIP -regex-match '^(strip|1)$'; then
 			echo Stripping output binary
 			if ! nice strip vim; then
 				warn FAILED to strip vim
@@ -100,8 +100,7 @@ env() {
 
 		echo
 		echo "Installing Vim binary to $DEST"
-		pcre_compile -i '^(strip|1)$'
-		if [[ -n $STRIP ]] && pcre_match $STRIP; then
+		if [[ -n $STRIP ]] && $STRIP -regex-match '^(strip|1)$'; then
 			if ! nice $SUDO make STRIP=strip installvimbin; then return; fi
 			echo "${DEST}/bin/vim is not stripped"
 		else
