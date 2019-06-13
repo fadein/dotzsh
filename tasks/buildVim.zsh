@@ -1,17 +1,25 @@
 #!/bin/zsh
 
 PURPOSE='Rebuild Vim from GitHub'
-VERSION="1.8"
-   DATE="Thu Jun 13 08:32:35 MDT 2019"
+VERSION="1.9"
+   DATE="Thu Jun 13 16:49:16 MDT 2019"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 TASKNAME=$0:t:r
 
+# Directory of Vim code repository
+export BUILDDIR=~/build/vim.git
+
+setup() {
+    if ! [[ -d $BUILDDIR/.git ]]; then
+        git clone https://github.com/vim/vim $BUILDDIR
+        return $!
+    fi
+}
+
 env() {
 	zmodload zsh/regex
 
-	# Directory of Vim repository
-	BUILDDIR=~/build/vim.git
 
 	SHUSH=1
 	if command -v sudo &>/dev/null; then
