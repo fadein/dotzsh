@@ -26,10 +26,10 @@ export EDIT=$EDITOR
 #
 # Add to PATH, MANPATH, and cull out duplicates
 for D in /usr/sbin ~/bin ~/.zsh ~/.zsh/tasks; do
-    [[ -d $D ]] && PATH+=:$D
+    [[ -d $D ]] && PATH+=:$D:A
 done
-for D in /usr/local/share/man /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
-    [[ -d $D ]] && MANPATH+=:$D
+for D in /usr/local/man /usr/local/share/man /usr/man /usr/share/man /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
+    [[ -d $D ]] && MANPATH+=:$D:A
 done
 export PATH MANPATH
 if declare -F uniquify >/dev/null; then
