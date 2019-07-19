@@ -1,8 +1,8 @@
 #!/bin/zsh
 
-PURPOSE="Enable/disable Anaconda Python Distribution"
-VERSION="1.0"
-   DATE="Fri Dec 29 11:41:57 MST 2017"
+PURPOSE="Enable/disable Anaconda Python3 Distribution"
+VERSION="1.1"
+   DATE="Wed Feb 20 09:20:21 MST 2019"
  AUTHOR="Erik Falor <erik.falor@usu.edu>"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -23,9 +23,11 @@ env() {
     [[ -n $PATH    ]] && PATH=$(uniquify $PATH)
 
     # Anaconda's Python doesn't recognize TERM=rxvt-unicode
-    if [[ $TERM = rxvt-unicode ]]; then
-        TERM=xterm
-    fi
+    case $TERM in
+    rxvt-unicode*)
+        TERM=xterm;;
+    esac
+
     echo "You're now using Anaconda python in this shell"
 }
 
