@@ -11,6 +11,11 @@ setup() {
     if ! [[ -d ~/anaconda3/bin ]]; then
         die 'Anaconda 3 distribution is not installed in $HOME'
     fi
+
+    # Make sure Window Manager identifies as LG3D (lies) for stupid Java programs
+    if ! wmname | grep -q LG3D; then
+        wmname LG3D
+    fi
 }
 
 env() {

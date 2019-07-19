@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.5"
-    DATE="Wed Aug 22 12:30:00 MDT 2018"
+ VERSION="1.6"
+    DATE="Thu Jul 18 18:47:53 MDT 2019"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -96,6 +96,7 @@ case $HOSTNAME in
 		fi
 
 		_TODO+=(
+			'$ mount /boot/efi'
 			'$ cd /boot/efi/EFI/Slackware/'
 			'$ cp /boot/vmlinuz*(.) .'
 			'run $(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k <KERNEL-VER>)'
