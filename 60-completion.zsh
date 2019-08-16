@@ -1,7 +1,7 @@
 # enable the completion system
 fpath=($HOME/.zsh/completion/ $fpath)
 autoload -U $HOME/.zsh/completion/*(:t)
-autoload -U compinit; compinit -d ~/.zsh/compdump
+autoload -U compinit; compinit -u -d ~/.zsh/compdump
 
 zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
