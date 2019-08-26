@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.8
-# Date:    Sat Sep 15 22:22:06 MDT 2018
+# Version: 1.9
+# Date:    Sun Aug 25 18:43:22 MDT 2019
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -109,9 +109,9 @@ if ! functions prettySeconds >/dev/null; then
 		#print it out
 		case $#result in
 			3) printf '%02d:%02d:%02d' ${result[@]} ;;
-		2) printf '%02d:%02d' ${result[@]} ;;
-	1) printf '00:%02d' ${result[@]} ;;
-esac
+			2) printf '%02d:%02d' ${result[@]} ;;
+			1) printf '00:%02d' ${result[@]} ;;
+		esac
 	}
 fi
 
