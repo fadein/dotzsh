@@ -1,1 +1,0 @@
-/home/fadein/school/Fa19/cs3100/.course/course_task.zsh
