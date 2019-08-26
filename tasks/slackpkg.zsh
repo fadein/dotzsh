@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.4"
-    DATE="Tue Jul  3 15:35:13 MDT 2018"
+ VERSION="1.6"
+    DATE="Thu Jul 18 18:47:53 MDT 2019"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -24,15 +24,21 @@ env() {
 
 	_TODO=(
 		"\$ $SLACKPKG install-new"
-		"\$ $SLACKPKG upgrade-all"
-		"\$ $SLACKPKG upgrade multilib"
-		"\$ $SLACKPKG install multilib"
-	)
+		"\$ $SLACKPKG upgrade-all")
 
+	case $HOSTNAME in
+		voyager2*)
+			_TODO+=(
+				"\$ $SLACKPKG upgrade multilib"
+				"\$ $SLACKPKG install multilib"
+			)
+	esac
+
+	LAST_UPDATE=
 	if [[ -f /tmp/slackpkg.last_update.txt ]]; then
-		local last_update=$(< /tmp/slackpkg.last_update.txt)
+		LAST_UPDATE=$(< /tmp/slackpkg.last_update.txt)
 		print These new packages have been added to the repo:
-		sed -n -e '/Added.$/p' -e "/^$last_update/q" /var/lib/slackpkg/ChangeLog.txt
+		sed -n -e '/Added.$/p' -e "/^$LAST_UPDATE/q" /var/lib/slackpkg/ChangeLog.txt
 	fi
 
 	# Store the date of this update
@@ -71,27 +77,33 @@ Make sure that the vmlinuz file there is replaced by the vmlinuz-generic file.
 Next, re-create the initrd Run this command, inserting the version number of
 the new kernel:
 
-	# /usr/share/mkinitrd/mkinitrd_command_generator.sh -k 4.4.75
+	# /usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k 4.4.75
 
 It should echo back a command including a big list of kernel modules"
 
 case $HOSTNAME in
 	voyager2*|mariner*)
-		if [[ -n $last_update ]]; then
-			if sed -n -e '/a\/kernel-.*/q0' -e "/^$last_update/q1" /var/lib/slackpkg/ChangeLog.txt; then
-				print $IMPORTANT
-				_TODO+=(
-				'$ cd /boot/efi/EFI/Slackware/'
-				'copy the new vmlinuz* files from /boot to here (not symlinks)'
-				'replace the vmlinuz file with vmlinuz-generic'
-				'run "/usr/share/mkinitrd/mkinitrd_command_generator.sh -k <kernel ver>"'
-				'copy the resulting /boot/initrd.gz up here'
+		print $IMPORTANT
+
+		if sed -n -e '/a\/kernel-.*/q0' -e "/^$LAST_UPDATE/q1" /var/lib/slackpkg/ChangeLog.txt; then
+			_TODO+=(
+				'The kernel was updated; run the subsequent commands'
 				)
-			fi
-		else
-			print $IMPORTANT
+			else
+			_TODO+=(
+				"The kernel wasn't updated; you may skip the following commands"
+				)
 		fi
-		;;
+
+		_TODO+=(
+			'$ mount /boot/efi'
+			'$ cd /boot/efi/EFI/Slackware/'
+			'$ cp /boot/vmlinuz*(.) .'
+			'run $(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k <KERNEL-VER>)'
+			'run cp /boot/initrd.gz initrd-<KERNEL-VER>.gz'
+			'edit elilo.conf to point to the new kernel (make it be the 1st entry)'
+		)
+	;;
 esac
 
 }

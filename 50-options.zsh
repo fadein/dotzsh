@@ -2,6 +2,7 @@
 # typed so far
 set ESC-P
 
+# 6,$sort /^setopt \(no_\)\?/
 setopt append_history
 setopt auto_cd
 setopt auto_continue
@@ -14,6 +15,7 @@ setopt hist_ignore_space
 setopt hist_no_store
 setopt hist_reduce_blanks
 setopt hist_save_no_dups
+setopt interactive_comments
 setopt long_list_jobs
 setopt multios
 setopt notify no_beep

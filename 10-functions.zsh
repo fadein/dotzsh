@@ -81,8 +81,8 @@ _dotdotcomp() {
 
 # this hook function decides which commands are added to the shell's history
 zshaddhistory() {
-	[[ "$1" =~ '^(fg|bg)\s+$' ]] && return 1
-	return 0
+    emulate -L zsh
+    [[ ! $1 =~ '^(fg|bg)\s*$' ]]
 }
 
 
@@ -92,7 +92,10 @@ iplocate() {
         print "Usage: gimme an IP address to geolocate"
         return 1
     else
-        curl -s http://ip-api.com/json/$1 | python3 -m json.tool
+        until [[ $# < 1 ]]; do
+            curl -s http://ip-api.com/json/$1 | python3 -m json.tool
+            shift
+        done
     fi
 }
 
