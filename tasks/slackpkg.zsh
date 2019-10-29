@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.6"
-    DATE="Thu Jul 18 18:47:53 MDT 2019"
+ VERSION="1.7"
+    DATE="Mon Oct 28 23:03:01 MDT 2019"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -85,7 +85,7 @@ case $HOSTNAME in
 	voyager2*|mariner*)
 		print $IMPORTANT
 
-		if sed -n -e '/a\/kernel-.*/q0' -e "/^$LAST_UPDATE/q1" /var/lib/slackpkg/ChangeLog.txt; then
+		if sed -n -e '/a\/kernel-generic.*/q0' -e "/^$LAST_UPDATE/q1" /var/lib/slackpkg/ChangeLog.txt; then
 			_TODO+=(
 				'The kernel was updated; run the subsequent commands'
 				)
