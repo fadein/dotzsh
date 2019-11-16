@@ -105,6 +105,26 @@ iplocate() {
     fi
 }
 
+urxvtbg() {
+    if [[ $# -lt 1 ]]; then
+        print "Usage: urxvtbg color [TTY]"
+        print "Defaults to changing color of current tty"
+        return 1
+    fi
+
+    if [[ $# -gt 1 ]]; then
+        #print changing color of $2 to $1
+        if [[ ${2:0:5} == '/dev/' ]]; then
+            print "\x1b]11;$1\x07" > $2
+        else
+            print "\x1b]11;$1\x07" > /dev/$2
+        fi
+    else
+        #print changing color of current terminal to $1
+        print "\x1b]11;$1\x07"
+    fi
+}
+
 # Countdown timer for use with 
 countdown() {
     if [[ $# -lt 1 ]]; then
