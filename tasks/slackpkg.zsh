@@ -28,7 +28,7 @@ env() {
 		"\$ $SLACKPKG upgrade-all")
 
 	case $HOSTNAME in
-		voyager2*)
+		nevermind*)
 			_TODO+=(
 				"\$ $SLACKPKG upgrade multilib"
 				"\$ $SLACKPKG install multilib"
