@@ -147,6 +147,7 @@ countdown() {
     if [[ $# -ge 1 ]]; then
         $@
     fi
+}
 
 ipcheck() {
     curl -s http://ip-api.com/json/ | python3 -m json.tool
