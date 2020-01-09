@@ -1,6 +1,6 @@
 # fadein's zshrc
 
-[[ -r ~/.dir_colors ]] && eval "$(dircolors ~/.dir_colors -b)"
+[[ -r ~/.dircolors ]] && eval "$(dircolors ~/.dircolors -b)"
 
 # Source global definitions
 [[ -r /etc/zsh/zprofile ]] && source /etc/zsh/zprofile
