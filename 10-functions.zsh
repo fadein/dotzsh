@@ -105,6 +105,7 @@ iplocate() {
     fi
 }
 
+
 urxvtbg() {
     if [[ $# -lt 1 ]]; then
         print "Usage: urxvtbg color [TTY]"
@@ -146,6 +147,10 @@ countdown() {
     if [[ $# -ge 1 ]]; then
         $@
     fi
+}
+
+ipcheck() {
+    curl -s http://ip-api.com/json/ | python3 -m json.tool
 }
 
 
