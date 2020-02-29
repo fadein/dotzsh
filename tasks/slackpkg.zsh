@@ -12,6 +12,7 @@ NICE=/usr/bin/nice
 
 setup() {
 	raisePrivs
+    modprobe -a fat vfat nls_cp437 nls_iso8859-1 || die "Couldn't insert modules needed to mount /boot/efi"
 }
 
 # spawn a (nice) root child shell
@@ -27,7 +28,7 @@ env() {
 		"\$ $SLACKPKG upgrade-all")
 
 	case $HOSTNAME in
-		voyager2*)
+		nevermind*)
 			_TODO+=(
 				"\$ $SLACKPKG upgrade multilib"
 				"\$ $SLACKPKG install multilib"

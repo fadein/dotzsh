@@ -86,10 +86,16 @@ zshaddhistory() {
 }
 
 
+# go out and get my IP address
+whatismyipaddress() {
+	curl http://checkip.dyndns.org 2>/dev/null | command grep -o -E '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
+}
+
+
 # geolocate an ip address with cURL and the ip-api.com service
 iplocate() {
     if [[ $# < 1 ]]; then
-        print "Usage: gimme an IP address to geolocate"
+        print "Usage: iplocate IP ..."
         return 1
     else
         until [[ $# < 1 ]]; do
@@ -99,6 +105,53 @@ iplocate() {
     fi
 }
 
+
+urxvtbg() {
+    if [[ $# -lt 1 ]]; then
+        print "Usage: urxvtbg color [TTY]"
+        print "Defaults to changing color of current tty"
+        return 1
+    fi
+
+    if [[ $# -gt 1 ]]; then
+        #print changing color of $2 to $1
+        if [[ ${2:0:5} == '/dev/' ]]; then
+            print "\x1b]11;$1\x07" > $2
+        else
+            print "\x1b]11;$1\x07" > /dev/$2
+        fi
+    else
+        #print changing color of current terminal to $1
+        print "\x1b]11;$1\x07"
+    fi
+}
+
+# Countdown timer for use with 
+countdown() {
+    if [[ $# -lt 1 ]]; then
+        print 'Usage: countdown SECONDS [CMD ARGS]'
+        return 2
+    fi
+
+    N=$1
+    shift
+    [[ $# -ge 1 ]] && print -n "Running '$@' in "
+
+    until [[ $N -eq 0 ]]; do
+        print -n "$N... "
+        sleep 1
+        ((N--))
+    done
+    print Done
+
+    if [[ $# -ge 1 ]]; then
+        $@
+    fi
+}
+
+ipcheck() {
+    curl -s http://ip-api.com/json/ | python3 -m json.tool
+}
 
 
 # Display directory notes
@@ -179,8 +232,12 @@ entropy() {
 }
 
 sec2time() {
-	TZ=GMT perl -e "print scalar localtime $1, \" GMT\n\""
-	TZ=MST perl -e "print scalar localtime $1, \" MST\n\""
+    while [ $# -gt 0 ]; do
+        TZ=GMT perl -e "print scalar localtime $1, \" GMT\n\""
+        TZ=MST perl -e "print scalar localtime $1, \" MST\n\""
+        echo
+        shift
+    done
 }
 
 # re-source this file
@@ -276,16 +333,10 @@ mountc() {
 	mount $1 && cd $1
 }
 
-# go out and get my IP address
-whatismyipaddress() {
-	curl http://checkip.dyndns.org 2>/dev/null | command grep -o -E '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+'
-}
-
-
 zle -N increase-char _increase_char
 zle -N decrease-char _increase_char
-bindkey "^[^O"    increase-char
-bindkey "^[^E"    decrease-char
+bindkey "^[^N"    increase-char
+bindkey "^[^P"    decrease-char
 _increase_char() {
   local char
 
@@ -304,8 +355,8 @@ _increase_char() {
 
 zle -N increase-number _increase_number
 zle -N decrease-number _increase_number
-bindkey "^[^P"    increase-number
-bindkey "^[^_"    decrease-number
+bindkey "^[^A"    increase-number
+bindkey "^[^X"    decrease-number
 _increase_number() {
   integer pos NUMBER i first last prelength diff
   pos=$CURSOR
