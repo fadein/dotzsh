@@ -31,11 +31,15 @@ done
 for D in /usr/local/man /usr/local/share/man /usr/man /usr/share/man /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
     [[ -d $D ]] && MANPATH+=:$D:A
 done
+for D in ~/.zsh/functions; do
+    [[ -d $D ]] && FPATH+=:$D:A
+done
 export PATH MANPATH
 if declare -F uniquify >/dev/null; then
-    #remove duplicate entries from PATH, MANPATH
+    #remove duplicate entries from PATH, MANPATH, FPATH
     [[ -n $PATH    ]] && PATH=$(uniquify $PATH)
     [[ -n $MANPATH ]] && MANPATH=$(uniquify $MANPATH)
+    [[ -n $FPATH   ]] && FPATH=$(uniquify $FPATH)
 fi
 
 #

@@ -10,21 +10,27 @@ autoload -U edit-command-line && zle -N edit-command-line
 # other misc. helpful functions
 autoload zmv zargs zcalc
 
-# ding is a command-modifier:
-# ring the bell once when the supplied command succeeds, thrice when it has failed
+
+
+# ding is a command-modifier, much like `time` or `sudo`
+# Ring the bell once when the supplied command succeeds, thrice when it has failed
+# The command's own exit code is returned to the shell
 ding() {
-    # run the supplied commandline, preserving its return code
-    $@
+    # run the supplied command, preserving its return code
+    eval $@
     local retval=$?
 
     if [[ $retval == 0 ]]; then
-        print "\a"
+        echo -e "\a"
     else
-        for (( dings=0; dings < 3; dings++ )) { print -n "\a"; sleep 1 }
+        for ding in {0..2}; do
+            echo -ne "\a"; sleep 1
+        done
     fi
 
     return $retval
 }
+
 
 # remove duplicate entries from colon separated string while preserving order
 uniquify() {
@@ -126,28 +132,38 @@ urxvtbg() {
     fi
 }
 
-# Countdown timer for use with 
+
+# countdown is a command-modifier, much like `time` or `sudo`
+# Print a dramatic countdown timer before running a command
 countdown() {
     if [[ $# -lt 1 ]]; then
-        print 'Usage: countdown SECONDS [CMD ARGS]'
-        return 2
+        echo 'Usage: countdown SECONDS [CMD ARGS]'
+        return 1
     fi
 
+    local N I
     N=$1
+    I=1
     shift
-    [[ $# -ge 1 ]] && print -n "Running '$@' in "
+    [[ $# -ge 1 ]] && echo "Running '$@' in "
 
     until [[ $N -eq 0 ]]; do
-        print -n "$N... "
+        if [[ $((I % 10)) -eq 0 ]]; then
+            echo "$N... "
+        else
+            echo -n "$N... "
+        fi
+
         sleep 1
-        ((N--))
+        ((N--, I++))
     done
-    print Done
+    echo Done
 
     if [[ $# -ge 1 ]]; then
-        $@
+        eval $@
     fi
 }
+
 
 ipcheck() {
     curl -s http://ip-api.com/json/ | python3 -m json.tool
@@ -211,18 +227,20 @@ undosubdirs() {
 	fi
 }
 
-# Make and chdir into <dirname>
+
+# Make and chdir into a new directory DIRNAME
 mcdir() {
 	if [ -z "$1" ]; then
-		echo Usage: mcdir \<dirname\>
-		echo Make and change into \<dirname\>
+		echo Usage: mcdir DIRNAME
+		echo Make and change into DIRNAME
 		return
 	fi
-	if [ ! -d "$1" ]; then
+	if [[ ! -d "$1" ]]; then
 		mkdir -p "$1"
 	fi
 	cd "$1"
 }
+
 
 # report on the amount of entropy in the system
 entropy() {
@@ -313,10 +331,12 @@ ontherecord() {
 	fi
 }
 
+
 # Escalate privileges, Hollywood style
 override() {
 	eval sudo $(fc -lLn -1)
 }
+
 
 # In case I fatfinger Ctrl-p
 p() {

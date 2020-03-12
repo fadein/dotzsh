@@ -7,7 +7,7 @@
 
 # Source my modularized dotfiles
 for F in ~/.zsh/[0-9][0-9]-*.zsh; do
-    source $F
+    [[ -x $F ]] && source $F
 done
 
 # Load custom stuff from a local zshrc

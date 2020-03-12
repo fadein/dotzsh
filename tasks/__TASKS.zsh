@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.9
-# Date:    Sun Aug 25 18:43:22 MDT 2019
+# Version: 1.10
+# Date:    Sat Feb 29 09:06:08 MST 2020
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -181,7 +181,7 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 							printf "%*d. %s\n" $width $i $T
 						done ;;
 
-					next|done) # complete an arbitrary task
+					rm|next|done) # complete an arbitrary task
 						if [[ -z $2 ]]; then
 							[[ 0 != $#_TODO ]] && shift _TODO
 						elif [[ $2 -le $#_TODO ]]; then
@@ -194,7 +194,7 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 						# any extra arguments are forwarded on to the command
 						if [[ 0 != $#_TODO && ${_TODO[1]#$ } != $_TODO[1] ]]; then
 							local cmd=${_TODO[1]#$ }
-							eval ${=~cmd} $argv[2,$#argv]
+							eval "${=~cmd} $argv[2,$#argv]"
 							local ret=$?
 							if [[ 0 == $ret ]]; then
 								_TODO[1]=()
@@ -213,13 +213,14 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 
 					help)
 						>&1 <<-'HELP'
-						todo                Print the next task
-						todo list           List each task with its index
-						todo done [index]   Remove the current (or numbered) task from the list
-						todo add TASK       Append TASK to list (quote it!)
-						todo clear          Delete the entire list
-						todo it [args]      Execute the next task if begins with '$', with any args
-						todo help           Show this message
+						todo                   Print the next task
+						todo list              List each task with its index
+						todo next              Skip over the current task
+						todo rm|done [index]   Remove the current (or numbered) task from the list
+						todo add TASK          Append TASK to list (quote it!)
+						todo clear             Delete the entire list
+						todo it [args]         Execute the next task if begins with '$', with any args
+						todo help              Show this message
 						HELP
 						;;
 				esac
