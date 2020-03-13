@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Recording a screencast"
-VERSION="1.0"
-   DATE="Thu Mar 12 14:58:41 MDT 2020"
+VERSION="1.1"
+   DATE="Fri Mar 13 13:12:05 MDT 2020"
  AUTHOR="Erik Falor"
 
 PROGNAME=$0
@@ -11,6 +11,18 @@ TASKNAME=$0:t:r
 VIDEOS=~/Videos/
 
 setup() {
+	case $HOSTNAME in
+		endeavour)
+			# Set the DPI for Firefox
+			echo Xft.dpi: 132 | xrdb -quiet -override
+
+			# Set my screen to 1080p
+			xrandr --output eDP1 --mode 1920x1080
+			;;
+	esac
+
+
+	xset s off -dpms
 	killall compton
 	if ! [[ -d $VIDEOS ]]; then
 		mkdir -p $VIDEOS
@@ -84,6 +96,13 @@ env() {
 
 cleanup() {
 	compton& disown
+	case $HOSTNAME in
+		endeavour)
+			xrandr --output eDP1 --mode 3840x2160
+			echo Xft.dpi: 200 | xrdb -quiet -override
+			;;
+	esac
+
 }
 
 source $0:h/__TASKS.zsh
