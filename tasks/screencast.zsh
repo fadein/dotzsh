@@ -81,6 +81,14 @@ help() {
 	When that doesn't work, FFmpeg can convert video and audio into the new format:
 
 		ffmpeg -i filename.mkv output.avi
+
+
+	# Reducing file size
+	
+	I tried this on a file that Flowblade inflated to >1GB (sources were
+	~600MB) and it reduced it down to ~60MB.
+
+		ffmpeg -i $VIDEO -r 15 -filter minterpolate ${VIDEO%mpg}mkv
 	MESSAGE
 }
 
