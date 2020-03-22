@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Recording a screencast"
-VERSION="1.1"
-   DATE="Fri Mar 13 13:12:05 MDT 2020"
+VERSION="1.2"
+   DATE="Sat Mar 21 21:06:36 MDT 2020"
  AUTHOR="Erik Falor"
 
 PROGNAME=$0
@@ -14,7 +14,7 @@ setup() {
 	case $HOSTNAME in
 		endeavour)
 			# Set the DPI for Firefox
-			echo Xft.dpi: 132 | xrdb -quiet -override
+			print Xft.dpi: 132 | xrdb -quiet -override
 
 			# Set my screen to 1080p
 			xrandr --output eDP1 --mode 1920x1080
@@ -27,6 +27,12 @@ setup() {
 	if ! [[ -d $VIDEOS ]]; then
 		mkdir -p $VIDEOS
 	fi
+
+	urxvt -geometry 88x19 -fn xft:hack:pixelsize=24:antialias=true -bg midnightblue -e sh -c "cd Videos; vokoscreen" &
+
+	VOKOPID=$!
+	sleep .25
+	disown
 }
 
 
@@ -95,19 +101,18 @@ help() {
 
 env() {
 	cd $VIDEOS
-	urxvt -bg midnightblue -e sh -c "cd Videos; vokoscreen" &
-	sleep .25
-	disown
 	help
 }
 
 
 cleanup() {
+	kill $VOKOPID
+	xset s on +dpms
 	compton& disown
 	case $HOSTNAME in
 		endeavour)
+			print Xft.dpi: 200 | xrdb -quiet -override
 			xrandr --output eDP1 --mode 3840x2160
-			echo Xft.dpi: 200 | xrdb -quiet -override
 			;;
 	esac
 
