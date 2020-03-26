@@ -1,15 +1,15 @@
 #!/bin/env zsh
 
- PURPOSE="RoguelikeDev Does The Complete Roguelike Tutorial 2019"
- VERSION="1.1"
-    DATE="Mon Jun 17 23:20:58 MDT 2019"
+ PURPOSE="RoguelikeDev Does The Complete Roguelike Tutorial 2020"
+ VERSION="1.2"
+    DATE="Mon Mar 23 21:44:00 MDT 2020"
   AUTHOR="fadein"
 PROGNAME=$0
 TASKNAME=$0:t:r
 
 
 env() {
-    TUTDIR=~/devel/RoguelikeTutorial2019/
+    TUTDIR=~/devel/python/RoguelikeTutorial2019/
     tut() { cd $TUTDIR; }
     tcod() { cd $TUTDIR; }
 
