@@ -1,1 +1,0 @@
-/home/fadein/school/Sp20/cs1440/.course/course_task.zsh
