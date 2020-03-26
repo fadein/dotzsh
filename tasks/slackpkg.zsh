@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.7"
-    DATE="Mon Oct 28 23:03:01 MDT 2019"
+ VERSION="1.8"
+    DATE="Thu Mar 26 08:21:42 MDT 2020"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -12,7 +12,7 @@ NICE=/usr/bin/nice
 
 setup() {
 	raisePrivs
-    modprobe -a fat vfat nls_cp437 nls_iso8859-1 || die "Couldn't insert modules needed to mount /boot/efi"
+	modprobe -a fat vfat nls_cp437 nls_iso8859-1 || die "Couldn't insert modules needed to mount /boot/efi"
 }
 
 # spawn a (nice) root child shell
@@ -20,8 +20,33 @@ spawn() {
 	TASK=$TASKNAME $NICE -n 10 $ZSH_NAME
 }
 
+
+help() {
+	>&1 <<-MESSAGE
+	
+	### package logs
+	/var/log/packages
+	/var/log/removed_packages
+	
+	### slackpkg ChangeLog location:
+	/var/lib/slackpkg/ChangeLog.txt
+	
+	
+	Run this command to install new packages added since last update:
+	\$ $SLACKPKG install-new
+	
+	Run this command when you're ready to upgrade the set of installed packages:
+	\$ $SLACKPKG upgrade-all
+	
+	MESSAGE
+}
+
+
 env() {
+
 	$SLACKPKG update
+	# ring the bell when the update is received
+	print "\C-g"
 
 	_TODO=(
 		"\$ $SLACKPKG install-new"
@@ -38,31 +63,23 @@ env() {
 	LAST_UPDATE=
 	if [[ -f /tmp/slackpkg.last_update.txt ]]; then
 		LAST_UPDATE=$(< /tmp/slackpkg.last_update.txt)
-		print These new packages have been added to the repo:
+		cat <<-BANNER
+		
+		
+		===================================================
+		My previous update was $LAST_UPDATE
+		===================================================
+		
+		These new packages have been added to the repo since the last update:
+		BANNER
 		sed -n -e '/Added.$/p' -e "/^$LAST_UPDATE/q" /var/lib/slackpkg/ChangeLog.txt
 	fi
 
 	# Store the date of this update
 	head -n1 /var/lib/slackpkg/ChangeLog.txt > /tmp/slackpkg.last_update.txt
 
-	>&1 <<MESSAGE
 
-
-### package logs
-/var/log/packages
-/var/log/removed_packages
-
-### slackpkg ChangeLog location:
-/var/lib/slackpkg/ChangeLog.txt
-
-
-Run this command to install new packages added since last update:
-	\$ $SLACKPKG install-new
-
-Run this command when you're ready to upgrade the set of installed packages:
-	\$ $SLACKPKG upgrade-all
-
-MESSAGE
+	help
 
 IMPORTANT="
 
@@ -109,4 +126,5 @@ esac
 
 }
 
+# vim: set noexpandtab:
 source $0:h/__TASKS.zsh
