@@ -62,13 +62,13 @@ env() {
     export DONT_MOUNT_BOOT=1
 
 	_TODO=(
-		'$ setsid emerge -DNauv --keep-going --tree --unordered-display --autounmask-keep-masks=y --autounmask-continue=y @system'
-		'$ setsid emerge -DNauv --keep-going --tree --unordered-display --autounmask-keep-masks=y --autounmask-continue=y @world'
-		'$ setsid emerge -DNauv --keep-going --tree --unordered-display --autounmask-keep-masks=y --autounmask-continue=y @module-rebuild'
+		'$ emerge -DNauv --keep-going --tree --unordered-display --autounmask-keep-masks=y --autounmask-continue=y @system'
+		'$ emerge -DNauv --keep-going --tree --unordered-display --autounmask-keep-masks=y --autounmask-continue=y @world'
+		'$ emerge -DNauv --keep-going --tree --unordered-display --autounmask-keep-masks=y --autounmask-continue=y @module-rebuild'
 		'$ dispatch-conf'
 		'$ emerge --depclean'
-		'$ setsid emerge --autounmask-keep-masks=y --autounmask-continue=y @preserved-rebuild'
-		'$ setsid revdep-rebuild -ip')
+		'$ emerge --autounmask-keep-masks=y --autounmask-continue=y @preserved-rebuild'
+		'$ revdep-rebuild -ip')
 
 	cd /root/portage
 
