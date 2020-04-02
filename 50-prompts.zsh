@@ -58,8 +58,8 @@ function title {
     case $TERM in
         screen)
             # Use these two for GNU Screen:
-            print -nP $'\ek'${ROOT}$2$'\e'\\
-            print -nP $'\e]0;'${ROOT}$*$'\a'
+            print -n $'\ek'${ROOT}$2$'\e'\\
+            print -n $'\e]0;'${ROOT}$*$'\a'
             ;;
         xterm*|rxvt*)
             # Use this one instead for XTerms:
@@ -67,9 +67,9 @@ function title {
             # command contains Zsh prompt escape sequences
             #
             # The trouble is that sometimes I'll want these prompt
-            # escapes to be expanded (in the case of title()), and
+            # escapes to be expanded (in the case of precmd()), and
             # other times I don't (in the case of `print %f{blue}`)...
-            print -nP $'\e]0;'${ROOT}$*$'\a'
+            print -n $'\e]0;'${ROOT}$*$'\a'
             ;;
         screen.rxvt)
             # I'm not sure the -R flag is called for here; it enables
@@ -78,7 +78,7 @@ function title {
             # Anyhow, it seems that this block can be rolled up with
             # the screen case above
             print -nR $'\ek'${ROOT}$2$'\e'\\
-            print -nP $'\e]0;'${ROOT}$*$'\a'
+            print -n  $'\e]0;'${ROOT}$*$'\a'
             ;;
     esac
 }
@@ -91,9 +91,8 @@ function title {
 
 # Set the XTerm window title property
 # The default value appears as "[host] zsh tty cwd"
-
 function precmd {
-    title '[%M] ' 'zsh' '%l %~'
+    title "[$HOSTNAME] " "zsh" "${TTY#/dev/} $PWD"
 }
 
 # Helper to set the terminal window's title to the running command,
@@ -133,8 +132,8 @@ function preexec() {
                          # through to the next case
 
         *)
-            title '[%m] ' $cmd[1]:t $cmd[2,-1]    # Not resuming a job,
-            return                                # so we're all done
+            title "[$HOSTNAME] " $cmd[1]:t $cmd[2,-1]    # Not resuming a job,
+            return                                       # so we're all done
             ;;
     esac
 
@@ -162,11 +161,6 @@ function colorful() {
 function screen() {
     PROMPT="[%(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~]%# $_UTEXT"
     RPROMPT="${_UEND}[%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)]"
-}
-
-function phosphor() {
-    unset RPROMPT
-    PROMPT='[%n@%M %~]%# '
 }
 
 function _git_branch_details() {
