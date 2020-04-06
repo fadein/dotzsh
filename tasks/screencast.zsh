@@ -91,15 +91,40 @@ help() {
 
 	# Reducing file size
 	
-	I tried this on a file that Flowblade inflated to >1GB (sources were
-	~600MB) and it reduced it down to ~60MB.
+	Use the 'shrink(IN, OUT)' shell function
 
-		ffmpeg -i $VIDEO -r 15 -filter minterpolate ${VIDEO%mpg}mkv
 	MESSAGE
 }
 
 
 env() {
+	shrink() {
+		if [[ $# -lt 2 ]]; then
+			print "Usage: shrink INPUT OUTPUT"
+			return 1
+		fi
+
+		if [[ $1:e != $2:e ]]; then
+			print "The file extension of INPUT should match OUTPUT"
+			return 2
+		fi
+
+		case $2:e in
+			mkv)
+				ffmpeg -i $1 -b:v 400k -c:v mpeg4 $2
+				;;
+			mp4)
+				ffmpeg -i $1 -b:v 4000k -c:v mpeg4 $2
+				;;
+			*)
+				print Unknown format $2:e
+				return 3
+				;;
+		esac
+	}
+
+	alias mplayer='mplayer -osdlevel 3 -speed 1.5'
+
 	cd $VIDEOS
 	help
 }
@@ -115,7 +140,6 @@ cleanup() {
 			xrandr --output eDP1 --mode 3840x2160
 			;;
 	esac
-
 }
 
 source $0:h/__TASKS.zsh
