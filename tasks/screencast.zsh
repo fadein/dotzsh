@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Recording a screencast"
-VERSION="1.2"
-   DATE="Sat Mar 21 21:06:36 MDT 2020"
+VERSION="1.3"
+   DATE="Thu Apr  9 21:32:13 MDT 2020"
  AUTHOR="Erik Falor"
 
 PROGNAME=$0
@@ -21,6 +21,9 @@ setup() {
 			;;
 	esac
 
+	if [[ -f ~/.config/vokoscreen/vokoscreen.conf ]]; then
+		perl -pi -e 's!(VideoPath=).*!$1/home/fadein/Videos!' ~/.config/vokoscreen/vokoscreen.conf 
+	fi
 
 	xset s off -dpms
 	killall compton
@@ -28,7 +31,9 @@ setup() {
 		mkdir -p $VIDEOS
 	fi
 
-	urxvt -geometry 88x19 -fn xft:hack:pixelsize=24:antialias=true -bg midnightblue -e sh -c "cd Videos; vokoscreen" &
+	urxvt -geometry 88x19 -fn xft:hack:pixelsize=14:antialias=true -bg midnightblue -e sh -c "cd Videos; vokoscreen" &
+
+	print "\033]710;xft:hack:pixelsize=14:antialias=true\007"
 
 	VOKOPID=$!
 	sleep .25
@@ -111,10 +116,10 @@ env() {
 
 		case $2:e in
 			mkv)
-				ffmpeg -i $1 -b:v 400k -c:v mpeg4 $2
+				ffmpeg -i $1 -b:v 400k -c:v mpeg4 -acodec copy $2
 				;;
 			mp4)
-				ffmpeg -i $1 -b:v 4000k -c:v mpeg4 $2
+				ffmpeg -i $1 -b:v 4000k -c:v mpeg4 -acodec copy $2
 				;;
 			*)
 				print Unknown format $2:e
@@ -123,7 +128,7 @@ env() {
 		esac
 	}
 
-	alias mplayer='mplayer -osdlevel 3 -speed 1.5'
+	alias mplayer='mplayer -osdlevel 3 -speed 1.5 -af scaletempo'
 
 	cd $VIDEOS
 	help
@@ -134,6 +139,7 @@ cleanup() {
 	kill $VOKOPID
 	xset s on +dpms
 	compton& disown
+	print "\033]710;xft:hack:pixelsize=32:antialias=true\007"
 	case $HOSTNAME in
 		endeavour)
 			print Xft.dpi: 200 | xrdb -quiet -override
