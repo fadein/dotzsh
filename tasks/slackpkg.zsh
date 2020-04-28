@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.8"
-    DATE="Thu Mar 26 08:21:42 MDT 2020"
+ VERSION="1.9"
+    DATE="Tue Apr 28 06:28:12 MDT 2020"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -12,7 +12,17 @@ NICE=/usr/bin/nice
 
 setup() {
 	raisePrivs
-	modprobe -a fat vfat nls_cp437 nls_iso8859-1 || die "Couldn't insert modules needed to mount /boot/efi"
+
+	case $HOSTNAME in
+		voyager2*|mariner*|endeavour)
+			if ! findmnt /boot/efi >/dev/null 2>&1; then
+				modprobe -a fat vfat nls_cp437 nls_iso8859-1 || die "Couldn't insert modules needed to mount /boot/efi"
+				mount /boot/efi || die "Couldn't mount /boot/efi"
+			else
+				print /boot/efi is already mounted
+			fi
+			;;
+	esac
 }
 
 # spawn a (nice) root child shell
@@ -100,7 +110,7 @@ the new kernel:
 It should echo back a command including a big list of kernel modules"
 
 case $HOSTNAME in
-	voyager2*|mariner*)
+	voyager2*|mariner*|endeavour)
 		print $IMPORTANT
 
 		if sed -n -e '/a\/kernel-generic.*/q0' -e "/^$LAST_UPDATE/q1" /var/lib/slackpkg/ChangeLog.txt; then
@@ -114,12 +124,11 @@ case $HOSTNAME in
 		fi
 
 		_TODO+=(
-			'$ mount /boot/efi'
 			'$ cd /boot/efi/EFI/Slackware/'
 			'$ cp /boot/vmlinuz*(.) .'
 			'run $(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k <KERNEL-VER>)'
 			'run cp /boot/initrd.gz initrd-<KERNEL-VER>.gz'
-			'edit elilo.conf to point to the new kernel (make it be the 1st entry)'
+			'edit elilo.conf to point to the new kernel (make it the 1st entry)'
 		)
 	;;
 esac
@@ -128,3 +137,4 @@ esac
 
 # vim: set noexpandtab:
 source $0:h/__TASKS.zsh
+
