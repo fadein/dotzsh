@@ -252,9 +252,9 @@ function _git_branch_details() {
     # show number of non-indexed changes in red
     # and number of indexed changes in green
     if [[ -n "${staged}${dirty}${unmerged}${untracked}" ]]; then
-        print "%(?..%s) (%(?..%S)%F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u%s %(?..%S)${branch}%s${upstream:+ }%(?..%S)${diverged+%F{red\}$diverged}${upstream}%f)"
+        print "%(?..%s) (%(?..%S)%F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u%s %(?..%S)${branch}%s${upstream:+ }%(?..%S)${diverged+%F{red\}$diverged}${upstream}%f%(?..%s))"
     else
-        print "%(?..%s) (%(?..%S)%F{green}${branch}${upstream:+ }${diverged+%F{red\}$diverged}${upstream}%f)"
+        print "%(?..%s) (%(?..%S)%F{green}${branch}${upstream:+ }${diverged+%F{red\}$diverged}${upstream}%f%(?..%s))"
     fi
 }
 
