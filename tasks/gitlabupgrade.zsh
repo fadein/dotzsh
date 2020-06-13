@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.1"
-    DATE="Sat Feb 29 09:15:09 MST 2020"
+ VERSION="1.2"
+    DATE="Fri Jun 12 19:32:14 MDT 2020"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -24,12 +24,11 @@ env() {
 		'$ apt list --upgradable'
 		'$ apt upgrade -y'
 		'$ gitlab-ctl status'
-		'$ gitlab-ctl stop'
 		'$ cd /opt/gitlab/embedded/service/gitaly-ruby/git-hooks'
 		'$ ln -sf post-receive.pl post-receive'
-		'$ cd; mv gitlab.msg gitlab.msg.old'
 		"Make sure the hook was replaced by pushing a commit"
-		"Retire the broadcast message"
+		"Retire the webpage broadcast message"
+		'$ cd; mv gitlab.msg gitlab.msg.old'
 		'$ if [[ -f /var/run/reboot-required ]]; then print Reboot is required; else print Reboot is NOT required; fi'
 	)
 }
