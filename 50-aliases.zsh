@@ -9,6 +9,7 @@ alias date='date +"%a, %b %e %Y  %R %Z"'
 alias df='df -h'
 alias dmesg="dmesg -H"
 alias du='du -h'
+alias feh='feh --scale-down'
 alias ffmpeg='ffmpeg -hide_banner'
 alias ffplay='ffplay -hide_banner'
 alias ffprobe='ffprobe -hide_banner'
