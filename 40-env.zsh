@@ -24,8 +24,8 @@ export EDITOR=/usr/bin/vim
 export EDIT=$EDITOR
 
 #
-# Add to PATH, MANPATH, and cull out duplicates
-for D in /usr/sbin ~/bin ~/.zsh ~/.zsh/tasks; do
+# Add to PATH, MANPATH, FPATH and cull out duplicates
+for D in /usr/local/sbin /usr/sbin /sbin ~/bin ~/.local/bin ~/.zsh ~/.zsh/tasks; do
     [[ -d $D ]] && PATH+=:$D:A
 done
 for D in /usr/local/man /usr/local/share/man /usr/man /usr/share/man /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
@@ -47,7 +47,6 @@ fi
 # boring, change the %j below to %s for seconds since epoch
 sengines=(https://ixquick.com/
 	https://duckduckgo.com/lite/
-	# https://privatelee.com/ # requires JS
 	https://yippy.com/
 	https://hulbee.com/
 	https://search.disconnect.me/

@@ -100,9 +100,8 @@ whatismyipaddress() {
 
 # geolocate an ip address with cURL and the ip-api.com service
 iplocate() {
-    if [[ $# < 1 ]]; then
-        print "Usage: iplocate IP ..."
-        return 1
+    if (( $# < 1 )); then
+        curl -s http://ip-api.com/json/ | python3 -m json.tool
     else
         until [[ $# < 1 ]]; do
             curl -s http://ip-api.com/json/$1 | python3 -m json.tool
@@ -162,11 +161,6 @@ countdown() {
     if [[ $# -ge 1 ]]; then
         eval $@
     fi
-}
-
-
-ipcheck() {
-    curl -s http://ip-api.com/json/ | python3 -m json.tool
 }
 
 
