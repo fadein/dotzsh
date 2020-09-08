@@ -22,6 +22,8 @@ export PAGER='less -r'
 export LESS='-MFX'
 export EDITOR=/usr/bin/vim
 export EDIT=$EDITOR
+export TMPDIR=/tmp
+export TMP=/tmp
 
 #
 # Add to PATH, MANPATH, FPATH and cull out duplicates
