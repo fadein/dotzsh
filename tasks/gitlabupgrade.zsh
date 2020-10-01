@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.2"
-    DATE="Fri Jun 12 19:32:14 MDT 2020"
+ VERSION="1.3"
+    DATE="Sun Aug 30 20:31:14 MDT 2020"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -12,6 +12,8 @@ setup() {
 }
 
 env() {
+    _KEEP_FUNCTIONS=(prettySeconds)
+
 	local HOURS=4
 	if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
 		apt update
@@ -32,5 +34,12 @@ env() {
 		'$ if [[ -f /var/run/reboot-required ]]; then print Reboot is required; else print Reboot is NOT required; fi'
 	)
 }
+
+
+# Report on time spent on this task
+cleanup() {
+	echo This upgrade took $( prettySeconds ) to complete
+}
+
 
 source $0:h/__TASKS.zsh
