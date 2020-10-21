@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Tempdir: create a temporary directory under CWD; erase it when done"
-VERSION="1.0"
-   DATE="Tue Oct 20 13:50:11 MDT 2020"
+VERSION="1.1"
+   DATE="Tue Oct 20 19:47:29 MDT 2020"
  AUTHOR="fadein"
 
 PROGNAME=$0
@@ -21,7 +21,7 @@ env() {
 }
 
 cleanup() {
-    read -q "REPLY?Retain $_TMPDIR? [y/n] "
+    read -q "REPLY?Retain $_TMPDIR? [y/N] "
     print
     case $REPLY in
         Y|y)
