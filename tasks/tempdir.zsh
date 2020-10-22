@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Tempdir: create a temporary directory under CWD; erase it when done"
-VERSION="1.1"
-   DATE="Tue Oct 20 19:47:29 MDT 2020"
+VERSION="1.2"
+   DATE="Wed Oct 21 22:08:40 MDT 2020"
  AUTHOR="fadein"
 
 PROGNAME=$0
@@ -13,11 +13,16 @@ MKTEMP=/usr/bin/mktemp
 export _TMPDIR
 
 setup() {
-    _TMPDIR=$(mktemp -d $PWD/tmpXXXXXX) || exit 1
+    _TMPDIR=$(mktemp -d $PWD/temp-XXXXXXXX) || exit 1
 }
 
 env() {
     cd $_TMPDIR
+    print 'The shell function "tempdir" will return you here'
+    print 'This location is named by $_TMPDIR'
+    tempdir() {
+        pushd $_TMPDIR
+    }
 }
 
 cleanup() {
