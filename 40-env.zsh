@@ -26,22 +26,27 @@ export TMPDIR=/tmp
 export TMP=/tmp
 
 #
-# Add to PATH, MANPATH, FPATH and cull out duplicates
-for D in /usr/local/sbin /usr/sbin /sbin ~/bin ~/.local/bin ~/.zsh ~/.zsh/tasks; do
-    [[ -d $D ]] && PATH+=:$D:A
+# typeset -U -g constrains these vars to contain only unique elements
+typeset -U -g PATH path
+for D in /usr/local/bin ~/.local/bin /usr/local/sbin /usr/sbin /sbin ~/bin ~/.zsh ~/.zsh/tasks; do
+    [[ -d $D ]] && path=($D:A $path)
 done
+
+typeset -U -g FPATH fpath
+for D in ~/.zsh/functions; do
+    [[ -d $D ]] && fpath=($D:A $fpath)
+done
+
+#
+# Add to MANPATH and cull out duplicates
 for D in /usr/local/man /usr/local/share/man /usr/man /usr/share/man /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
     [[ -d $D ]] && MANPATH+=:$D:A
 done
-for D in ~/.zsh/functions; do
-    [[ -d $D ]] && FPATH+=:$D:A
-done
-export PATH MANPATH
+
+export MANPATH
 if declare -F uniquify >/dev/null; then
-    #remove duplicate entries from PATH, MANPATH, FPATH
-    [[ -n $PATH    ]] && PATH=$(uniquify $PATH)
+    #remove duplicate entries from MANPATH, FPATH
     [[ -n $MANPATH ]] && MANPATH=$(uniquify $MANPATH)
-    [[ -n $FPATH   ]] && FPATH=$(uniquify $FPATH)
 fi
 
 #
