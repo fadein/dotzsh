@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.9"
-    DATE="Tue Apr 28 06:28:12 MDT 2020"
+ VERSION="1.10"
+    DATE="Mon Dec 28 19:10:33 MST 2020"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -12,6 +12,11 @@ NICE=/usr/bin/nice
 
 setup() {
 	raisePrivs
+	grep -v '^#' /etc/slackpkg/mirrors || die "You need to uncomment one mirror from /etc/slackpkg/mirrors"
+	
+	$SLACKPKG update
+
+	[[ -f /var/lib/slackpkg/ChangeLog.txt ]] || die "'$SLACKPKG update' failed, or soemthing else went wrong"
 
 	case $HOSTNAME in
 		voyager2*|mariner*|endeavour)
@@ -54,7 +59,6 @@ help() {
 
 env() {
 
-	$SLACKPKG update
 	# ring the bell when the update is received
 	print "\C-g"
 

@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.10
-# Date:    Sat Feb 29 09:06:08 MST 2020
+# Version: 1.11
+# Date:    Mon Dec 28 19:12:09 MST 2020
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -20,6 +20,8 @@
 #   * spawn()
 #   * env()
 #   * cleanup()
+#
+# When setup() returns non-zero the task is aborted.
 #
 # Explore EXAMPLE.zsh to see the role each of these functions play.
 
@@ -141,7 +143,7 @@ fi
 # Commands to execute when this script is run by the user
 if [[ 0 == "$#" && -z "$TASK" ]]; then
 
-	if functions setup >/dev/null; then setup; fi
+	if functions setup >/dev/null; then setup || exit $?; fi
 
 	if functions spawn >/dev/null; then
 		spawn
