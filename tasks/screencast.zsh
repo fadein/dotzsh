@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
-PURPOSE="Recording a screencast"
-VERSION="1.3"
-   DATE="Thu Apr  9 21:32:13 MDT 2020"
+PURPOSE="Recording a screencast with Vokoscreen + Flowblade"
+VERSION="1.4"
+   DATE="Thu Jan  7 18:23:58 MST 2021"
  AUTHOR="Erik Falor"
 
 PROGNAME=$0
@@ -13,7 +13,7 @@ VIDEOS=~/Videos/
 setup() {
 	case $HOSTNAME in
 		endeavour)
-			# Set the DPI for Firefox
+			# Set the DPI for Firefox in 1080p mode
 			print Xft.dpi: 132 | xrdb -quiet -override
 
 			# Set my screen to 1080p
@@ -26,83 +26,96 @@ setup() {
 	fi
 
 	xset s off -dpms
-	killall compton
+	killall picom
 	if ! [[ -d $VIDEOS ]]; then
 		mkdir -p $VIDEOS
 	fi
 
-	urxvt -geometry 88x19 -fn xft:hack:pixelsize=14:antialias=true -bg midnightblue -e sh -c "cd Videos; vokoscreen" &
+	# create Flowblade render args file
+	if ! [[ -f $VIDEOS/webm.rargs ]]; then
+		cat <<-WEBM_RARGS > $VIDEOS/webm.rargs
+		f=webm
+		acodec=libvorbis
+		ab=128k
+		vcodec=libvpx
+		g=120
+		rc_lookahead=16
+		quality=good
+		speed=0
+		vprofile=0
+		qmax=51
+		qmin=11
+		slices=4
+		vb=8000k
+		maxrate=24M
+		minrate=100k
+		arnr_max_frames=7
+		arnr_strength=5
+		arnr_type=3
+		auto-alt-ref=0
+		mlt_image_format=rgb24a
+		pix_fmt=yuv420p
+		WEBM_RARGS
+	fi
 
-	print "\033]710;xft:hack:pixelsize=14:antialias=true\007"
-
+	urxvt -geometry 88x19 -fn xft:hack:pixelsize=14:antialias=true -bg midnightblue -e sh -c "cd Videos; vokoscreenNG" &
 	VOKOPID=$!
+	print "\033]710;xft:hack:pixelsize=14:antialias=true\007"
 	sleep .25
 	disown
 }
 
 
-help() {
+usage() {
 	>&1 <<-MESSAGE
 	# Using vokoscreen
 
-	0.  Put DWM in floating mode
-
-	1.  *Display* Record fullscreen on Display #2: 1920x1080
+	1.  *Display* Record fullscreen on eDP1: 1920x1080
+		*	Disable magnification
 		*   Set a countdown of 3 seconds, wait until the countdown screen completely disappears before speaking
 
 	2.  *Audio*
-		*   Select _Alsa_, and _Yeti Stereo Microphone_
+		*   Select _Yeti Stereo Microphone Analog Stereo_
+		*   Deselect all *Monitor* inputs, including _Monitor of Yeti ..._
 
 	3.  *Video*
-		*   Keep the defaults:
-			- 25 fps
-			- Format: mkv
-			- Videocodec: mpeg4
-			- Audiocodec: libmp3lame
+		- 25 fps
+		- Format: webm
+		- Videocodec: VP8
 
 
 	# Uploading to Canvas
 
-	Upload a video converted to .avi (or .mp4) format as a file.
+	Upload a video in .webm format as a file.
 
 	Embed it into a page as an ordinary file using the sidebar on the right.
 	Canvas will replace the link with a thumbnail that expands to a video player
 	when clicked.
 
 
-	# Uploading to Kaltura
-
-	Upload the .mkv file to Kaltura's media gallery.  It'll become available after they do their processing
-
 	# Captioning videos
 
 	Once the video is live email <captions@usu.edu> with the URL so they can caption it
-
-
-	# Converting Vokoscreen recordings to AVI format
-
-	Canvas will auto-embed AVI files into an online player.  MKV is not supported.
-
-	In order to just copy the video and audio bitstream, thus without quality loss
-	run this command.  This is *fast*:
-
-		ffmpeg -i filename.mkv -c:v copy -c:a copy output.avi
-
-
-	When that doesn't work, FFmpeg can convert video and audio into the new format:
-
-		ffmpeg -i filename.mkv output.avi
-
-
-	# Reducing file size
-	
-	Use the 'shrink(IN, OUT)' shell function
 
 	MESSAGE
 }
 
 
 env() {
+	quickavi() {
+		if [[ $# -lt 1 ]]; then
+			print "Usage: quickavi INPUT"
+			return 1
+		fi
+
+		if [[ $1:e == avi ]]; then
+			print "$1 is already in AVI format"
+			return 2
+		fi
+
+		ffmpeg -hide_banner -i $1 -bsf:v h264_mp4toannexb -c:v copy -c:a copy $1:r.avi
+	}
+
 	shrink() {
 		if [[ $# -lt 2 ]]; then
 			print "Usage: shrink INPUT OUTPUT"
@@ -128,17 +141,32 @@ env() {
 		esac
 	}
 
+	flowblade () {
+		OLD_DPI=$(xrdb -q | \grep Xft.dpi) 
+		echo "Xft.dpi: 232" | xrdb -override
+		echo "Xft.dpi: 96" | xrdb -override
+		~/build/flowblade/flowblade-trunk/flowblade
+		echo "$OLD_DPI" | xrdb -override
+	}
+
+
+	typeset -gA _HELP
+	_HELP+=(quickavi "DEPRECATED: quickly convert MKV into AVI"
+		shrink "DEPRECATED: re-encode an MP4 or MKV into a lower bitrate"
+		usage "Display a helpful usage message"
+		flowblade "Run flowblade (Git version) out of ~/build"
+	)
+
 	alias mplayer='mplayer -osdlevel 3 -speed 1.5 -af scaletempo'
 
 	cd $VIDEOS
-	help
+	usage
 }
 
 
 cleanup() {
 	kill $VOKOPID
 	xset s on +dpms
-	compton& disown
 	print "\033]710;xft:hack:pixelsize=32:antialias=true\007"
 	case $HOSTNAME in
 		endeavour)
@@ -146,6 +174,9 @@ cleanup() {
 			xrandr --output eDP1 --mode 3840x2160
 			;;
 	esac
+
+	sleep .25
+	picom& disown
 }
 
 source $0:h/__TASKS.zsh
