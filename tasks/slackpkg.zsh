@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.10"
-    DATE="Mon Dec 28 19:10:33 MST 2020"
+ VERSION="1.11"
+    DATE="Tue Jan 12 10:42:50 MST 2021"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -36,7 +36,24 @@ spawn() {
 }
 
 
-help() {
+kernelUpdateInstrs() {
+	cat <<-MSG
+	After updating the kernel on LVM systems (Voyager2, Mariner), you must copy the
+	new kernel files into /boot/efi/EFI/Slackware/
+
+	Make sure that the vmlinuz file there is replaced by the vmlinuz-generic file.
+
+	Next, re-create the initrd by running this command, inserting the version
+	number of the new kernel:
+
+	    # /usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k 5.10.6
+
+	It should echo back a command including a big list of kernel modules
+	MSG
+}
+
+
+usage() {
 	>&1 <<-MESSAGE
 	
 	### package logs
@@ -57,21 +74,34 @@ help() {
 }
 
 
+recordTimeOfLastUpdate() {
+	head -n1 /var/lib/slackpkg/ChangeLog.txt > /tmp/slackpkg.last_update.txt
+}
+
 env() {
+	# Support for help function
+	typeset -gA _HELP
+	_HELP+=(usage "Instructions for using this task"
+	        kernelUpdateInstrs "EFI+ELILO kernel configuration"
+	)
 
 	# ring the bell when the update is received
 	print "\C-g"
 
 	_TODO=(
 		"\$ $SLACKPKG install-new"
-		"\$ $SLACKPKG upgrade-all")
+		"\$ $SLACKPKG upgrade-all"
+		"\$ recordTimeOfLastUpdate" # Store the date of this update in /tmp
+	)
 
+	# add this host's name if I'm running multilib here
 	case $HOSTNAME in
 		nevermind*)
 			_TODO+=(
 				"\$ $SLACKPKG upgrade multilib"
 				"\$ $SLACKPKG install multilib"
 			)
+			;;
 	esac
 
 	LAST_UPDATE=
@@ -87,58 +117,56 @@ env() {
 		These new packages have been added to the repo since the last update:
 		BANNER
 		sed -n -e '/Added.$/p' -e "/^$LAST_UPDATE/q" /var/lib/slackpkg/ChangeLog.txt
+	else
+		cat <<-BANNER
+		
+		
+		===================================================
+		\$LAST_UPDATE is unset; no updates have occurred
+		===================================================
+		BANNER
 	fi
 
-	# Store the date of this update
-	head -n1 /var/lib/slackpkg/ChangeLog.txt > /tmp/slackpkg.last_update.txt
 
+	case $HOSTNAME in
+		voyager2*|mariner*|endeavour|columbia)
+			print $IMPORTANT
 
-	help
+			if sed -n -e '/a\/kernel-generic.*/q0' -e "/^$LAST_UPDATE/q1" /var/lib/slackpkg/ChangeLog.txt; then
+				KERNEL_VER=$(sed -n -e '/a.kernel-generic/{ s/a.kernel-generic-\([^-]*\)-.*$/\1/p; q }' /var/lib/slackpkg/ChangeLog.txt)
+				UPDATED=1
+				_TODO+=('The kernel was updated; run the subsequent commands')
+			else
+				KERNEL_VER='<KERNEL_VER>'
+				UPDATED=
+				_TODO+=("The kernel wasn't updated; you may skip the following commands")
+			fi
 
-IMPORTANT="
-
-!!!!!!!!!!!!!!!!!
-!!! IMPORTANT !!!
-!!!!!!!!!!!!!!!!!
-
-After updating the kernel on LVM systems (Voyager2, Mariner), you must copy the
-new kernel files into /boot/efi/EFI/Slackware/
-
-Make sure that the vmlinuz file there is replaced by the vmlinuz-generic file.
-
-Next, re-create the initrd Run this command, inserting the version number of
-the new kernel:
-
-	# /usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k 4.4.75
-
-It should echo back a command including a big list of kernel modules"
-
-case $HOSTNAME in
-	voyager2*|mariner*|endeavour)
-		print $IMPORTANT
-
-		if sed -n -e '/a\/kernel-generic.*/q0' -e "/^$LAST_UPDATE/q1" /var/lib/slackpkg/ChangeLog.txt; then
 			_TODO+=(
-				'The kernel was updated; run the subsequent commands'
+				'$ cd /boot/efi/EFI/Slackware/'
+				'$ cp /boot/vmlinuz*(.) .'
+			)
+
+			if [[ -n $UPDATED ]]; then
+				_TODO+=(
+					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER)"
+					"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
 				)
 			else
-			_TODO+=(
-				"The kernel wasn't updated; you may skip the following commands"
+				_TODO+=(
+					"Run \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER)"
+					"Run cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
 				)
-		fi
+			fi
 
-		_TODO+=(
-			'$ cd /boot/efi/EFI/Slackware/'
-			'$ cp /boot/vmlinuz*(.) .'
-			'run $(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k <KERNEL-VER>)'
-			'run cp /boot/initrd.gz initrd-<KERNEL-VER>.gz'
-			'edit elilo.conf to point to the new kernel (make it the 1st entry)'
-		)
-	;;
-esac
+			_TODO+=(
+				"Make the new kernel become the 1st entry in elilo.conf"
+			)
+		;;
+	esac
 
+	usage
 }
 
 # vim: set noexpandtab:
 source $0:h/__TASKS.zsh
-
