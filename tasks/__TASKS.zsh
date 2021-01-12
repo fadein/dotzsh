@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.11
-# Date:    Mon Dec 28 19:12:09 MST 2020
+# Version: 1.12
+# Date:    Tue Jan 12 10:41:05 MST 2021
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -192,6 +192,16 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 						fi
 						[[ 0 == $#_TODO ]] && print "All done!" || true ;;
 
+					skip)
+						if [[ -z $2 ]]; then
+							print "todo skip: Specify a task to skip to"
+						elif (( $2 < 1 )) || (( $2 > ${#_TODO[@]} )); then
+							print "todo skip: Task $2 is out of bounds"
+						else
+							for ((I=1; I<$2; I++)) _TODO[1]=()
+						fi
+						;;
+
 					it) # if next task begins with '$', run it as a shell cmd
 						# any extra arguments are forwarded on to the command
 						if [[ 0 != $#_TODO && ${_TODO[1]#$ } != $_TODO[1] ]]; then
@@ -210,14 +220,15 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 					add)  # add a new task to the end of the list
 						[[ -n $2 ]] && _TODO+=$argv[2,-1] ;;
 
-					clear) # delete the entire todo list
+					clear) # delete the entire TODO list
 						unset _TODO ;;
 
 					help)
 						>&1 <<-'HELP'
 						todo                   Print the next task
 						todo list              List each task with its index
-						todo next              Skip over the current task
+						todo next              Remove the current task
+						todo skip index        Skip ahead to the specified task
 						todo rm|done [index]   Remove the current (or numbered) task from the list
 						todo add TASK          Append TASK to list (quote it!)
 						todo clear             Delete the entire list
