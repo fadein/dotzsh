@@ -16,10 +16,10 @@ setup() {
 	
 	$SLACKPKG update
 
-	[[ -f /var/lib/slackpkg/ChangeLog.txt ]] || die "'$SLACKPKG update' failed, or soemthing else went wrong"
+	[[ -f /var/lib/slackpkg/ChangeLog.txt ]] || die "The ChangeLog is missing; either '$SLACKPKG update' failed or something else went wrong"
 
 	case $HOSTNAME in
-		voyager2*|mariner*|endeavour)
+		voyager2*|mariner*|endeavour|columbia)
 			if ! findmnt /boot/efi >/dev/null 2>&1; then
 				modprobe -a fat vfat nls_cp437 nls_iso8859-1 || die "Couldn't insert modules needed to mount /boot/efi"
 				mount /boot/efi || die "Couldn't mount /boot/efi"
@@ -30,7 +30,8 @@ setup() {
 	esac
 }
 
-# spawn a (nice) root child shell
+# Spawn a (nice) child shell
+# This will be a root shell by virtue of raisePrivs() having been run in setup()
 spawn() {
 	TASK=$TASKNAME $NICE -n 10 $ZSH_NAME
 }
@@ -89,7 +90,7 @@ env() {
 		sed -n -e '/Added.$/p' -e "/^$LAST_UPDATE/q" /var/lib/slackpkg/ChangeLog.txt
 	fi
 
-	# Store the date of this update
+	# Store the date of this update for next time
 	head -n1 /var/lib/slackpkg/ChangeLog.txt > /tmp/slackpkg.last_update.txt
 
 
@@ -109,7 +110,7 @@ Make sure that the vmlinuz file there is replaced by the vmlinuz-generic file.
 Next, re-create the initrd Run this command, inserting the version number of
 the new kernel:
 
-	# /usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k 4.4.75
+	# /usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k 5.10.6
 
 It should echo back a command including a big list of kernel modules"
 
