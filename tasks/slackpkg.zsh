@@ -16,10 +16,10 @@ setup() {
 	
 	$SLACKPKG update
 
-	[[ -f /var/lib/slackpkg/ChangeLog.txt ]] || die "'$SLACKPKG update' failed, or soemthing else went wrong"
+	[[ -f /var/lib/slackpkg/ChangeLog.txt ]] || die "The ChangeLog is missing; either '$SLACKPKG update' failed or something else went wrong"
 
 	case $HOSTNAME in
-		voyager2*|mariner*|endeavour)
+		voyager2*|mariner*|endeavour|columbia)
 			if ! findmnt /boot/efi >/dev/null 2>&1; then
 				modprobe -a fat vfat nls_cp437 nls_iso8859-1 || die "Couldn't insert modules needed to mount /boot/efi"
 				mount /boot/efi || die "Couldn't mount /boot/efi"
@@ -30,7 +30,8 @@ setup() {
 	esac
 }
 
-# spawn a (nice) root child shell
+# Spawn a (nice) child shell
+# This will be a root shell by virtue of raisePrivs() having been run in setup()
 spawn() {
 	TASK=$TASKNAME $NICE -n 10 $ZSH_NAME
 }
