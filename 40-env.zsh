@@ -7,9 +7,6 @@ ulimit -c unlimited
 # Don't use Ctrl-S for scrollock; enable incremental history searching
 stty -ixon
 
-# set tabstops at 4 spaces
-tabs 4
-
 #
 # Zsh configuration variables
 HISTFILE=~/.zsh/history
