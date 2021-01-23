@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Recording a screencast with Vokoscreen + Flowblade"
-VERSION="1.4"
-   DATE="Thu Jan  7 18:23:58 MST 2021"
+VERSION="1.6"
+   DATE="Sat Jan 23 11:08:13 MST 2021"
  AUTHOR="Erik Falor"
 
 PROGNAME=$0
@@ -17,12 +17,12 @@ setup() {
 			print Xft.dpi: 132 | xrdb -quiet -override
 
 			# Set my screen to 1080p
-			xrandr --output eDP1 --mode 1920x1080
+			xrandr --output eDP-1 --mode 1920x1080
 			;;
 	esac
 
-	if [[ -f ~/.config/vokoscreen/vokoscreen.conf ]]; then
-		perl -pi -e 's!(VideoPath=).*!$1/home/fadein/Videos!' ~/.config/vokoscreen/vokoscreen.conf 
+	if [[ -f ~/.config/vokoscreenNG/vokoscreenNG.conf ]]; then
+		perl -pi -e 's!(VideoPath=).*!$1/home/fadein/Videos!' ~/.config/vokoscreenNG/vokoscreenNG.conf
 	fi
 
 	xset s off -dpms
@@ -59,9 +59,10 @@ setup() {
 	fi
 
 	urxvt -geometry 88x19 -fn xft:hack:pixelsize=14:antialias=true -bg midnightblue -e sh -c "cd Videos; vokoscreenNG" &
-	VOKOPID=$!
 	print "\033]710;xft:hack:pixelsize=14:antialias=true\007"
 	sleep .25
+
+	VOKOPID=$!
 	disown
 }
 
@@ -79,9 +80,11 @@ usage() {
 		*   Deselect all *Monitor* inputs, including _Monitor of Yeti ..._
 
 	3.  *Video*
-		- 25 fps
-		- Format: webm
-		- Videocodec: VP8
+		*   Keep the defaults:
+			- 25 fps
+			- Format: webm
+			- Videocodec: mpeg4
+			- Audiocodec: libmp3lame
 
 
 	# Uploading to Canvas
@@ -171,7 +174,7 @@ cleanup() {
 	case $HOSTNAME in
 		endeavour)
 			print Xft.dpi: 200 | xrdb -quiet -override
-			xrandr --output eDP1 --mode 3840x2160
+			xrandr --output eDP-1 --mode 3840x2160
 			;;
 	esac
 
