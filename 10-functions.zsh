@@ -1,4 +1,4 @@
-#!/bin/zsh
+# vim: set ft=zsh expandtab:
 
 
 #TODO: see about making these functions autoloadable
@@ -36,7 +36,7 @@ ding() {
 uniquify() {
     local IFS=:
     local -a OUT_A
-	local i j
+    local i j
     for i in "${=1}"; do
         local in=
         for j in "${=OUT_A}"; do
@@ -483,4 +483,3 @@ _increase_number() {
   (( diff = $#BUFFER - $prelength ))
   (( CURSOR = last + diff ))
 }
-
