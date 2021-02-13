@@ -11,6 +11,43 @@ autoload -U edit-command-line && zle -N edit-command-line
 autoload zmv zargs zcalc
 
 
+# Simple recycle bin implementation.  Moves files into $RECYCLE, after which they are deleted after a few days.
+#
+# Works in conjunction with this crontab snippet:
+#
+RECYCLE=~/.recycle
+RECYCLE_DAYS=30
+# Take out the trash every 2 hours
+# 00 */2   *   *  *          find $RECYCLE -mindepth 1 -ctime +$DAYS -exec rm -rf '{}' +
+#
+recycle() {
+    if (( $# < 1 )); then
+        print Usage: recycle FILE_OR_DIR...
+    else
+        if [[ ! -d $RECYCLE ]]; then
+            print Creating recycle bin $RECYCLE
+            if ! mkdir $RECYCLE; then
+                print Failed to create recycle bin $RECYCLE
+                return 1
+            fi
+        fi
+        local SUCCESS=0
+        until (( $# < 1 )); do
+            print Recycling $1
+            if mv $1 $RECYCLE; then
+                (( SUCCESS ++))
+            fi
+            shift
+        done
+
+        if (( SUCCESS == 1 )); then
+            print This file will be deleted in $DAYS days
+        elif (( SUCCESS > 1 )); then
+            print These files will be deleted in $DAYS days
+        fi
+    fi
+}
+
 
 # ding is a command-modifier, much like `time` or `sudo`
 # Ring the bell once when the supplied command succeeds, thrice when it has failed
