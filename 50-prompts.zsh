@@ -94,7 +94,7 @@ function title {
 # Set the XTerm window title property
 # The default value appears as "[host] zsh tty cwd"
 function precmd {
-    title "[$HOSTNAME] " "zsh" "${TTY#/dev/} $PWD"
+    title "[$HOSTNAME] " "zsh" "$PWD ${TTY#/dev/}"
 }
 
 # Helper to set the terminal window's title to the running command,
