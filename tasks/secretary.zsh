@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.1"
-   DATE="Fri Feb 12 23:06:11 MST 2021"
+VERSION="0.2"
+   DATE="Fri Feb 19 20:59:11 MST 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -10,14 +10,48 @@ TASKNAME=$0:t:r
 BROWSER=firefox
 CHURCH=~/Documents/Church
 
+BISHOPRIC=(
+	"King, Jeff"
+	"Nichols, Greg"
+	"Hunsaker, Jacob"
+	"Falor, Erik"
+	"Parker, Lance" 
+	)
+
+WARD_COUNCIL=(
+	$BISHOPRIC
+	"Thomsen, George"
+	"Eliason, Shannon"
+	"Fritzler, James"
+	"Conde, Eva"
+	"Edvalson, Amy"
+	"Clark, Derald"
+	)
+
+
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
-	To:  Falor, Erik; Hunsaker, Jacob; King, Jeff; Nichols, Greg; Parker, Lance 
-	Bishopric Meeting Tomorrow @ 7:30am
+	To: $BISHOPRIC
+	Bishopric Meeting Sunday @ 7:30am
 
 	Handbook Training: Bro. ~~~~~~~
 
-	See you tomorrow morning!
+	  See you Sunday morning!
+	-- Erik
+	EM
+}
+
+_ward_council_email() {
+	cat <<-EM > $CHURCH/bishopric_email
+	To:  $WARD_COUNCIL
+	Ward Council Meeting Sunday @ 8:45am
+
+	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
+
+	Spiritual Thought & Song: ~~~~~~~
+
+	  See you Sunday morning!
+	-- Erik
 	EM
 }
 
@@ -27,12 +61,12 @@ setup() {
 		https://docs.google.com/spreadsheets/d/1SRNa8kKWCzNE_VRsf-m5KQm-ky9y3dMYtpsamF1mMOM/edit \
 		"https://lcr.churchofjesuschrist.org/messaging?lang=eng" \
 		https://drive.google.com/drive/folders/1gGZF3WEEe2mB_DIAZdbdA9SbWXKyWeo7 \
-		https://calendar.google.com/calendar/u/0/r/week \
-		"https://lcr.churchofjesuschrist.org/?lang=eng"
+		https://calendar.google.com/calendar/u/0/r/week
 
 
 	[[ ! -d $CHURCH ]] && mkdir -p $CHURCH
 	[[ ! -f $CHURCH/bishopric_email ]] && _bishopric_email
+	[[ ! -f $CHURCH/ward_council_email ]] && _ward_council_email
 	cd $CHURCH
 }
 
@@ -49,6 +83,7 @@ env() {
         "check sacrament hymns"
         "copy sacrament agenda from last time"
 		"get conductor & speaker from Bishopric agenda"
+		"get prayers from Lance"
     )
 }
 
