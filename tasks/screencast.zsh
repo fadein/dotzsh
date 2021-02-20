@@ -11,6 +11,9 @@ TASKNAME=$0:t:r
 VIDEOS=~/Videos/
 
 setup() {
+	xset s off -dpms
+	killall picom
+
 	case $HOSTNAME in
 		endeavour)
 			# Set the DPI for Firefox in 1080p mode
@@ -25,8 +28,6 @@ setup() {
 		perl -pi -e 's!(VideoPath=).*!$1/home/fadein/Videos!' ~/.config/vokoscreenNG/vokoscreenNG.conf
 	fi
 
-	xset s off -dpms
-	killall picom
 	if ! [[ -d $VIDEOS ]]; then
 		mkdir -p $VIDEOS
 	fi
