@@ -18,8 +18,8 @@ autoload zmv zargs zcalc
 RECYCLE=~/.recycle
 RECYCLE_DAYS=30
 # Take out the trash every 2 hours
-# 00 */2   *   *  *          find $RECYCLE -mindepth 1 -ctime +$DAYS -exec rm -rf '{}' +
-#
+# 00 */2   *   *  *          find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS -exec rm -rf '{}' +
+
 recycle() {
     if (( $# < 1 )); then
         print Usage: recycle FILE_OR_DIR...
@@ -41,9 +41,9 @@ recycle() {
         done
 
         if (( SUCCESS == 1 )); then
-            print This file will be deleted in $DAYS days
+            print This file will be deleted in $RECYCLE_DAYS days
         elif (( SUCCESS > 1 )); then
-            print These files will be deleted in $DAYS days
+            print These files will be deleted in $RECYCLE_DAYS days
         fi
     fi
 }
