@@ -12,6 +12,7 @@ autoload zmv zargs zcalc
 
 
 # Simple recycle bin implementation.  Moves files into $RECYCLE, after which they are deleted after a few days.
+# Relies on realpath(1) to preserve file's original path name
 #
 # Works in conjunction with this crontab snippet:
 #
@@ -33,10 +34,29 @@ recycle() {
         fi
         local SUCCESS=0
         until (( $# < 1 )); do
-            print Recycling $1
-            if mv $1 $RECYCLE; then
-                (( SUCCESS ++))
+
+            if [[ -e $1 ]]; then
+                # preserve this file's original path name
+                local DEST=$(realpath $1)
+                DEST=$RECYCLE/${DEST//\//:}
+
+                # Append a suffix in case there is already a file in the recycle bin with this name
+                local I=0 TRY=$DEST
+                while [[ -e $TRY ]]; do
+                    TRY=$DEST.$(( I++ ))
+                done
+                DEST=$TRY
+
+                print "Recycling '$1' as '$DEST'..."
+
+                if mv $1 $DEST; then
+                    (( SUCCESS++ ))
+                fi
+
+            else
+                print "'$1' doesn't exist"
             fi
+
             shift
         done
 
