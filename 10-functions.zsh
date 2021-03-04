@@ -14,12 +14,17 @@ autoload zmv zargs zcalc
 # Simple recycle bin implementation.  Moves files into $RECYCLE, after which they are deleted after a few days.
 # Relies on realpath(1) to preserve file's original path name
 #
-# Works in conjunction with this crontab snippet:
+# Works in conjunction with this shell script and crontab snippet:
+#  #!/bin/sh
+#  # ~/bin/recycle.sh
+#  
+#  RECYCLE=~/.recycle
+#  RECYCLE_DAYS=30
+#  logger -- find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS -exec rm -rf '{}' +
 #
-RECYCLE=~/.recycle
-RECYCLE_DAYS=30
-# Take out the trash every 2 hours
-# 00 */2   *   *  *          find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS -exec rm -rf '{}' +
+# crontab:
+#  Take out the trash every 2 hours
+#  00 */2   *   *  *          $HOME/bin/recycle.sh
 
 recycle() {
     if (( $# < 1 )); then
