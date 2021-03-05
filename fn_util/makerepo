@@ -1,0 +1,58 @@
+# vim: set ft=zsh expandtab:
+
+
+makerepo() {
+
+    case $1 in
+        -h | -help | --help)
+            cat 1>&2 <<MSG 
+Create a remote git repo under /GIT on viking-dyn and push the current directory/repo
+If this directory isn't already a repo, create a new repo and commit EVERYTHING here
+
+If a repo name is not given, use the dirname of CWD
+
+Usage: $0 [REPO_NAME]
+
+MSG
+            return 1
+        ;;
+    esac
+
+    # If I'm not already in a git repo, make one here
+    if ! git status --porcelain=v1 2>/dev/null; then
+        git init
+        git add .
+        git commit -m "First post"
+    fi
+
+
+    # Ensure that there isn't already a remote named 'origin' here
+    if git remote | grep -qw origin; then
+        print 1>&2 "Error!  Remote named 'origin' already exists"
+        return 3
+    fi
+
+
+    # If the user didn't specify a name for the repo, use the dirname of CWD
+    if (( $# >= 1 )); then
+        REPO_NAME=$1
+    else
+        REPO_NAME=$PWD:t
+    fi
+
+    if ! ssh viking-dyn "git init --bare --shared=group /GIT/$REPO_NAME.git"; then
+        print 1>&2 "Error!  Failed to create the remote repo"
+        return 2
+    fi
+
+
+    if ! git remote add origin viking-dyn:/GIT/$REPO_NAME.git; then
+        print 1>&2 "Error!  Failed to add remote repo 'origin'"
+        return 2
+    fi
+
+    if ! git push --all -u origin; then
+        print 1>&2 "Error!  Failed to push --all refs to 'origin'"
+        return 2
+    fi
+}

@@ -1,0 +1,15 @@
+# vim: set ft=zsh expandtab:
+
+
+# Make and chdir into a new directory DIRNAME
+mcdir() {
+	if [ -z "$1" ]; then
+		echo Usage: mcdir DIRNAME
+		echo Make and change into DIRNAME
+		return
+	fi
+	if [[ ! -d "$1" ]]; then
+		mkdir -p "$1"
+	fi
+	cd "$1"
+}

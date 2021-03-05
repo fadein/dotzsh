@@ -1,0 +1,25 @@
+# vim: set ft=zsh expandtab:
+
+# Swap the contents of two files
+swap() {
+	if [ -z "$1" -o -z "$2" ]; then
+		echo Usage: swap file1 file2
+		echo Swaps the contents of file1 with file2
+		return
+	fi
+
+	if [ ! -r $1 -a ! -w $1 ]; then
+		echo No permission to move $1
+		return
+	fi
+	if [ ! -r $2 -a ! -w $2 ]; then
+		echo No permission to move $2
+		return
+	fi
+
+	RANDFILENAME=${RANDOM}${$}
+
+	mv -f $1 $RANDFILENAME
+	mv -f $2 $1
+	mv -f $RANDFILENAME $2
+}

@@ -1,0 +1,9 @@
+# vim: set ft=zsh expandtab:
+
+
+# report on the amount of entropy in the system
+entropy() {
+	local AVAIL=$(cat /proc/sys/kernel/random/entropy_avail)
+	local PSIZE=$(cat /proc/sys/kernel/random/poolsize)
+	printf "(%d/%d) %.2f%%\n" $AVAIL $PSIZE $(( $AVAIL / $PSIZE.0 * 100 ))
+}

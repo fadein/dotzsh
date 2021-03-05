@@ -1,0 +1,63 @@
+# vim: set ft=zsh expandtab:
+
+# Simple recycle bin implementation.  Moves files into $RECYCLE, after which they are deleted after a few days.
+# Relies on realpath(1) to preserve file's original path name
+#
+# Works in conjunction with this shell script and crontab snippet:
+#  #!/bin/sh
+#  # ~/bin/recycle.sh
+#  
+#  RECYCLE=~/.recycle
+#  RECYCLE_DAYS=30
+#  logger -- find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS -exec rm -rf '{}' +
+#
+# crontab:
+#  Take out the trash every 2 hours
+#  00 */2   *   *  *          $HOME/bin/recycle.sh
+
+recycle() {
+    if (( $# < 1 )); then
+        print Usage: recycle FILE_OR_DIR...
+    else
+        if [[ ! -d $RECYCLE ]]; then
+            print Creating recycle bin $RECYCLE
+            if ! mkdir $RECYCLE; then
+                print Failed to create recycle bin $RECYCLE
+                return 1
+            fi
+        fi
+        local SUCCESS=0
+        until (( $# < 1 )); do
+
+            if [[ -e $1 ]]; then
+                # preserve this file's original path name
+                local DEST=$(realpath $1)
+                DEST=$RECYCLE/${DEST//\//:}
+
+                # Append a suffix in case there is already a file in the recycle bin with this name
+                local I=0 TRY=$DEST
+                while [[ -e $TRY ]]; do
+                    TRY=$DEST.$(( I++ ))
+                done
+                DEST=$TRY
+
+                print "Recycling '$1' as '$DEST'..."
+
+                if mv $1 $DEST; then
+                    (( SUCCESS++ ))
+                fi
+
+            else
+                print "'$1' doesn't exist"
+            fi
+
+            shift
+        done
+
+        if (( SUCCESS == 1 )); then
+            print This file will be deleted in $RECYCLE_DAYS days
+        elif (( SUCCESS > 1 )); then
+            print These files will be deleted in $RECYCLE_DAYS days
+        fi
+    fi
+}

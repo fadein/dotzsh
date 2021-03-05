@@ -1,0 +1,32 @@
+# vim: set ft=zsh expandtab:
+
+# countdown is a command-modifier, much like `time` or `sudo`
+# Print a dramatic countdown timer before running a command
+countdown() {
+    if [[ $# -lt 1 ]]; then
+        echo 'Usage: countdown SECONDS [CMD ARGS]'
+        return 1
+    fi
+
+    local N I
+    N=$1
+    I=1
+    shift
+    [[ $# -ge 1 ]] && echo "Running '$@' in "
+
+    until [[ $N -eq 0 ]]; do
+        if [[ $((I % 10)) -eq 0 ]]; then
+            echo "$N... "
+        else
+            echo -n "$N... "
+        fi
+
+        sleep 1
+        ((N--, I++))
+    done
+    echo Done
+
+    if [[ $# -ge 1 ]]; then
+        eval $@
+    fi
+}

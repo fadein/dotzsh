@@ -1,0 +1,11 @@
+# vim: set ft=zsh expandtab:
+
+
+sec2time() {
+    while [ $# -gt 0 ]; do
+        TZ=GMT perl -e "print scalar localtime $1, \" GMT\n\""
+        TZ=MST perl -e "print scalar localtime $1, \" MST\n\""
+        echo
+        shift
+    done
+}

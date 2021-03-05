@@ -84,4 +84,7 @@ else
 	linkToHome $HERE               .zsh
 	linkToHome $HERE/zshrc         .zshrc
 	linkToHome $HERE/zshenv        .zshenv
+
+    # Pre-build autoload functions
+    make
 fi

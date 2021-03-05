@@ -1,0 +1,21 @@
+# vim: set ft=zsh expandtab:
+
+# remove duplicate entries from colon separated string while preserving order
+uniquify() {
+    local IFS=:
+    local -a OUT_A
+    local i j
+    for i in "${=1}"; do
+        local in=
+        for j in "${=OUT_A}"; do
+            if [[ "$i" = "$j" ]]; then
+                in=1
+                break
+            fi
+        done
+        if [[ -z "$in" ]]; then
+            OUT_A+=($i)
+        fi
+    done
+    echo "$OUT_A"
+}

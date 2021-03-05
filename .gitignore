@@ -2,3 +2,4 @@ cache
 calc_history
 compdump
 history
+*.zwc

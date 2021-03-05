@@ -1,0 +1,13 @@
+# vim: set ft=zsh expandtab:
+
+# geolocate an ip address with cURL and the ip-api.com service
+iplocate() {
+    if (( $# < 1 )); then
+        curl -s http://ip-api.com/json/ | python3 -m json.tool
+    else
+        until [[ $# < 1 ]]; do
+            curl -s http://ip-api.com/json/$1 | python3 -m json.tool
+            shift
+        done
+    fi
+}

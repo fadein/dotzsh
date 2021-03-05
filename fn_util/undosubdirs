@@ -1,0 +1,20 @@
+# vim: set ft=zsh expandtab:
+
+
+undosubdirs() {
+	if [ -z $1 ]
+	then
+		for dir in *
+		do
+			echo Really undo $dir \(y/n\)\?
+			read yn
+			if [ $yn = "y" ]; then
+				mv -i $dir/* .
+				rmdir $dir
+			fi
+		done
+	else
+		mv -i $1/* .
+		rmdir $1
+	fi
+}

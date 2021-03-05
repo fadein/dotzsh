@@ -1,0 +1,7 @@
+# vim: set ft=zsh expandtab:
+
+
+# Escalate privileges, Hollywood style
+override() {
+	eval sudo $(fc -lLn -1)
+}

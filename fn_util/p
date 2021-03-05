@@ -1,0 +1,7 @@
+# vim: set ft=zsh expandtab:
+
+
+# In case I fatfinger Ctrl-p
+p() {
+	eval $(fc -lLn -1)
+}
