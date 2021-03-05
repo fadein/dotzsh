@@ -29,6 +29,15 @@ WARD_COUNCIL=(
 	)
 
 
+YOUTH_COUNCIL=(
+	$BISHOPRIC
+	"Priest Quorum 1st Assistant"
+	"Teacher's & Deacon's Quorum Presidents"
+	"Young Women Class Presidents"
+	"Young Women President"
+	)
+
+
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
 	To: $BISHOPRIC
@@ -55,6 +64,23 @@ _ward_council_email() {
 	EM
 }
 
+
+_youth_council_email() {
+	cat <<-EM > $CHURCH/youth_council_email
+	To:  $YOUTH_COUNCIL
+	Youth Council Meeting Sunday @ 8:45am
+
+	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
+	Meeting ID: 952 2086 3203
+	Passcode: 425441
+
+	Spiritual Thought & Song: ~~~~~~~
+
+	  See you Sunday morning!
+	-- Erik
+	EM
+}
+
 setup() {
 	$BROWSER \
 		https://docs.google.com/document/d/1_IaASzBuJGxxLkk58LpNGUdSdCyYXuS0p5gEADiwNVw/edit \
@@ -67,6 +93,7 @@ setup() {
 	[[ ! -d $CHURCH ]] && mkdir -p $CHURCH
 	[[ ! -f $CHURCH/bishopric_email ]] && _bishopric_email
 	[[ ! -f $CHURCH/ward_council_email ]] && _ward_council_email
+	[[ ! -f $CHURCH/youth_council_email ]] && _youth_council_email
 	cd $CHURCH
 }
 
