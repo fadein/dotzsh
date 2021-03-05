@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.2"
-   DATE="Fri Feb 19 20:59:11 MST 2021"
+VERSION="0.3"
+   DATE="Thu Mar  4 21:37:40 MST 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -42,7 +42,7 @@ _bishopric_email() {
 }
 
 _ward_council_email() {
-	cat <<-EM > $CHURCH/bishopric_email
+	cat <<-EM > $CHURCH/ward_council_email
 	To:  $WARD_COUNCIL
 	Ward Council Meeting Sunday @ 8:45am
 
