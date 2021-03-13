@@ -87,8 +87,8 @@ setup() {
 		https://docs.google.com/spreadsheets/d/1SRNa8kKWCzNE_VRsf-m5KQm-ky9y3dMYtpsamF1mMOM/edit \
 		"https://lcr.churchofjesuschrist.org/messaging?lang=eng" \
 		https://drive.google.com/drive/folders/1gGZF3WEEe2mB_DIAZdbdA9SbWXKyWeo7 \
-		https://calendar.google.com/calendar/u/0/r/week
-
+		https://calendar.google.com/calendar/u/0/r/week \
+		>/dev/null 2>&1 &
 
 	[[ ! -d $CHURCH ]] && mkdir -p $CHURCH
 	[[ ! -f $CHURCH/bishopric_email ]] && _bishopric_email
