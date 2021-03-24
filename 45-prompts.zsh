@@ -1,5 +1,16 @@
 # prompts.zsh
 
+
+# Timestamp in RPROMPT updates when command is run
+# Inspired by https://stackoverflow.com/questions/13125825/zsh-update-prompt-with-current-time-when-a-command-is-started
+WHEN=%F{white}%D{%K:%M:%S}
+function _reset-prompt-and-accept-line {
+    zle reset-prompt
+    zle .accept-line     # Note the . meaning the built-in accept-line.
+}
+zle -N accept-line _reset-prompt-and-accept-line
+
+
 #Choose color for host and username #{
 if ! functions hostcolor >/dev/null; then
     case $OSTYPE in
@@ -148,6 +159,7 @@ function preexec() {
         title '[%m] ' $cmd[1]:t $cmd[2,-1]) 2>/dev/null
 }
 
+
 function plain() {
     PS1='%n@%M %~ %# '
 }
@@ -155,14 +167,14 @@ function plain() {
 #The jobcount is colored red if non-zero.
 function colorful() {
     PROMPT="%(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~ %# $_UTEXT"
-    RPROMPT="${_UEND}%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B${WHEN:+$WHEN }%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() {
     PROMPT="%(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~ %# $_UTEXT"
-    RPROMPT="${_UEND}%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B${WHEN:+$WHEN }%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 function _git_branch_details() {
@@ -270,7 +282,7 @@ function git() {
     PROMPT="%(?..%F{white}%K{red}%?%k%f %S)$(hostcolor %4~)\$(_git_branch_details)%(?..%s) $(usercolor '%#') ${_UTEXT}"
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
-    RPROMPT="${_UEND}%B%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B${WHEN:+$WHEN }%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 
