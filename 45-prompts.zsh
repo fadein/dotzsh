@@ -3,9 +3,14 @@
 
 # Timestamp in RPROMPT updates when command is run
 # Inspired by https://stackoverflow.com/questions/13125825/zsh-update-prompt-with-current-time-when-a-command-is-started
-WHEN=%F{white}%D{%K:%M:%S}
+#
+# Setting then unsetting `psvar` causes the time stamp to appear only
+# after accepting the command line
+WHEN="%F{white}%* "
 function _reset-prompt-and-accept-line {
+    psvar=(1)
     zle reset-prompt
+    psvar=()
     zle .accept-line     # Note the . meaning the built-in accept-line.
 }
 zle -N accept-line _reset-prompt-and-accept-line
@@ -167,14 +172,15 @@ function plain() {
 #The jobcount is colored red if non-zero.
 function colorful() {
     PROMPT="%(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~ %# $_UTEXT"
-    RPROMPT="${_UEND}%B${WHEN:+$WHEN }%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
+
 
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() {
     PROMPT="%(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~ %# $_UTEXT"
-    RPROMPT="${_UEND}%B${WHEN:+$WHEN }%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 function _git_branch_details() {
@@ -282,7 +288,7 @@ function git() {
     PROMPT="%(?..%F{white}%K{red}%?%k%f %S)$(hostcolor %4~)\$(_git_branch_details)%(?..%s) $(usercolor '%#') ${_UTEXT}"
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
-    RPROMPT="${_UEND}%B${WHEN:+$WHEN }%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 
