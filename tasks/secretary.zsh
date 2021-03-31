@@ -116,6 +116,8 @@ env() {
 		"get conductor & speaker from Bishopric agenda"
 		"get prayers from Lance"
     )
+
+	cal
 }
 
 
