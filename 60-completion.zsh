@@ -25,10 +25,11 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<-
 zstyle ':completion:*:(ssh|scp|rsync):*' hosts off
 
 # allow for autocomplete to be case insensitive
-zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+l:|?=** r:|?=**'
+# XXX this is broken!
+# zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+l:|?=** r:|?=**'
 
 # ^I goes forward in the completion menu, ^O goes backward
 bindkey '^O' reverse-menu-complete
 
 # initialize the autocompletion (from phat_sumo)
-#autoload -Uz compinit && compinit -i
+autoload -Uz compinit && compinit -i
