@@ -35,6 +35,7 @@ refresh() {
             print
         )
     done
+    ding
 }
 
 
