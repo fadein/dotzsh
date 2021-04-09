@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.4"
-   DATE="Thu Mar 18 21:35:53 MDT 2021"
+VERSION="0.5"
+   DATE="Thu Apr  8 21:12:58 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -11,21 +11,21 @@ BROWSER=firefox
 CHURCH=~/Documents/Church
 
 BISHOPRIC=(
-	"King, Jeff"
-	"Nichols, Greg"
-	"Hunsaker, Jacob"
-	"Falor, Erik"
-	"Parker, Lance" 
+	"Jeff King"
+	"Greg Nichols"
+	"Jacob Hunsaker"
+	"Erik Falor"
+	"Lance Parker"
 	)
 
 WARD_COUNCIL=(
 	$BISHOPRIC
-	"Thomsen, George"
-	"Eliason, Shannon"
-	"Fritzler, James"
-	"Conde, Eva"
-	"Edvalson, Amy"
-	"Clark, Derald"
+	"George Thomsen"
+	"Shannon Eliason"
+	"James Fritzler"
+	"Eva Conde"
+	"Amy Edvalson"
+	"Derald Clark"
 	)
 
 
@@ -40,19 +40,19 @@ YOUTH_COUNCIL=(
 
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
-	To: $BISHOPRIC
+	To: ${(j:, :)BISHOPRIC}
 	Bishopric Meeting Sunday @ 7:30am
 
 	Handbook Training: Bro. ~~~~~~~
 
-	  See you Sunday morning!
+	See you Sunday morning!
 	-- Erik
 	EM
 }
 
 _ward_council_email() {
 	cat <<-EM > $CHURCH/ward_council_email
-	To:  $WARD_COUNCIL
+	To:  ${(j:, :)WARD_COUNCIL}
 	Ward Council Meeting Sunday @ 8:45am
 
 	Zoom Link:
@@ -63,7 +63,7 @@ _ward_council_email() {
 	Meeting Agenda:
 	~~~~~~~
 
-	  See you Sunday morning!
+	See you Sunday morning!
 	-- Erik
 	EM
 }
@@ -71,7 +71,7 @@ _ward_council_email() {
 
 _youth_council_email() {
 	cat <<-EM > $CHURCH/youth_council_email
-	To:  $YOUTH_COUNCIL
+	To: ${(j:, :)YOUTH_COUNCIL}
 	Youth Council Meeting Sunday @ 8:45am
 
 	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
@@ -80,7 +80,7 @@ _youth_council_email() {
 
 	Spiritual Thought & Song: ~~~~~~~
 
-	  See you Sunday morning!
+	See you Sunday morning!
 	-- Erik
 	EM
 }
@@ -95,9 +95,10 @@ setup() {
 		>/dev/null 2>&1 &
 
 	[[ ! -d $CHURCH ]] && mkdir -p $CHURCH
-	[[ ! -f $CHURCH/bishopric_email ]] && _bishopric_email
-	[[ ! -f $CHURCH/ward_council_email ]] && _ward_council_email
-	[[ ! -f $CHURCH/youth_council_email ]] && _youth_council_email
+	# Restore the email templates
+	_bishopric_email
+	_ward_council_email
+	_youth_council_email
 	cd $CHURCH
 }
 
