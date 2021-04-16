@@ -18,6 +18,10 @@ BISHOPRIC=(
 	"Lance Parker"
 	)
 
+HIGH_COUNCIL=(
+	"Mark Anderson"
+	)
+
 WARD_COUNCIL=(
 	$BISHOPRIC
 	"George Thomsen"
@@ -40,7 +44,7 @@ YOUTH_COUNCIL=(
 
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
-	To: ${(j:, :)BISHOPRIC}
+	To: ${(j:, :)BISHOPRIC}, ${(j:, :)HIGH_COUNCIL}
 	Bishopric Meeting Sunday @ 7:30am
 
 	Handbook Training: Bro. ~~~~~~~
