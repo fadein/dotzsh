@@ -59,3 +59,8 @@ zmodload zsh/datetime
 #add one because zsh arrays are 1-indexed
 export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
 unset sengines
+
+
+#
+# Set a restrictive umask
+# umask 0027

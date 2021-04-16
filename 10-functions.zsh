@@ -118,7 +118,8 @@ alias 10th='nth 10'
 
 # turn off history recording
 offtherecord() {
-	umask 027
+    export _OLDUMASK=$(umask)
+    umask 027
 	if [[ -n "$HISTFILE" ]]; then
 		OLDHISTFILE=$HISTFILE
 		unset HISTFILE
@@ -136,7 +137,7 @@ otx() {
 
 # turn on history recording
 ontherecord() {
-	umask 022
+	umask ${_OLDUMASK:-027}
 	if [[ -n "$OLDHISTFILE" ]]; then
 		HISTFILE=$OLDHISTFILE
 		unset OLDHISTFILE
