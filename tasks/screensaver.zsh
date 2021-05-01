@@ -2,8 +2,8 @@
 
 #Program: screensaver.zsh
 PURPOSE="Temporarily disable display powersave mode"
-VERSION=1.1
-   DATE="Thu Oct  1 10:11:31 MDT 2020"
+VERSION=1.2
+   DATE="Sat May  1 09:54:47 MDT 2021"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
@@ -11,6 +11,7 @@ TASKNAME=$0:t:r
 
 setup() {
     xset -dpms s off
+    xset s off
     cat <<':'
    ___ ___________ ___ ___  ___ ___ __  _____ ____
   (_-</ __/ __/ -_) -_) _ \(_-</ _ `/ |/ / -_) __/
@@ -24,7 +25,8 @@ setup() {
 }
 
 cleanup() {
-    xset +dpms s on
+    xset +dpms
+    xset s on
 
     cat <<':'
    ___ ___________ ___ ___  ___ ___ __  _____ ____
