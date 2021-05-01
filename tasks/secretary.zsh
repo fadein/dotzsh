@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.5"
-   DATE="Thu Apr  8 21:12:58 MDT 2021"
+VERSION="0.6"
+   DATE="Sun Apr 25 09:52:16 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -45,7 +45,7 @@ YOUTH_COUNCIL=(
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
 	To: ${(j:, :)BISHOPRIC}, ${(j:, :)HIGH_COUNCIL}
-	Bishopric Meeting Sunday @ 7:30am
+	Bishopric Meeting Sunday @ 8:30am
 
 	Handbook Training: Bro. ~~~~~~~
 
@@ -57,7 +57,7 @@ _bishopric_email() {
 _ward_council_email() {
 	cat <<-EM > $CHURCH/ward_council_email
 	To:  ${(j:, :)WARD_COUNCIL}
-	Ward Council Meeting Sunday @ 8:45am
+	Ward Council Meeting Sunday @ 9:45am
 
 	Zoom Link:
 	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
@@ -76,9 +76,9 @@ _ward_council_email() {
 _youth_council_email() {
 	cat <<-EM > $CHURCH/youth_council_email
 	To: ${(j:, :)YOUTH_COUNCIL}
-	Youth Council Meeting Sunday @ 8:45am
+	Youth Council Meeting Sunday @ 9:45am
 
-	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
+	https://zoom.us/j/95018696863?pwd=WFZhTjNFcTNTNDNZSUh6dHdtSHk5Zz09
 	Meeting ID: 952 2086 3203
 	Passcode: 425441
 
@@ -93,8 +93,8 @@ setup() {
 	$BROWSER \
 		https://docs.google.com/document/d/1_IaASzBuJGxxLkk58LpNGUdSdCyYXuS0p5gEADiwNVw/edit \
 		https://docs.google.com/spreadsheets/d/1SRNa8kKWCzNE_VRsf-m5KQm-ky9y3dMYtpsamF1mMOM/edit \
-		"https://lcr.churchofjesuschrist.org/messaging?lang=eng" \
 		https://drive.google.com/drive/folders/1gGZF3WEEe2mB_DIAZdbdA9SbWXKyWeo7 \
+		"https://lcr.churchofjesuschrist.org/messaging?lang=eng" \
 		https://calendar.google.com/calendar/u/0/r/week \
 		>/dev/null 2>&1 &
 
