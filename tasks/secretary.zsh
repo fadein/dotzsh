@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.7"
-   DATE="Sat May  1 09:53:52 MDT 2021"
+VERSION="0.8"
+   DATE="Thu May 13 08:58:28 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -91,11 +91,11 @@ _youth_council_email() {
 
 setup() {
 	$BROWSER \
-		https://calendar.google.com/calendar/u/0/r/week \
 		https://docs.google.com/document/d/1_IaASzBuJGxxLkk58LpNGUdSdCyYXuS0p5gEADiwNVw/edit \
 		https://docs.google.com/spreadsheets/d/1SRNa8kKWCzNE_VRsf-m5KQm-ky9y3dMYtpsamF1mMOM/edit \
 		https://drive.google.com/drive/folders/1gGZF3WEEe2mB_DIAZdbdA9SbWXKyWeo7 \
 		"https://lcr.churchofjesuschrist.org/messaging?lang=eng" \
+		https://calendar.google.com/calendar/u/0/r/week \
 		>/dev/null 2>&1 &
 
 	[[ ! -d $CHURCH ]] && mkdir -p $CHURCH
@@ -109,7 +109,7 @@ setup() {
 
 env() {
     _TODO=(
-        "check what weekly meetings happen this Sunday"
+        "check which weekly/quarterly meetings happen this Sunday"
         "who has handbook training in bishopric meeting?"
         "make a new bishopric agenda"
         "email the bishopric, alert whoever has the training"
