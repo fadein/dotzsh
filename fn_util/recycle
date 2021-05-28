@@ -1,12 +1,18 @@
 # vim: set ft=zsh expandtab:
 
 # Simple recycle bin implementation.  Moves files into $RECYCLE, after which they are deleted after a few days.
-# Relies on realpath(1) to preserve file's original path name
+# Relies on realpath(1) to preserve file's original path name.
 #
-# Works in conjunction with this shell script and crontab snippet:
+# Ensure these variables are defined in the environment:
+#  export RECYCLE=~/.recycle
+#  export RECYCLE_DAYS=30
+#
+#
+# This function works in conjunction with the following shell script and crontab snippet
+# ~/.local/bin/recycle.sh:
 #  #!/bin/sh
-#  # ~/bin/recycle.sh
-#  
+#
+#  # Empty the recycle bin
 #  RECYCLE=~/.recycle
 #  RECYCLE_DAYS=30
 #  logger -- find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS -exec rm -rf '{}' +
@@ -19,10 +25,13 @@ recycle() {
     if (( $# < 1 )); then
         print Usage: recycle FILE_OR_DIR...
     else
-        if [[ ! -d $RECYCLE ]]; then
+        if [[ -z $RECYCLE ]]; then
+            print "Error: env var $RECYCLE undefined; set to recycle bin directory and exportt"
+            return 1
+        elif [[ ! -d $RECYCLE ]]; then
             print Creating recycle bin $RECYCLE
             if ! mkdir $RECYCLE; then
-                print Failed to create recycle bin $RECYCLE
+                print "Error: Failed to create recycle bin $RECYCLE"
                 return 1
             fi
         fi
