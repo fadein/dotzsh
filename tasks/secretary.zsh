@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.8"
-   DATE="Thu May 13 08:58:28 MDT 2021"
+VERSION="0.8.1"
+   DATE="Thu May 27 18:30:43 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -44,8 +44,8 @@ YOUTH_COUNCIL=(
 
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
-	To: ${(j:, :)BISHOPRIC}, ${(j:, :)HIGH_COUNCIL}
 	Bishopric Meeting Sunday @ 8:30am
+	To: ${(j:, :)BISHOPRIC}, ${(j:, :)HIGH_COUNCIL}
 
 	Handbook Training: Bro. ~~~~~~~
 
@@ -54,10 +54,11 @@ _bishopric_email() {
 	EM
 }
 
+
 _ward_council_email() {
 	cat <<-EM > $CHURCH/ward_council_email
-	To:  ${(j:, :)WARD_COUNCIL}
 	Ward Council Meeting Sunday @ 9:45am
+	To:  ${(j:, :)WARD_COUNCIL}
 
 	Zoom Link:
 	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
@@ -75,8 +76,8 @@ _ward_council_email() {
 
 _youth_council_email() {
 	cat <<-EM > $CHURCH/youth_council_email
-	To: ${(j:, :)YOUTH_COUNCIL}
 	Youth Council Meeting Sunday @ 9:45am
+	To: ${(j:, :)YOUTH_COUNCIL}
 
 	https://zoom.us/j/95018696863?pwd=WFZhTjNFcTNTNDNZSUh6dHdtSHk5Zz09
 	Meeting ID: 952 2086 3203
@@ -88,6 +89,7 @@ _youth_council_email() {
 	-- Erik
 	EM
 }
+
 
 setup() {
 	$BROWSER \
@@ -115,7 +117,7 @@ env() {
         "email the bishopric, alert whoever has the training"
         "who has spiritual thought in the 2nd meeting?"
         "make a new 2nd meeting agenda with Zoom link"
-        "email 2nd meeting attendees"
+		"email 2nd meeting attendees (youth council: send texts)"
         "check sacrament hymns"
         "copy sacrament agenda from last time"
 		"get conductor & speaker from Bishopric agenda"
