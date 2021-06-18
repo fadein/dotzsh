@@ -1,14 +1,16 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.11"
-    DATE="Tue Jan 12 10:42:50 MST 2021"
+ VERSION="1.12"
+    DATE="Fri May 28 12:22:55 MDT 2021"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
 
 SLACKPKG=/usr/sbin/slackpkg
 NICE=/usr/bin/nice
+LAST_UPDATE_FILE=/var/lib/slackpkg/last_update
+
 
 setup() {
 	raisePrivs
@@ -76,7 +78,7 @@ usage() {
 
 
 recordTimeOfLastUpdate() {
-	head -n1 /var/lib/slackpkg/ChangeLog.txt > /tmp/slackpkg.last_update.txt
+	head -n1 /var/lib/slackpkg/ChangeLog.txt > $LAST_UPDATE_FILE
 }
 
 env() {
@@ -86,28 +88,13 @@ env() {
 	        kernelUpdateInstrs "EFI+ELILO kernel configuration"
 	)
 
-	# ring the bell when the update is received
+	# ring the bell after the update is received
 	print "\C-g"
 
-	_TODO=(
-		"\$ $SLACKPKG install-new"
-		"\$ $SLACKPKG upgrade-all"
-		"\$ recordTimeOfLastUpdate" # Store the date of this update in /tmp
-	)
-
-	# add this host's name if I'm running multilib here
-	case $HOSTNAME in
-		nevermind*)
-			_TODO+=(
-				"\$ $SLACKPKG upgrade multilib"
-				"\$ $SLACKPKG install multilib"
-			)
-			;;
-	esac
-
+	# Report which packages have changed since the last time I ran an update
 	LAST_UPDATE=
-	if [[ -f /tmp/slackpkg.last_update.txt ]]; then
-		LAST_UPDATE=$(< /tmp/slackpkg.last_update.txt)
+	if [[ -f $LAST_UPDATE_FILE ]]; then
+		LAST_UPDATE=$(< $LAST_UPDATE_FILE)
 		cat <<-BANNER
 		
 		
@@ -128,24 +115,51 @@ env() {
 		BANNER
 	fi
 
+	# Check whether a slackpkg update is on tap and do it first
+	if sed -n -e "/ap\/slackpkg.*/q0" -e "/^$LAST_UPDATE/q1" /var/lib/slackpkg/ChangeLog.txt; then
+		_TODO=(
+			"$ slackpkg upgrade slackpkg"
+			"$ slackpkg update"
+		)
+	else
+		_TODO=()
+	fi
+
+	_TODO+=(
+		"\$ $SLACKPKG install-new"
+		"\$ $SLACKPKG upgrade-all"
+		"\$ recordTimeOfLastUpdate" # Store the date of this update in /tmp
+	)
+
+	# add this host's name if I'm running multilib here
+	case $HOSTNAME in
+		nevermind*)
+			_TODO+=(
+				"\$ $SLACKPKG upgrade multilib"
+				"\$ $SLACKPKG install multilib"
+			)
+			;;
+	esac
+
+
 
 	case $HOSTNAME in
 		voyager2*|mariner*|endeavour|columbia)
-			print $IMPORTANT
 
-			if sed -n -e '/a\/kernel-generic.*/q0' -e "/^$LAST_UPDATE/q1" /var/lib/slackpkg/ChangeLog.txt; then
+			# Check whether a kernel update is on tap
+			if sed -n -e "/a\/kernel-generic.*/q0" -e "/^$LAST_UPDATE/q1" /var/lib/slackpkg/ChangeLog.txt; then
 				KERNEL_VER=$(sed -n -e '/a.kernel-generic/{ s/a.kernel-generic-\([^-]*\)-.*$/\1/p; q }' /var/lib/slackpkg/ChangeLog.txt)
 				UPDATED=1
-				_TODO+=('The kernel was updated; run the subsequent commands')
+				_TODO+=("The kernel was updated; run the subsequent commands")
 			else
-				KERNEL_VER='<KERNEL_VER>'
+				KERNEL_VER="<KERNEL_VER>"
 				UPDATED=
 				_TODO+=("The kernel wasn't updated; you may skip the following commands")
 			fi
 
 			_TODO+=(
-				'$ cd /boot/efi/EFI/Slackware/'
-				'$ cp /boot/vmlinuz*(.) .'
+				"$ cd /boot/efi/EFI/Slackware/"
+				"$ cp /boot/vmlinuz*(.) ."
 			)
 
 			if [[ -n $UPDATED ]]; then

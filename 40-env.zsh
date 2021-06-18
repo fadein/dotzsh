@@ -23,6 +23,10 @@ export TMPDIR=/tmp
 export TMP=/tmp
 
 #
+# Personal recycle bin - see `fn_util/recycle`
+export RECYCLE=~/.recycle
+export RECYCLE_DAYS=30
+
 # typeset -U -g constrains these vars to contain only unique elements
 typeset -U -g PATH path
 for D in /usr/local/bin ~/.local/bin /usr/local/sbin /usr/sbin /sbin ~/bin ~/.zsh ~/.zsh/tasks; do
