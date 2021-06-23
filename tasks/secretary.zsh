@@ -46,8 +46,8 @@ YOUTH_COUNCIL=(
 
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
-	To: ${(j:, :)BISHOPRIC}, ${(j:, :)HIGH_COUNCIL}
 	Bishopric Meeting Sunday @ 8:30am
+	To: ${(j:, :)BISHOPRIC}, ${(j:, :)HIGH_COUNCIL}
 
 	Handbook Training: Bro. ~~~~~~~
 
@@ -59,8 +59,8 @@ _bishopric_email() {
 
 _ward_council_email() {
 	cat <<-EM > $CHURCH/ward_council_email
-	To:  ${(j:, :)WARD_COUNCIL}
 	Ward Council Meeting Sunday @ 9:45am
+	To:  ${(j:, :)WARD_COUNCIL}
 
 	Zoom Link:
 	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
@@ -78,8 +78,8 @@ _ward_council_email() {
 
 _youth_council_email() {
 	cat <<-EM > $CHURCH/youth_council_email
-	To: ${(j:, :)YOUTH_COUNCIL}
 	Youth Council Meeting Sunday @ 9:45am
+	To: ${(j:, :)YOUTH_COUNCIL}
 
 	https://zoom.us/j/95018696863?pwd=WFZhTjNFcTNTNDNZSUh6dHdtSHk5Zz09
 	Meeting ID: 952 2086 3203

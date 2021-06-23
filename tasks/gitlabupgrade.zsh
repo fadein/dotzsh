@@ -1,18 +1,29 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.4"
-    DATE="Mon Dec 14 13:34:11 MST 2020"
+ VERSION="1.5"
+    DATE="Fri Jun 18 13:07:53 MDT 2021"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
 
 setup() {
 	raisePrivs
+    true
 }
 
 env() {
     _KEEP_FUNCTIONS=(prettySeconds)
+
+    check-logfile-permissions() {
+        EXPECTED="git:git 644"
+        for F in /var/log/gitlab/huge_repos.log /var/log/gitlab/errors.log; do
+            STAT="$(stat -c '%U:%G %a' $F)"
+            if [[ $? == 0 && $STAT != $EXPECTED ]]; then
+                1>&2 print "Ownership/perms were '$STAT'\n instead of expected '$EXPECTED'\n for file $F\n"
+            fi
+        done
+    }
 
 	local HOURS=4
 	if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
@@ -31,7 +42,7 @@ env() {
 		"Make sure the hook was replaced by pushing a commit"
 		"Retire the webpage broadcast message"
 		'$ cd; mv gitlab.msg gitlab.msg.old'
-        'Make sure that /var/log/gitlab/{errors,huge_repos}.log exist, are 0644 and "git:git"'
+        '$ check-logfile-permissions'
 		'$ if [[ -f /var/run/reboot-required ]]; then print Reboot is required; else print Reboot is NOT required; fi'
 	)
 }
@@ -39,6 +50,7 @@ env() {
 
 # Report on time spent on this task
 cleanup() {
+    print $TASKNAME $0
 	echo This upgrade took $( prettySeconds ) to complete
 }
 
