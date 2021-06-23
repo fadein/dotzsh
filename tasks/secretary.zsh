@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.8"
-   DATE="Thu May 13 08:58:28 MDT 2021"
+VERSION="0.9"
+   DATE="Wed Jun 23 16:38:12 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -18,9 +18,11 @@ BISHOPRIC=(
 	"Lance Parker"
 	)
 
+
 HIGH_COUNCIL=(
 	"Mark Anderson"
 	)
+
 
 WARD_COUNCIL=(
 	$BISHOPRIC
@@ -35,9 +37,9 @@ WARD_COUNCIL=(
 
 YOUTH_COUNCIL=(
 	$BISHOPRIC
-	"Priest Quorum 1st Assistant"
-	"Teacher's & Deacon's Quorum Presidents"
-	"Young Women Class Presidents"
+	"Priest Quorum 1st Assistant (Chase Chesley)"
+	"Teacher's & Deacon's Quorum Presidents (Tai Falor, Jack Decker)"
+	"Young Women Class Presidents (Avery Anderson, Sydney Haynie)"
 	"Young Women President"
 	)
 
@@ -53,6 +55,7 @@ _bishopric_email() {
 	-- Erik
 	EM
 }
+
 
 _ward_council_email() {
 	cat <<-EM > $CHURCH/ward_council_email
@@ -89,6 +92,7 @@ _youth_council_email() {
 	EM
 }
 
+
 setup() {
 	$BROWSER \
 		https://docs.google.com/document/d/1_IaASzBuJGxxLkk58LpNGUdSdCyYXuS0p5gEADiwNVw/edit \
@@ -99,11 +103,12 @@ setup() {
 		>/dev/null 2>&1 &
 
 	[[ ! -d $CHURCH ]] && mkdir -p $CHURCH
-	# Restore the email templates
+	cd $CHURCH
+
+	# Update the email templates
 	_bishopric_email
 	_ward_council_email
 	_youth_council_email
-	cd $CHURCH
 }
 
 
@@ -114,15 +119,45 @@ env() {
         "make a new bishopric agenda"
         "email the bishopric, alert whoever has the training"
         "who has spiritual thought in the 2nd meeting?"
-        "make a new 2nd meeting agenda with Zoom link"
-        "email 2nd meeting attendees"
+		"make a new 2nd meeting agenda with Zoom link")
+
+	# if next Sunday is a 4th Sunday
+	case $( command date -d 'next sunday' +%d ) in
+		<22-28>) # Fourth Sunday = Bishopric Youth Committee
+			_TODO+=(
+				"remind bishop to contact conductor (YM=even months, YW=odd)"
+				"text bishopric youth committee members"
+				"email adults involved with bishopric youth committee"
+			)
+			;;
+		<29-31>) # Fifth Sunday = Whatever
+			_TODO+=("if we are holding a 2nd meeting, email attendees")
+			;;
+		*)
+			_TODO+=("email 2nd meeting attendees")
+			;;
+	esac
+
+	_TODO+=(
         "check sacrament hymns"
         "copy sacrament agenda from last time"
 		"get conductor & speaker from Bishopric agenda"
 		"get prayers from Lance"
     )
 
-	cal
+	cal $(\date -d 'next sunday' +'%d %m %Y')
+	print
+	case $( command date -d 'next sunday' +%d ) in
+		<1-7>|<15-21>)
+			print "This Sunday will be Sunday School"
+			;;
+		<8-14>|<22-28>)
+			print "This Sunday will be Priesthood/Relief Society"
+			;;
+		<29-31>)
+			print "This is a 5th Sunday; the 2nd meeting will be combined"
+			;;
+	esac
 }
 
 
