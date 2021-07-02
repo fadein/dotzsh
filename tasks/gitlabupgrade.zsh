@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.5"
-    DATE="Fri Jun 18 13:07:53 MDT 2021"
+ VERSION="1.5.1"
+    DATE="Fri Jul  2 12:50:25 MDT 2021"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -33,8 +33,8 @@ env() {
 	fi
 
 	_TODO=(
-		'$ gitlab-ctl status'
 		'$ apt list --upgradable'
+		'$ gitlab-ctl status'
 		'$ apt upgrade -y'
 		'$ gitlab-ctl status'
 		'$ cd /opt/gitlab/embedded/service/gitaly-ruby/git-hooks'
@@ -50,7 +50,6 @@ env() {
 
 # Report on time spent on this task
 cleanup() {
-    print $TASKNAME $0
 	echo This upgrade took $( prettySeconds ) to complete
 }
 
