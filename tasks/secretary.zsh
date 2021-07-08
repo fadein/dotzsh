@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.9"
-   DATE="Wed Jun 23 16:38:12 MDT 2021"
+VERSION="0.10.1"
+   DATE="Thu Jul  8 17:02:25 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -114,48 +114,63 @@ setup() {
 
 env() {
     _TODO=(
-        "check which weekly/quarterly meetings happen this Sunday"
-        "who has handbook training in bishopric meeting?"
-        "make a new bishopric agenda"
-        "email the bishopric, alert whoever has the training"
-        "who has spiritual thought in the 2nd meeting?"
-		"make a new 2nd meeting agenda with Zoom link")
+        "Note which weekly/quarterly interviews happen this Sunday"
+        "Who has handbook training in bishopric meeting?"
+        "Make a new bishopric agenda"
+        "Email the bishopric, alert whoever has the training"
+        "Who has spiritual thought in the 2nd meeting?"
+		"Make a new 2nd meeting agenda with Zoom link")
 
 	# if next Sunday is a 4th Sunday
 	case $( command date -d 'next sunday' +%d ) in
 		<22-28>) # Fourth Sunday = Bishopric Youth Committee
 			_TODO+=(
-				"remind bishop to contact conductor (YM=even months, YW=odd)"
-				"text bishopric youth committee members"
-				"email adults involved with bishopric youth committee"
+				"Remind bishop to contact conductor (YM=even months, YW=odd)"
+				"Text bishopric youth committee members"
+				"Email adults involved with bishopric youth committee"
 			)
 			;;
 		<29-31>) # Fifth Sunday = Whatever
-			_TODO+=("if we are holding a 2nd meeting, email attendees")
+			_TODO+=("If we are holding a 2nd meeting, email attendees")
 			;;
 		*)
-			_TODO+=("email 2nd meeting attendees")
+			_TODO+=("Email 2nd meeting attendees")
 			;;
 	esac
 
 	_TODO+=(
-        "check sacrament hymns"
-        "copy sacrament agenda from last time"
-		"get conductor & speaker from Bishopric agenda"
-		"get prayers from Lance"
+        "Check sacrament hymns"
+        "Copy sacrament agenda from last time"
+		"Get conductor & speaker from Bishopric agenda"
+		"Get prayers from Lance"
     )
 
 	cal $(\date -d 'next sunday' +'%d %m %Y')
 	print
 	case $( command date -d 'next sunday' +%d ) in
-		<1-7>|<15-21>)
+		<1-7>|<15-21>)  # 1st & 3rd Sunday
 			print "This Sunday will be Sunday School"
+			print "Ward Council is held this week"
 			;;
-		<8-14>|<22-28>)
+		<8-14>)  # 2nd Sunday
 			print "This Sunday will be Priesthood/Relief Society"
+			case $(cal $(\date -d 'next sunday' +%m)) in
+				1|4|7|10) print "Bishop has an interview with the Primary President" ;;
+				2|5|8|11) print "Bishop has an interview with the Relief Society President" ;;
+				3|6|9|12) print "Bishop has an interview with the Young Women President" ;;
+			esac
+			;;
+		<22-28>)  # 4th Sunday
+			print "This Sunday will be Priesthood/Relief Society"
+			print "Bishop Youth Council is held this week"
+			case $(cal $(\date -d 'next sunday' +%m)) in
+				1|4|7|10) print "Bishop has an interview with the Sunday School President" ;;
+				2|5|8|11) print "Bishop has an interview with the Elder's Quorum President" ;;
+			esac
 			;;
 		<29-31>)
 			print "This is a 5th Sunday; the 2nd meeting will be combined"
+			print "Check with Bishop what kind of meeting to hold"
 			;;
 	esac
 }
