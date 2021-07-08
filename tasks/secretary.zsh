@@ -1,13 +1,14 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.1"
-   DATE="Thu Jul  8 17:02:25 MDT 2021"
+VERSION="0.10.2"
+   DATE="Thu Jul  8 17:11:53 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
-BROWSER=firefox
+# suppress launch of browser by prefixing command with BROWSER=
+BROWSER=${BROWSER-firefox}
 CHURCH=~/Documents/Church
 
 BISHOPRIC=(
@@ -94,13 +95,15 @@ _youth_council_email() {
 
 
 setup() {
-	$BROWSER \
-		https://docs.google.com/document/d/1_IaASzBuJGxxLkk58LpNGUdSdCyYXuS0p5gEADiwNVw/edit \
-		https://docs.google.com/spreadsheets/d/1SRNa8kKWCzNE_VRsf-m5KQm-ky9y3dMYtpsamF1mMOM/edit \
-		https://drive.google.com/drive/folders/1gGZF3WEEe2mB_DIAZdbdA9SbWXKyWeo7 \
-		"https://lcr.churchofjesuschrist.org/messaging?lang=eng" \
-		https://calendar.google.com/calendar/u/0/r/week \
-		>/dev/null 2>&1 &
+	if [[ -n $BROWSER ]]; then
+		$BROWSER \
+			https://docs.google.com/document/d/1_IaASzBuJGxxLkk58LpNGUdSdCyYXuS0p5gEADiwNVw/edit \
+			https://docs.google.com/spreadsheets/d/1SRNa8kKWCzNE_VRsf-m5KQm-ky9y3dMYtpsamF1mMOM/edit \
+			https://drive.google.com/drive/folders/1gGZF3WEEe2mB_DIAZdbdA9SbWXKyWeo7 \
+			"https://lcr.churchofjesuschrist.org/messaging?lang=eng" \
+			https://calendar.google.com/calendar/u/0/r/week \
+			>/dev/null 2>&1 &
+	fi
 
 	[[ ! -d $CHURCH ]] && mkdir -p $CHURCH
 	cd $CHURCH
@@ -118,8 +121,7 @@ env() {
         "Who has handbook training in bishopric meeting?"
         "Make a new bishopric agenda"
         "Email the bishopric, alert whoever has the training"
-        "Who has spiritual thought in the 2nd meeting?"
-		"Make a new 2nd meeting agenda with Zoom link")
+	)
 
 	# if next Sunday is a 4th Sunday
 	case $( command date -d 'next sunday' +%d ) in
@@ -131,10 +133,16 @@ env() {
 			)
 			;;
 		<29-31>) # Fifth Sunday = Whatever
-			_TODO+=("If we are holding a 2nd meeting, email attendees")
+			_TODO+=(
+				"If we are holding a 2nd meeting, who has spiritual thought in the 2nd meeting?"
+				"If we are holding a 2nd meeting, make an agenda with Zoom link"
+				"If we are holding a 2nd meeting, email attendees")
 			;;
-		*)
-			_TODO+=("Email 2nd meeting attendees")
+		<1-7>|<15-21>)  # 1st & 3rd Sunday = Ward Council
+			_TODO+=(
+				"Who has spiritual thought in Ward Council?"
+				"Make a Ward Council agenda with Zoom link"
+				"Email Ward Council attendees")
 			;;
 	esac
 
@@ -145,27 +153,27 @@ env() {
 		"Get prayers from Lance"
     )
 
-	cal $(\date -d 'next sunday' +'%d %m %Y')
+	cal $(command date -d 'next sunday' +'%d %m %Y')
 	print
-	case $( command date -d 'next sunday' +%d ) in
+	case $(command date -d 'next sunday' +%d) in
 		<1-7>|<15-21>)  # 1st & 3rd Sunday
 			print "This Sunday will be Sunday School"
 			print "Ward Council is held this week"
 			;;
 		<8-14>)  # 2nd Sunday
 			print "This Sunday will be Priesthood/Relief Society"
-			case $(cal $(\date -d 'next sunday' +%m)) in
-				1|4|7|10) print "Bishop has an interview with the Primary President" ;;
-				2|5|8|11) print "Bishop has an interview with the Relief Society President" ;;
-				3|6|9|12) print "Bishop has an interview with the Young Women President" ;;
+			case $(command date -d 'next sunday' +%m) in
+				01|04|07|10) print "Bishop has a quarterly interview with the Primary President" ;;
+				02|05|08|11) print "Bishop has a quarterly interview with the Relief Society President" ;;
+				03|06|09|12) print "Bishop has a quarterly interview with the Young Women President" ;;
 			esac
 			;;
 		<22-28>)  # 4th Sunday
 			print "This Sunday will be Priesthood/Relief Society"
 			print "Bishop Youth Council is held this week"
-			case $(cal $(\date -d 'next sunday' +%m)) in
-				1|4|7|10) print "Bishop has an interview with the Sunday School President" ;;
-				2|5|8|11) print "Bishop has an interview with the Elder's Quorum President" ;;
+			case $(command date -d 'next sunday' +%m) in
+				01|04|07|10) print "Bishop has a quarterly interview with the Sunday School President" ;;
+				02|05|08|11) print "Bishop has a quarterly interview with the Elder's Quorum President" ;;
 			esac
 			;;
 		<29-31>)
