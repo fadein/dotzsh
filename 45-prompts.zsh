@@ -6,7 +6,7 @@
 #
 # Setting then unsetting `psvar` causes the time stamp to appear only
 # after accepting the command line
-WHEN="%F{white}%* "
+WHEN="%F{white}%D{%T} "
 function _reset-prompt-and-accept-line {
     psvar=(1)
     zle reset-prompt
