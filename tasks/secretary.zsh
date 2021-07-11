@@ -1,13 +1,14 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.9"
-   DATE="Wed Jun 23 16:38:12 MDT 2021"
+VERSION="0.10.2"
+   DATE="Thu Jul  8 17:11:53 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
-BROWSER=firefox
+# suppress launch of browser by prefixing command with BROWSER=
+BROWSER=${BROWSER-firefox}
 CHURCH=~/Documents/Church
 
 BISHOPRIC=(
@@ -94,13 +95,15 @@ _youth_council_email() {
 
 
 setup() {
-	$BROWSER \
-		https://docs.google.com/document/d/1_IaASzBuJGxxLkk58LpNGUdSdCyYXuS0p5gEADiwNVw/edit \
-		https://docs.google.com/spreadsheets/d/1SRNa8kKWCzNE_VRsf-m5KQm-ky9y3dMYtpsamF1mMOM/edit \
-		https://drive.google.com/drive/folders/1gGZF3WEEe2mB_DIAZdbdA9SbWXKyWeo7 \
-		"https://lcr.churchofjesuschrist.org/messaging?lang=eng" \
-		https://calendar.google.com/calendar/u/0/r/week \
-		>/dev/null 2>&1 &
+	if [[ -n $BROWSER ]]; then
+		$BROWSER \
+			https://docs.google.com/document/d/1_IaASzBuJGxxLkk58LpNGUdSdCyYXuS0p5gEADiwNVw/edit \
+			https://docs.google.com/spreadsheets/d/1SRNa8kKWCzNE_VRsf-m5KQm-ky9y3dMYtpsamF1mMOM/edit \
+			https://drive.google.com/drive/folders/1gGZF3WEEe2mB_DIAZdbdA9SbWXKyWeo7 \
+			"https://lcr.churchofjesuschrist.org/messaging?lang=eng" \
+			https://calendar.google.com/calendar/u/0/r/week \
+			>/dev/null 2>&1 &
+	fi
 
 	[[ ! -d $CHURCH ]] && mkdir -p $CHURCH
 	cd $CHURCH
@@ -114,48 +117,68 @@ setup() {
 
 env() {
     _TODO=(
-        "check which weekly/quarterly meetings happen this Sunday"
-        "who has handbook training in bishopric meeting?"
-        "make a new bishopric agenda"
-        "email the bishopric, alert whoever has the training"
-        "who has spiritual thought in the 2nd meeting?"
-		"make a new 2nd meeting agenda with Zoom link")
+        "Note which weekly/quarterly interviews happen this Sunday"
+        "Who has handbook training in bishopric meeting?"
+        "Make a new bishopric agenda"
+        "Email the bishopric, alert whoever has the training"
+	)
 
 	# if next Sunday is a 4th Sunday
 	case $( command date -d 'next sunday' +%d ) in
 		<22-28>) # Fourth Sunday = Bishopric Youth Committee
 			_TODO+=(
-				"remind bishop to contact conductor (YM=even months, YW=odd)"
-				"text bishopric youth committee members"
-				"email adults involved with bishopric youth committee"
+				"Remind bishop to contact conductor (YM=even months, YW=odd)"
+				"Text bishopric youth committee members"
+				"Email adults involved with bishopric youth committee"
 			)
 			;;
 		<29-31>) # Fifth Sunday = Whatever
-			_TODO+=("if we are holding a 2nd meeting, email attendees")
+			_TODO+=(
+				"If we are holding a 2nd meeting, who has spiritual thought in the 2nd meeting?"
+				"If we are holding a 2nd meeting, make an agenda with Zoom link"
+				"If we are holding a 2nd meeting, email attendees")
 			;;
-		*)
-			_TODO+=("email 2nd meeting attendees")
+		<1-7>|<15-21>)  # 1st & 3rd Sunday = Ward Council
+			_TODO+=(
+				"Who has spiritual thought in Ward Council?"
+				"Make a Ward Council agenda with Zoom link"
+				"Email Ward Council attendees")
 			;;
 	esac
 
 	_TODO+=(
-        "check sacrament hymns"
-        "copy sacrament agenda from last time"
-		"get conductor & speaker from Bishopric agenda"
-		"get prayers from Lance"
+        "Check sacrament hymns"
+        "Copy sacrament agenda from last time"
+		"Get conductor & speaker from Bishopric agenda"
+		"Get prayers from Lance"
     )
 
-	cal $(\date -d 'next sunday' +'%d %m %Y')
+	cal $(command date -d 'next sunday' +'%d %m %Y')
 	print
-	case $( command date -d 'next sunday' +%d ) in
-		<1-7>|<15-21>)
+	case $(command date -d 'next sunday' +%d) in
+		<1-7>|<15-21>)  # 1st & 3rd Sunday
 			print "This Sunday will be Sunday School"
+			print "Ward Council is held this week"
 			;;
-		<8-14>|<22-28>)
+		<8-14>)  # 2nd Sunday
 			print "This Sunday will be Priesthood/Relief Society"
+			case $(command date -d 'next sunday' +%m) in
+				01|04|07|10) print "Bishop has a quarterly interview with the Primary President" ;;
+				02|05|08|11) print "Bishop has a quarterly interview with the Relief Society President" ;;
+				03|06|09|12) print "Bishop has a quarterly interview with the Young Women President" ;;
+			esac
+			;;
+		<22-28>)  # 4th Sunday
+			print "This Sunday will be Priesthood/Relief Society"
+			print "Bishop Youth Council is held this week"
+			case $(command date -d 'next sunday' +%m) in
+				01|04|07|10) print "Bishop has a quarterly interview with the Sunday School President" ;;
+				02|05|08|11) print "Bishop has a quarterly interview with the Elder's Quorum President" ;;
+			esac
 			;;
 		<29-31>)
 			print "This is a 5th Sunday; the 2nd meeting will be combined"
+			print "Check with Bishop what kind of meeting to hold"
 			;;
 	esac
 }
