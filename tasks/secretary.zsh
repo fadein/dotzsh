@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.2"
-   DATE="Thu Jul  8 17:11:53 MDT 2021"
+VERSION="0.10.3"
+   DATE="Sun Jul 25 09:56:43 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -27,12 +27,12 @@ HIGH_COUNCIL=(
 
 WARD_COUNCIL=(
 	$BISHOPRIC
-	"George Thomsen"
-	"Shannon Eliason"
-	"James Fritzler"
-	"Eva Conde"
-	"Amy Edvalson"
-	"Derald Clark"
+	"Elder's Quorum President (George Thomsen)"
+	"Relief Society President (Shannon Eliason)"
+	"Sunday School President (James Fritzler)"
+	"Young Women's President (Eva Conde)"
+	"Primary President (Amy Edvalson)"
+	"Ward Mission Leader (Derald Clark)"
 	)
 
 
@@ -82,11 +82,9 @@ _youth_council_email() {
 	Youth Council Meeting Sunday @ 9:45am
 	To: ${(j:, :)YOUTH_COUNCIL}
 
-	https://zoom.us/j/95018696863?pwd=WFZhTjNFcTNTNDNZSUh6dHdtSHk5Zz09
-	Meeting ID: 952 2086 3203
-	Passcode: 425441
-
 	Spiritual Thought & Song: ~~~~~~~
+
+	Agenda: ~~~~~~~
 
 	See you Sunday morning!
 	-- Erik
