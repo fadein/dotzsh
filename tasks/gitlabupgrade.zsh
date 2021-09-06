@@ -25,6 +25,11 @@ env() {
         done
     }
 
+    typeset -gA _HELP
+    _HELP[help]="This function"
+    _HELP[check-logfile-permissions]="Verify permissions of important log files"
+    _HELP["ls /var/log/apt/"]="APT log files; history GitLab upgrades"
+
 	local HOURS=4
 	if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
 		apt update
