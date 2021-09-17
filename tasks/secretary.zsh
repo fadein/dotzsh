@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.5"
-   DATE="Thu Aug 19 10:12:29 MDT 2021"
+VERSION="0.10.6"
+   DATE="Fri Sep 17 08:34:32 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -51,6 +51,8 @@ _bishopric_email() {
 	To: ${(j:, :)BISHOPRIC}, ${(j:, :)HIGH_COUNCIL}
 
 	Handbook Training: Bro. ~~~~~~~
+	Meeting Agenda:
+	~~~~~~~
 
 	See you Sunday morning!
 	-- Erik
