@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.6"
-   DATE="Fri Sep 17 08:34:32 MDT 2021"
+VERSION="0.10.7"
+   DATE="Fri Sep 17 08:44:29 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -65,10 +65,10 @@ _ward_council_email() {
 	Ward Council Meeting Sunday @ 9:45am
 	To:  ${(j:, :)WARD_COUNCIL}
 
+	Spiritual Thought & Song: ~~~~~~~
+
 	Zoom Link:
 	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
-
-	Spiritual Thought & Song: ~~~~~~~
 
 	Meeting Agenda:
 	~~~~~~~
