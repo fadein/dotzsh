@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.5.1"
-    DATE="Fri Jul  2 12:50:25 MDT 2021"
+ VERSION="1.5.2"
+    DATE="Thu Aug 19 00:14:56 MDT 2021"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -17,13 +17,18 @@ env() {
 
     check-logfile-permissions() {
         EXPECTED="git:git 644"
-        for F in /var/log/gitlab/huge_repos.log /var/log/gitlab/errors.log; do
+        for F in /var/log/gitlab/{huge_repos,errors,pushes}.log; do
             STAT="$(stat -c '%U:%G %a' $F)"
             if [[ $? == 0 && $STAT != $EXPECTED ]]; then
                 1>&2 print "Ownership/perms were '$STAT'\n instead of expected '$EXPECTED'\n for file $F\n"
             fi
         done
     }
+
+    typeset -gA _HELP
+    _HELP[help]="This function"
+    _HELP[check-logfile-permissions]="Verify permissions of important log files"
+    _HELP["ls /var/log/apt/"]="APT log files; history GitLab upgrades"
 
 	local HOURS=4
 	if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then

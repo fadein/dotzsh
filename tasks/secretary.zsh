@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.3"
-   DATE="Sun Jul 25 09:56:43 MDT 2021"
+VERSION="0.10.7"
+   DATE="Fri Sep 17 08:44:29 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -51,6 +51,8 @@ _bishopric_email() {
 	To: ${(j:, :)BISHOPRIC}, ${(j:, :)HIGH_COUNCIL}
 
 	Handbook Training: Bro. ~~~~~~~
+	Meeting Agenda:
+	~~~~~~~
 
 	See you Sunday morning!
 	-- Erik
@@ -63,10 +65,10 @@ _ward_council_email() {
 	Ward Council Meeting Sunday @ 9:45am
 	To:  ${(j:, :)WARD_COUNCIL}
 
+	Spiritual Thought & Song: ~~~~~~~
+
 	Zoom Link:
 	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
-
-	Spiritual Thought & Song: ~~~~~~~
 
 	Meeting Agenda:
 	~~~~~~~
@@ -125,7 +127,7 @@ env() {
 	case $( command date -d 'next sunday' +%d ) in
 		<22-28>) # Fourth Sunday = Bishopric Youth Committee
 			_TODO+=(
-				"Remind bishop to contact conductor (YM=even months, YW=odd)"
+				"Remind bishop to contact conductor (YM=odd months, YW=even)"
 				"Text bishopric youth committee members"
 				"Email adults involved with bishopric youth committee"
 			)
@@ -147,7 +149,7 @@ env() {
 	_TODO+=(
         "Check sacrament hymns"
         "Copy sacrament agenda from last time"
-		"Get conductor & speaker from Bishopric agenda"
+		"Get conductor & speakers from Bishopric agenda"
 		"Get prayers from Lance"
     )
 
