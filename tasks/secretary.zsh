@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.7"
-   DATE="Fri Sep 17 08:44:29 MDT 2021"
+VERSION="0.10.8"
+   DATE="Sun Oct 10 10:29:21 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -27,7 +27,7 @@ HIGH_COUNCIL=(
 
 WARD_COUNCIL=(
 	$BISHOPRIC
-	"Elder's Quorum President (George Thomsen)"
+	"Elder's Quorum President (Gustavo Flores)"
 	"Relief Society President (Shannon Eliason)"
 	"Sunday School President (James Fritzler)"
 	"Young Women's President (Eva Conde)"
