@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.8"
-   DATE="Sun Oct 10 10:29:21 MDT 2021"
+VERSION="0.10.9"
+   DATE="Sun Oct 24 12:58:03 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -15,8 +15,11 @@ BISHOPRIC=(
 	"Jeff King"
 	"Greg Nichols"
 	"Jacob Hunsaker"
+	)
+
+SEC_CLERK=(
 	"Erik Falor"
-	"Lance Parker"
+	"Justin Campbell"
 	)
 
 
@@ -26,6 +29,8 @@ HIGH_COUNCIL=(
 
 
 WARD_COUNCIL=(
+	$SEC_CLERK
+	$HIGH_COUNCIL
 	$BISHOPRIC
 	"Elder's Quorum President (Gustavo Flores)"
 	"Relief Society President (Shannon Eliason)"
@@ -150,7 +155,7 @@ env() {
         "Check sacrament hymns"
         "Copy sacrament agenda from last time"
 		"Get conductor & speakers from Bishopric agenda"
-		"Get prayers from Lance"
+		"Get prayers from Justin"
     )
 
 	cal $(command date -d 'next sunday' +'%d %m %Y')
