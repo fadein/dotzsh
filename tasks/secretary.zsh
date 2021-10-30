@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.9"
-   DATE="Sun Oct 24 12:58:03 MDT 2021"
+VERSION="0.10.10"
+   DATE="Sat Oct 30 10:25:31 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -53,7 +53,7 @@ YOUTH_COUNCIL=(
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
 	Bishopric Meeting Sunday @ 8:30am
-	To: ${(j:, :)BISHOPRIC}, ${(j:, :)HIGH_COUNCIL}
+	To: ${(j:, :)BISHOPRIC}, ${(j:, :)SEC_CLERK}, ${(j:, :)HIGH_COUNCIL}
 
 	Handbook Training: Bro. ~~~~~~~
 	Meeting Agenda:
