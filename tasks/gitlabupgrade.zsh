@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.5.2"
-    DATE="Thu Aug 19 00:14:56 MDT 2021"
+ VERSION="1.6"
+    DATE="Sat Nov 13 08:28:12 MST 2021"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -15,6 +15,10 @@ setup() {
 env() {
     _KEEP_FUNCTIONS=(prettySeconds)
 
+    typeset -gA _HELP
+    _HELP[help]="This function"
+
+    _HELP[check-logfile-permissions]="Verify permissions of important log files"
     check-logfile-permissions() {
         EXPECTED="git:git 644"
         for F in /var/log/gitlab/{huge_repos,errors,pushes}.log; do
@@ -25,10 +29,12 @@ env() {
         done
     }
 
-    typeset -gA _HELP
-    _HELP[help]="This function"
-    _HELP[check-logfile-permissions]="Verify permissions of important log files"
-    _HELP["ls /var/log/apt/"]="APT log files; history GitLab upgrades"
+    BACKUPSDIR=/var/opt/gitlab/backups
+    _HELP[backup-gitlab]="Back up GitLab's PostgreSQL database to $BACKUPSDIR"
+    backup-gitlab() {
+        ding gitlab-backup create
+        printf "\nBackup created in $BACKUPSDIR\nNow 'scp' it over to viking2:/mnt/rasp/fadein/backups"
+    }
 
 	local HOURS=4
 	if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
@@ -50,6 +56,8 @@ env() {
         '$ check-logfile-permissions'
 		'$ if [[ -f /var/run/reboot-required ]]; then print Reboot is required; else print Reboot is NOT required; fi'
 	)
+
+    _HELP["ls /var/log/apt/"]="APT log files; history GitLab upgrades"
 }
 
 
