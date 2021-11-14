@@ -1,5 +1,7 @@
 # fadein's zshrc
 
+PATH=/home/fadein/school/Sp21/cs1440/Assn/1-Text_Tools/sln:$PATH
+
 [[ -r ~/.dircolors ]] && eval "$(dircolors ~/.dircolors -b)"
 
 # Source global definitions
@@ -19,6 +21,3 @@ done
     || true
 
 # vim:set expandtab foldmethod=indent:
-
-[[ -n "$_TUTR" ]] && source $_TUTR || true  # shell tutorial shim DO NOT MODIFY
-
