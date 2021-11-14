@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.5"
-   DATE="Thu Aug 19 10:12:29 MDT 2021"
+VERSION="0.10.10"
+   DATE="Sat Oct 30 10:25:31 MDT 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -15,8 +15,11 @@ BISHOPRIC=(
 	"Jeff King"
 	"Greg Nichols"
 	"Jacob Hunsaker"
+	)
+
+SEC_CLERK=(
 	"Erik Falor"
-	"Lance Parker"
+	"Justin Campbell"
 	)
 
 
@@ -26,8 +29,10 @@ HIGH_COUNCIL=(
 
 
 WARD_COUNCIL=(
+	$SEC_CLERK
+	$HIGH_COUNCIL
 	$BISHOPRIC
-	"Elder's Quorum President (George Thomsen)"
+	"Elder's Quorum President (Gustavo Flores)"
 	"Relief Society President (Shannon Eliason)"
 	"Sunday School President (James Fritzler)"
 	"Young Women's President (Eva Conde)"
@@ -48,9 +53,11 @@ YOUTH_COUNCIL=(
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
 	Bishopric Meeting Sunday @ 8:30am
-	To: ${(j:, :)BISHOPRIC}, ${(j:, :)HIGH_COUNCIL}
+	To: ${(j:, :)BISHOPRIC}, ${(j:, :)SEC_CLERK}, ${(j:, :)HIGH_COUNCIL}
 
 	Handbook Training: Bro. ~~~~~~~
+	Meeting Agenda:
+	~~~~~~~
 
 	See you Sunday morning!
 	-- Erik
@@ -63,10 +70,10 @@ _ward_council_email() {
 	Ward Council Meeting Sunday @ 9:45am
 	To:  ${(j:, :)WARD_COUNCIL}
 
+	Spiritual Thought & Song: ~~~~~~~
+
 	Zoom Link:
 	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
-
-	Spiritual Thought & Song: ~~~~~~~
 
 	Meeting Agenda:
 	~~~~~~~
@@ -148,7 +155,7 @@ env() {
         "Check sacrament hymns"
         "Copy sacrament agenda from last time"
 		"Get conductor & speakers from Bishopric agenda"
-		"Get prayers from Lance"
+		"Get prayers from Justin"
     )
 
 	cal $(command date -d 'next sunday' +'%d %m %Y')

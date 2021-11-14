@@ -16,7 +16,7 @@ setup() {
 }
 
 cleanup() {
-    echo Xft.dpi: 200 | xrdb -quiet -override
+    echo Xft.dpi: 220 | xrdb -quiet -override
     xrandr --output eDP-1 --mode 3840x2160 --auto
 }
 

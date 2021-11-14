@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
-PURPOSE="Recording a screencast with Vokoscreen + Flowblade"
-VERSION="1.6"
-   DATE="Sat Jan 23 11:08:13 MST 2021"
+PURPOSE="Recording a screencast with Vokoscreen + Flowblade w/ custom MLT"
+VERSION="1.7"
+   DATE="Wed Sep  8 12:13:49 MDT 2021"
  AUTHOR="Erik Falor"
 
 PROGNAME=$0
@@ -149,7 +149,8 @@ env() {
 		OLD_DPI=$(xrdb -q | \grep Xft.dpi) 
 		echo "Xft.dpi: 232" | xrdb -override
 		echo "Xft.dpi: 96" | xrdb -override
-		~/build/flowblade/flowblade-trunk/flowblade
+		# wip: find my custom build of MLT
+		PYTHONPATH=/usr/local/lib64/python3.9/site-packages ~/build/flowblade/flowblade-trunk/flowblade
 		echo "$OLD_DPI" | xrdb -override
 	}
 
