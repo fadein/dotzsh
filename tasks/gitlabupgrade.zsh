@@ -1,19 +1,40 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.6"
-    DATE="Sat Nov 13 08:28:12 MST 2021"
+ VERSION="1.7"
+    DATE="Mon Nov 29 07:42:45 MST 2021"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
 
 setup() {
-	raisePrivs
-    true
+    [[ -z $STY && -z $TMUX ]] && die "Not using a terminal muxer?  That's just too risky for me."
+	raisePrivs || true
 }
 
 env() {
     _KEEP_FUNCTIONS=(prettySeconds)
+
+	local HOURS=4
+	if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
+		apt update
+	else
+		printf "'apt update' has been run within the past $HOURS hours, skipping...\n\n"
+	fi
+
+	_TODO=(
+		'$ apt list --upgradable'
+		'$ gitlab-ctl status'
+		'$ apt upgrade -y'
+		'$ gitlab-ctl status'
+		'$ cd /opt/gitlab/embedded/service/gitaly-ruby/git-hooks'
+		'$ ln -sf post-receive.pl post-receive'
+		"Make sure the hook was replaced by pushing a commit"
+		"Retire the webpage broadcast message"
+		'$ cd; mv gitlab.msg gitlab.msg.old'
+        '$ check-logfile-permissions'
+		'$ if [[ -f /var/run/reboot-required ]]; then print Reboot is required; else print Reboot is NOT required; fi'
+	)
 
     typeset -gA _HELP
     _HELP[help]="This function"
@@ -36,28 +57,9 @@ env() {
         printf "\nBackup created in $BACKUPSDIR\nNow 'scp' it over to viking2:/mnt/rasp/fadein/backups"
     }
 
-	local HOURS=4
-	if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
-		apt update
-	else
-		print "'apt update' has been run within the past $HOURS hours, skipping..."
-	fi
-
-	_TODO=(
-		'$ apt list --upgradable'
-		'$ gitlab-ctl status'
-		'$ apt upgrade -y'
-		'$ gitlab-ctl status'
-		'$ cd /opt/gitlab/embedded/service/gitaly-ruby/git-hooks'
-		'$ ln -sf post-receive.pl post-receive'
-		"Make sure the hook was replaced by pushing a commit"
-		"Retire the webpage broadcast message"
-		'$ cd; mv gitlab.msg gitlab.msg.old'
-        '$ check-logfile-permissions'
-		'$ if [[ -f /var/run/reboot-required ]]; then print Reboot is required; else print Reboot is NOT required; fi'
-	)
-
     _HELP["ls /var/log/apt/"]="APT log files; history GitLab upgrades"
+
+    print "Run 'help' to learn about other tools you can run in this task"
 }
 
 
