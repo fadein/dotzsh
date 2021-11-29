@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.7"
-    DATE="Mon Nov 29 07:42:45 MST 2021"
+ VERSION="1.7.1"
+    DATE="Mon Nov 29 08:23:23 MST 2021"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -54,7 +54,7 @@ env() {
     _HELP[backup-gitlab]="Back up GitLab's PostgreSQL database to $BACKUPSDIR"
     backup-gitlab() {
         ding gitlab-backup create
-        printf "\nBackup created in $BACKUPSDIR\nNow 'scp' it over to viking2:/mnt/rasp/fadein/backups"
+        printf "\nBackup created in $BACKUPSDIR\nNow 'scp' it to viking-dyn:/mnt/rasp/fadein/backups\n"
     }
 
     _HELP["ls /var/log/apt/"]="APT log files; history GitLab upgrades"
