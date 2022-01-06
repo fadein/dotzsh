@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.10"
-   DATE="Sat Oct 30 10:25:31 MDT 2021"
+VERSION="0.10.12"
+   DATE="Thu Dec 30 21:13:27 MST 2021"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -17,11 +17,12 @@ BISHOPRIC=(
 	"Jacob Hunsaker"
 	)
 
+CLERK="Justin Campbell"
+
 SEC_CLERK=(
 	"Erik Falor"
-	"Justin Campbell"
+	$CLERK
 	)
-
 
 HIGH_COUNCIL=(
 	"Mark Anderson"
@@ -52,7 +53,7 @@ YOUTH_COUNCIL=(
 
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
-	Bishopric Meeting Sunday @ 8:30am
+	Bishopric Meeting Sunday @ 6:30am
 	To: ${(j:, :)BISHOPRIC}, ${(j:, :)SEC_CLERK}, ${(j:, :)HIGH_COUNCIL}
 
 	Handbook Training: Bro. ~~~~~~~
@@ -67,13 +68,10 @@ _bishopric_email() {
 
 _ward_council_email() {
 	cat <<-EM > $CHURCH/ward_council_email
-	Ward Council Meeting Sunday @ 9:45am
+	Ward Council Meeting Sunday @ 7:30am
 	To:  ${(j:, :)WARD_COUNCIL}
 
 	Spiritual Thought & Song: ~~~~~~~
-
-	Zoom Link:
-	https://zoom.us/j/95220863203?pwd=SkpQVW9UckxuMk9wYnRNd3g4V1Nadz09
 
 	Meeting Agenda:
 	~~~~~~~
@@ -86,7 +84,7 @@ _ward_council_email() {
 
 _youth_council_email() {
 	cat <<-EM > $CHURCH/youth_council_email
-	Youth Council Meeting Sunday @ 9:45am
+	Youth Council Meeting Sunday @ 7:30am
 	To: ${(j:, :)YOUTH_COUNCIL}
 
 	Spiritual Thought & Song: ~~~~~~~
@@ -140,13 +138,13 @@ env() {
 		<29-31>) # Fifth Sunday = Whatever
 			_TODO+=(
 				"If we are holding a 2nd meeting, who has spiritual thought in the 2nd meeting?"
-				"If we are holding a 2nd meeting, make an agenda with Zoom link"
+				"If we are holding a 2nd meeting, make an agenda"
 				"If we are holding a 2nd meeting, email attendees")
 			;;
 		<1-7>|<15-21>)  # 1st & 3rd Sunday = Ward Council
 			_TODO+=(
 				"Who has spiritual thought in Ward Council?"
-				"Make a Ward Council agenda with Zoom link"
+				"Make a Ward Council agenda"
 				"Email Ward Council attendees")
 			;;
 	esac
@@ -155,7 +153,7 @@ env() {
         "Check sacrament hymns"
         "Copy sacrament agenda from last time"
 		"Get conductor & speakers from Bishopric agenda"
-		"Get prayers from Justin"
+		"Get prayers from ${${=CLERK}[1]}"  # ${=VAR} splits str->array on whitespace
     )
 
 	cal $(command date -d 'next sunday' +'%d %m %Y')

@@ -79,6 +79,7 @@ find-student() {
 
 # This version of `find-student` searches all courses' rosters across all semesters
 find-student+() {
+    setopt LOCAL_OPTIONS NULL_GLOB
     local BASE=/home/fadein/school
 
     if [[ -z $1 ]]; then
