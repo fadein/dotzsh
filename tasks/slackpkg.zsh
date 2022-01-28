@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.12.1"
-    DATE="Tue Nov 23 11:23:47 MST 2021"
+ VERSION="1.13"
+    DATE="Thu Jan  6 09:10:21 MST 2022"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -14,11 +14,16 @@ LAST_UPDATE_FILE=/var/lib/slackpkg/last_update
 
 setup() {
 	raisePrivs
-	grep -v '^#' /etc/slackpkg/mirrors || die "You need to uncomment one mirror from /etc/slackpkg/mirrors"
+	grep -qv '^#' /etc/slackpkg/mirrors || die "You need to uncomment one mirror from /etc/slackpkg/mirrors"
 	
-	$SLACKPKG update
+	local HOURS=4 CHANGELOG=/var/lib/slackpkg/ChangeLog.txt
+	if [[ ( ! -f $CHANGELOG ) || $(stat --format=%Y $CHANGELOG) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
+		$SLACKPKG update
+	else
+		print "'slackpkg update' has been run within the past $HOURS hours, skipping..."
+	fi
 
-	[[ -f /var/lib/slackpkg/ChangeLog.txt ]] || die "The ChangeLog is missing; either '$SLACKPKG update' failed or something else went wrong"
+	[[ -f $CHANGELOG ]] || die "The ChangeLog is missing; either '$SLACKPKG update' failed or something else went wrong"
 
 	case $HOSTNAME in
 		voyager2*|mariner*|endeavour|columbia)
@@ -56,6 +61,19 @@ kernelUpdateInstrs() {
 }
 
 
+rpiKernelUpdateInstrs() {
+	cat <<-MSG
+	Viking2 is an RPi3 Armv7 w/Hard float
+
+	The files come from https://slackware.uk/sarpi/rpi3/current-armv7/
+	General instructions: https://sarpi.penthux.net/index.php?p=installer
+
+	* Visit https://slackware.uk/sarpi/rpi3/current-armv7/ to see Kernel version and build date
+	* VER=(kernel version) DATE=(06Jan22)
+	* Ensure that ARCH=(armv7-1), TAG=(sp1) and BUILD=(slackcurrent) are all correct
+	MSG
+}
+
 usage() {
 	>&1 <<-MESSAGE
 	
@@ -80,6 +98,64 @@ usage() {
 recordTimeOfLastUpdate() {
 	head -n1 /var/lib/slackpkg/ChangeLog.txt > $LAST_UPDATE_FILE
 }
+
+
+getSARPIpkg() {
+	if [[ -f $1.txz ]]; then
+		echo Already have $1.txz
+	elif [[ $1 = *source* ]]; then
+		echo Getting src/$1.txz
+		wget $BASE/src/$1.txz
+	else
+		echo Getting pkg/$1.txz
+		wget $BASE/pkg/$1.txz
+	fi
+
+	if [[ -f $1.md5 ]]; then
+		echo Already have $1.md5
+	elif [[ $1 = *source* ]]; then
+		echo Getting src/$1.md5
+		wget $BASE/src/$1.md5
+	else
+		echo Getting pkg/$1.md5
+		wget $BASE/pkg/$1.md5
+	fi
+
+	if ! md5sum -c $F.md5; then
+		print ====================
+		print = MD5 sum mismatch = $F
+		print ====================
+	fi
+	print
+}
+
+
+getAllSARPIpkgs() {
+	DESC=${ARCH}_${BUILD}_${DATE}_${TAG}
+	for F in \
+		kernel_sarpi3-${KVER}-${DESC}  \
+		kernel-headers-sarpi3-${KVER}-${DESC}  \
+		kernel-modules-sarpi3-${KVER}-${DESC}  \
+		sarpi3-boot-firmware-${DESC} \
+		sarpi3-hacks-3.0-${DESC} \
+		sarpi3-kernel-source-${KVER}-${DESC}
+	do
+		getSARPIpkg $F
+	done
+}
+
+setSARPIvars() {
+	while true; do
+		for V in KVER DATE; do
+			vared -p "Set value for $V=" $V
+		done
+		read -k1 '?Proceed? [Y/n] '
+		case $REPLY in
+			''|y|Y) break ;;
+		esac
+	done
+}
+
 
 env() {
 	# Support for help function
@@ -143,10 +219,9 @@ env() {
 	esac
 
 
-
-	case $HOSTNAME in
-		voyager2*|mariner*|endeavour|columbia)
-
+	# per-architecture Kernel configuration
+	case $(uname -m) in
+		x86_64)
 			# Check whether a kernel update is on tap
 			if sed -n -e "/a\/kernel-generic.*/q0" -e "/^$LAST_UPDATE/q1" /var/lib/slackpkg/ChangeLog.txt; then
 				KERNEL_VER=$(sed -n -e '/a.kernel-generic/{ s/a.kernel-generic-\([^-]*\)-.*$/\1/p; q }' /var/lib/slackpkg/ChangeLog.txt)
@@ -179,6 +254,27 @@ env() {
 				"Make the new kernel become the 1st entry in elilo.conf"
 			)
 		;;
+
+		armv7l)
+			BASE=https://slackware.uk/sarpi/rpi3/current-armv7
+			KVER=5.15.13
+			ARCH=armv7-1
+			BUILD=slackcurrent
+			DATE=06Jan22
+			TAG=sp1
+
+			if [[ ! -d SARPI ]]; then
+				mkdir SARPI
+			fi
+			cd SARPI
+
+			_TODO+=(
+			"$ setSARPIvars"
+			"$ getAllSARPIpkgs"
+			"$ for F in *.txz; do upgradepkg --install-new --reinstall \$F; done"
+			)
+			;;
+
 	esac
 
 	usage
