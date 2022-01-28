@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.12"
-   DATE="Thu Dec 30 21:13:27 MST 2021"
+VERSION="0.10.13"
+   DATE="Thu Jan 27 20:40:01 MST 2022"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -44,9 +44,9 @@ WARD_COUNCIL=(
 
 YOUTH_COUNCIL=(
 	$BISHOPRIC
-	"Priest Quorum 1st Assistant (Chase Chesley)"
-	"Teacher's & Deacon's Quorum Presidents (Tai Falor, Jack Decker)"
-	"Young Women Class Presidents (Avery Anderson, Sydney Haynie)"
+	"Priest Quorum 1st Assistant (Andy Decker)"
+	"Teacher's & Deacon's Quorum Presidents (Jack Decker, Conner Chesley)"
+	"Young Women Class Presidents (Tess Hoglund, Kate Gunnell)"
 	"Young Women President"
 	)
 
