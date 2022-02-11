@@ -3,5 +3,13 @@
 
 # In case I fatfinger Ctrl-p
 p() {
-	eval $(fc -lLn -1)
+    local i cmd max=20
+    for ((i=1; i<=max; i++)); do
+        cmd=$(fc -lLn -$i -$i)
+        if [[ ${${=cmd}[1]} != p ]]; then
+            eval $cmd $@
+            return
+        fi
+    done
+    print "More than $max consecutive invocations of 'p' in recent history..."
 }
