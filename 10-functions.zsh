@@ -78,6 +78,11 @@ notes() {
 	&& chpwd_functions+=(notes)
 
 
+# Returns true when empty output is piped in; false otherwise
+# Useful for detecting when a command produces any output at all
+empty() { sed -ne '/./{q1};2{q2}'; }
+
+
 # Split an environment variable on a delimiter (default ':')
 # and return the nth item
 nth () {
