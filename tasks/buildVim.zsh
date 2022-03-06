@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 PURPOSE='Rebuild Vim from GitHub'
-VERSION="1.9"
-   DATE="Thu Jun 13 16:49:16 MDT 2019"
+VERSION="1.10"
+   DATE="Sun 06 Mar 2022 10:38:26 AM MST"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 TASKNAME=$0:t:r
@@ -31,8 +31,8 @@ env() {
 	EMERGENCY_DEST=/bin
 	NPROC=/usr/bin/nproc
 
-	OPTS_EMERGENCY="--with-features=small --disable-gui --disable-gpm --disable-acl"
-	OPTS_REGULAR="--with-features=huge --enable-perlinterp --enable-pythoninterp --enable-termtruecolor"
+	OPTS_EMERGENCY=(--with-features=small --disable-gui --disable-gpm --disable-acl)
+	OPTS_REGULAR=(--with-features=huge --enable-perlinterp --enable-pythoninterp --enable-termtruecolor)
 
 	#Count number of CPUs in this system and add one
 	MAKE_JOBS=-j$(( $(nproc) + 1 ))
