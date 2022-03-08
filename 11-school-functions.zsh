@@ -1,5 +1,5 @@
 # vim: set ft=zsh expandtab:
-SEMESTYR=Fa21
+SEMESTYR=Sp22
 BASE=/home/fadein/school
 
 refresh() {
@@ -79,6 +79,7 @@ find-student() {
 
 # This version of `find-student` searches all courses' rosters across all semesters
 find-student+() {
+    setopt LOCAL_OPTIONS NULL_GLOB
     local BASE=/home/fadein/school
 
     if [[ -z $1 ]]; then

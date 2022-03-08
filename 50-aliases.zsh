@@ -39,6 +39,7 @@ alias mv='mv -i'
 alias niceme='renice -n 10 -p $$'
 alias nl='nl -ba'
 alias pd=pushd
+alias perld='perl -de0'
 alias pgrep='pgrep -l'
 alias pwd='pwd -P'
 alias rm='rm -i'
