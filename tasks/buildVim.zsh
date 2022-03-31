@@ -2,7 +2,7 @@
 
 PURPOSE='Rebuild Vim from GitHub'
 VERSION="1.10"
-   DATE="Sun 06 Mar 2022 10:38:26 AM MST"
+   DATE="Thu Mar 31 09:07:18 MDT 2022"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 TASKNAME=$0:t:r
@@ -38,16 +38,17 @@ env() {
 	MAKE_JOBS=-j$(( $(nproc) + 1 ))
 	_TODO=(
 		'$ git pull'
-		'run makeVim() to build vim & gvim'
-		'run `sudo make install` to install the suite of runtime files'
-		'run emergencyVim() to build a minimal /bin/vi'
+		'$ makeVim'
+		'$ sudo make install'
+		'$ emergencyVi'
 		)
 
 	_KEEP_FUNCTIONS+=warn
+    typeset -gA _HELP
 
-	#Build emergency Vim (only requires glibc and ncurses)
-	function emergencyVim() {
-		local STRIP=$1
+    _HELP[emergencyVi]="Statically-linked emergency Vi (requires only glibc and ncurses; give a param to not strip)"
+	function emergencyVi() {
+		local NOSTRIP=$1
 		trap return SIGTERM SIGINT
 
 		[[ -n $SUDO ]] && $SUDO -v
@@ -66,28 +67,28 @@ env() {
 
 		if ! nice make $MAKE_JOBS; then return; fi
 
-		echo
-		if [[ -n $STRIP ]] && $STRIP -regex-match '^(strip|1)$'; then
-			echo Stripping output binary
+		print
+		if [[ -z $NOSTRIP ]]; then
+			print Stripping output binary
 			if ! nice strip vim; then
 				warn FAILED to strip vim
 				return
 			fi
 		else
-			echo Not stripping output binary
+			print Not stripping output binary
 		fi
 
-		echo
-		echo "Installing vi binary to $EMERGENCY_DEST"
+		print
+		print "Installing vi binary to $EMERGENCY_DEST"
 		if ! $SUDO cp vim $EMERGENCY_DEST/vi; then
 			warn FAILED to copy vim to $EMERGENCY_DEST/vi
 		fi
 		)
 	}
 
-	#Build regular Vim this way:
+    _HELP[makeVim]="Build Vim for everyday use (give a param to not strip)"
 	function makeVim() {
-		local STRIP=$1
+		local NOSTRIP=$1
 		trap return SIGTERM SIGINT
 
 		[[ -n $SUDO ]] && $SUDO -v
@@ -106,45 +107,45 @@ env() {
 
 		if ! nice make $MAKE_JOBS; then return; fi
 
-		echo
-		echo "Installing Vim binary to $DEST"
-		if [[ -n $STRIP ]] && $STRIP -regex-match '^(strip|1)$'; then
+		print
+		print "Installing Vim binary to $DEST"
+		if [[ -z $NOSTRIP ]]; then
 			if ! nice $SUDO make STRIP=strip installvimbin; then return; fi
-			echo "${DEST}/bin/vim is not stripped"
+			print "${DEST}/bin/vim is not stripped"
 		else
-			echo Not stripping output binary
-			STRIP=true
+			print Not stripping output binary
 			if ! nice $SUDO make STRIP=true installvimbin; then return; fi
-			echo "${DEST}/bin/vim is not stripped"
+			print "${DEST}/bin/vim is not stripped"
 		fi
-		echo
-		echo 'Run `sudo make install` if you want to install the entire'
-		echo 'updated Vim suite of runtime files.'
 		)
 	}
 
-	>&1 <<-MESSAGE
-	###
-	######
-	############
-	########################
-	BuildVim functions defined:
-	    makeVim( STRIP=0 )
-	    emergencyVim( STRIP=0 )
-	########################
-	############
-	######
-	###
+	>&1 <<-'MESSAGE'
+	[1;36m   __        _ __   ___   ___                __ 
+	  / /  __ __(_) /__/ / | / (_)_ _   ___ ___ / / 
+	 / _ \/ // / / / _  /| |/ / /  ' \_/_ /(_-</ _ \
+	/_.__/\_,_/_/_/\_,_/ |___/_/_/_/_(_)__/___/_//_/
+	[1;37m
+	BuildVim.zsh functions defined:
+	  [1;35mmakeVim[1;36m([1;33m NOSTRIP= [1;36m)
+	  [1;35memergencyVi[1;36m([1;33m NOSTRIP= [1;36m)
+	  [1;35mhelp[1;36m()
+	[0m
 	MESSAGE
 
 	cd $BUILDDIR
 	if ! git status --branch --porcelain 2>&1 | grep -q '## master'; then
 		>&1 <<-MESSAGE
 		[1;31m
-		     !!! The current branch is not '[32mmaster[31m' !!!
+		    !!! The current branch is not '[32mmaster[31m' !!!
 		Please checkout the master branch before continuing
 		[0m
 		MESSAGE
+
+        _TODO=(
+            "$ git checkout master"
+            $_TODO
+            )
 	fi
 }
 
