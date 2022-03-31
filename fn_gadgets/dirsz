@@ -1,0 +1,10 @@
+# vim: set ft=zsh expandtab:
+
+dirsz() {
+    setopt LOCAL_OPTIONS NULL_GLOB
+    if [[ $# == 0 ]]; then
+        du -sh * .* | sort -hr
+    else
+        du -sh $* | sort -hr
+    fi
+}

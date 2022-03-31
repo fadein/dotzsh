@@ -31,8 +31,8 @@ env() {
 	EMERGENCY_DEST=/bin
 	NPROC=/usr/bin/nproc
 
-	OPTS_EMERGENCY="--with-features=small --disable-gui --disable-gpm --disable-acl"
-	OPTS_REGULAR="--with-features=huge --enable-perlinterp --enable-pythoninterp --enable-termtruecolor"
+	OPTS_EMERGENCY=(--with-features=small --disable-gui --disable-gpm --disable-acl)
+	OPTS_REGULAR=(--with-features=huge --enable-perlinterp --enable-pythoninterp --enable-termtruecolor)
 
 	#Count number of CPUs in this system and add one
 	MAKE_JOBS=-j$(( $(nproc) + 1 ))

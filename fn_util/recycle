@@ -16,6 +16,7 @@
 #  RECYCLE=~/.recycle
 #  RECYCLE_DAYS=30
 #  logger -- find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS -exec rm -rf '{}' +
+#  find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS -exec rm -rf '{}' +
 #
 # crontab:
 #  Take out the trash every 2 hours

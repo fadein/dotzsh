@@ -10,6 +10,7 @@ TASKNAME=$0:t:r
 MOUNT=/bin/mount
 UMOUNT=/bin/umount
 
+
 setup() {
     if $MOUNT | grep -q /mnt/rasp; then
         die "/mnt/rasp is already mounted"

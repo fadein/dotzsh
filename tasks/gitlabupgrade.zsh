@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.7.1"
-    DATE="Mon Nov 29 08:23:23 MST 2021"
+ VERSION="1.7.3"
+    DATE="Thu Mar 24 12:32:58 MDT 2022"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -27,9 +27,7 @@ env() {
 		'$ gitlab-ctl status'
 		'$ apt upgrade -y'
 		'$ gitlab-ctl status'
-		'$ cd /opt/gitlab/embedded/service/gitaly-ruby/git-hooks'
-		'$ ln -sf post-receive.pl post-receive'
-		"Make sure the hook was replaced by pushing a commit"
+		"Make sure the post-receive.pl hook still works by pushing a commit"
 		"Retire the webpage broadcast message"
 		'$ cd; mv gitlab.msg gitlab.msg.old'
         '$ check-logfile-permissions'
@@ -57,7 +55,10 @@ env() {
         printf "\nBackup created in $BACKUPSDIR\nNow 'scp' it to viking-dyn:/mnt/rasp/fadein/backups\n"
     }
 
+    # Miscellaneous hints and commands
     _HELP["ls /var/log/apt/"]="APT log files; history GitLab upgrades"
+    _HELP['/opt/gitlab/embedded/service/gitlab-shell/hooks']="Location of server hook scripts"
+    _HELP['curl -s "https://packages.gitlab.com/gpg.key" | apt-key add -']="Update GitLab's package GPG signing key"
 
     print "Run 'help' to learn about other tools you can run in this task"
 }

@@ -1,44 +1,48 @@
 #!/bin/env zsh
 
-PURPOSE='Rebuild the Kernel'
-VERSION="1.2"
-   DATE="Fri Apr  5 10:00:45 MDT 2013"
+PURPOSE="Rebuild the Kernel on Slackware"
+VERSION="1.3"
+   DATE="Thu Apr  1 16:28:47 MDT 2021"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
-PROGNAME=$0:t
+PROGNAME=$0
 TASKNAME=$0:t:r
 
+GREP=/usr/bin/grep
 SUDO=/usr/bin/sudo
 NICE=/usr/bin/nice
 IONICE=/usr/bin/ionice
 UMOUNT=/bin/umount
 
-# umount /boot before we begin to avoid clobbering existing files
+
+# umount /boot/efi before we begin to avoid clobbering existing files
 setup() {
-    $UMOUNT /boot
+    raisePrivs
+    if $GREP -q /boot/efi /etc/mtab; then
+        $UMOUNT /boot/efi
+    fi
 }
 
 # spawn a nice child root shell
 spawn() {
-	$SUDO TASK=$TASKNAME $IONICE $NICE $ZSH_NAME
+	TASK=$TASKNAME $IONICE $NICE $ZSH_NAME
 }
 
 #
 env() {
 	_TODO=(
-		'Emerge latest kernel sources'
-		'Update /usr/src/linux symlink'
-        '$ cd /usr/src/linux'
 		'$ make menuconfig'
 		'$ make'
+		'$ make bzImage'
 		'$ make modules'
-        '$ ls /boot'
-		'$ mount /boot'
-		'$ make install modules_install'
-        '$ genkernel --install --no-ramdisk-modules initramfs'
-		'$ vim /boot/grub/menu.lst'
-		'$ module-rebuild rebuild'
-		'Rebuild VirtualBox drivers'
+		'$ make modules_install'
+        '$ gzip -c vmlinux > vmlinuz'
+        'Copy arch/x86/boot/bzImage to /boot/efi/EFI/Slackware/, name it vmlinuz-release#'
+        'Copy System.map to /boot, name it after the release #'
+        '$ ls /boot/efi'
+		'$ mount /boot/efi'
+		'$ pushd /boot/efi/EFI/Slackware'
+        '$ vim elilo.conf'
 		'Reboot!')
 
 	cd /usr/src/linux
