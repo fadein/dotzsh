@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.13"
-    DATE="Thu Jan  6 09:10:21 MST 2022"
+ VERSION="1.13.1"
+    DATE="Thu Jan  6 10:20:47 MST 2022"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -266,12 +266,14 @@ env() {
 			if [[ ! -d SARPI ]]; then
 				mkdir SARPI
 			fi
-			cd SARPI
+			pushd SARPI
 
 			_TODO+=(
 			"$ setSARPIvars"
 			"$ getAllSARPIpkgs"
 			"$ for F in *.txz; do upgradepkg --install-new --reinstall \$F; done"
+			"$ cp -R /mnt/mmcblk0p1 $(uname -r).bak"
+			"$ command cp -R /boot/* /mnt/mmcblk0p1"
 			)
 			;;
 
