@@ -1,7 +1,5 @@
 # fadein's zshrc
 
-PATH=/home/fadein/school/Sp21/cs1440/Assn/1-Text_Tools/sln:$PATH
-
 [[ -r ~/.dircolors ]] && eval "$(dircolors ~/.dircolors -b)"
 
 # Source global definitions
