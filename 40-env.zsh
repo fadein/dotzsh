@@ -64,6 +64,7 @@ zmodload zsh/datetime
 export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
 unset sengines
 
+export GOPATH=$HOME/devel/go
 
 #
 # Set a restrictive umask
