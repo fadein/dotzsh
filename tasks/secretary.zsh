@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.13"
-   DATE="Thu Jan 27 20:40:01 MST 2022"
+VERSION="0.10.14"
+   DATE="Thu Apr 14 16:46:01 MDT 2022"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -157,7 +157,8 @@ env() {
     )
 
 	cal $(command date -d 'next sunday' +'%d %m %Y')
-	print
+	printf "%14.8s\n\n" $(command date -d 'next sunday' +%D)
+
 	case $(command date -d 'next sunday' +%d) in
 		<1-7>|<15-21>)  # 1st & 3rd Sunday
 			print "This Sunday will be Sunday School"
