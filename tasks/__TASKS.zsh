@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.12
-# Date:    Tue Jan 12 10:41:05 MST 2021
+# Version: 1.13
+# Date:    Tue Apr 26 20:26:55 MDT 2022
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -86,33 +86,25 @@ fi
 # translate seconds into a timestamp "HH:MM:SS"
 if ! functions prettySeconds >/dev/null; then
 	prettySeconds() {
+		# DESCRIPTION:
+		#    Display seconds as a timestamp in the format HH:MM:SS
+		# PARAMETERS:
+		#    (Optional) Number of seconds as an integer; if this is not given the value of $SECONDS is used instead
+		# SIDE EFFECTS AND RETURN:
+		#    Display the timestamp
 		local seconds=${1:-$SECONDS}
-		local -a backwards
-		local i=1
-
-		#convert raw seconds into array=(seconds minutes hours)
-		while [[ $seconds -ne 0 ]]; do
-			backwards[$i]=$(( $seconds % 60 ))
-			let i++
-			let seconds=$(( $seconds / 60))
-		done
-
-		#reverse the array
-		local j=1
-		[[ $i -gt 0 ]] && let i--
 		local -a result
-		while [[ $i -gt 1 ]]; do
-			result[$j]=${backwards[$i]}
-			let j++
-			let i--
-		done
-		result[$j]=${backwards[$i]}
 
-		#print it out
-		case $#result in
-			3) printf '%02d:%02d:%02d' ${result[@]} ;;
-			2) printf '%02d:%02d' ${result[@]} ;;
-			1) printf '00:%02d' ${result[@]} ;;
+		# convert raw seconds into an array=(seconds minutes hours)
+		while [[ $seconds -ne 0 ]]; do
+			result=( $(( $seconds % 60 )) ${result[@]})
+			seconds=$(( $seconds / 60))
+		done
+
+		case ${#result[@]} in
+			3) printf '%02d:%02d:%02d\n' ${result[@]} ;;
+			2) printf '%02d:%02d\n' ${result[@]} ;;
+			1) printf '00:%02d\n' ${result[@]} ;;
 		esac
 	}
 fi
