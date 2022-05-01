@@ -39,14 +39,15 @@ refresh() {
 }
 
 
-clown() {
+clown () {
     zmodload zsh/regex
-    # convert https:// git repo URLs into SSH URLs and clone
     if [[ -z $1 ]]; then
         print "Usage: $0 <HTTPS git url> [DEST_NAME]"
         return 1
     fi
 
+    local URL
+    # convert https:// git repo URLs into SSH URLs
     if [[ $1 -regex-match ^(git@[^:]+:[^/]+/[^/]+) ]]; then
         # SSH-style URL
         URL=$MATCH
@@ -62,8 +63,18 @@ clown() {
         fi
     fi
 
+    # If $2 is unset and the URL looks like an assignment
+    # (i.e. matches .*/cs[0-9]{4}-last-first-assn[0-9](.git)?)
+    # set $DEST to "last-first-a[0-9]"
+    local DEST
+    if [[ -n $2 ]]; then
+        DEST=$2
+    elif [[ $URL -regex-match git@gitlab.cs.usu.edu:[^/]+/cs[0-9]{4}-(.*)-assn([0-9])(.git)?$ ]]; then
+        DEST="${match[1]}-a${match[2]}"
+    fi
+
     print "Cloning $URL..."
-    git clone $URL $2
+    git clone $URL $DEST
 }
 
 
