@@ -29,7 +29,7 @@ export RECYCLE_DAYS=30
 
 # typeset -U -g constrains these vars to contain only unique elements
 typeset -U -g PATH path
-for D in /usr/local/bin ~/.local/bin /usr/local/sbin /usr/sbin /sbin ~/bin ~/.zsh ~/.zsh/tasks; do
+for D in /usr/local/bin ~/.local/bin /usr/local/sbin /usr/sbin /sbin ~/bin ~/.zsh/tasks; do
     [[ -d $D ]] && path=($D:A $path)
 done
 
@@ -64,6 +64,7 @@ zmodload zsh/datetime
 export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
 unset sengines
 
+export GOPATH=$HOME/devel/go
 
 #
 # Set a restrictive umask
