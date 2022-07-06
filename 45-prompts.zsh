@@ -38,7 +38,7 @@ if ! functions hostcolor >/dev/null; then
                 columbia*)
                     function hostcolor { print "%B%F{yellow}$1%f%b"; } ;;
                 mariner)
-                    function hostcolor { print "%B%F{cyan}%K{black}$1%k%f%b"; } ;;
+                    function hostcolor { print "%B%F{magenta}%K{black}$1%k%f%b"; } ;;
                 *)
                     function hostcolor { print "%F{yellow}%K{black}$1%k%f"; } ;;
             esac ;;
