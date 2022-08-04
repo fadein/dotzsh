@@ -171,7 +171,7 @@ function plain() {
 
 #The jobcount is colored red if non-zero.
 function colorful() {
-    PROMPT="%(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~ %# $_UTEXT"
+    PROMPT="$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~ %# $_UTEXT"
     RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
@@ -179,7 +179,7 @@ function colorful() {
 #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() {
-    PROMPT="%(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~ %# $_UTEXT"
+    PROMPT="$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~ %# $_UTEXT"
     RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
@@ -285,7 +285,7 @@ function git() {
     #and thereby not need to `setopt prompt_subst`
     #maybe add _git_branch_details as a precmd, and delete it when
     #switching to another prompt?
-    PROMPT="%(?..%F{white}%K{red}%?%k%f %S)$(hostcolor %4~)\$(_git_branch_details)%(?..%s) $(usercolor '%#') ${_UTEXT}"
+    PROMPT="$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(hostcolor %4~)\$(_git_branch_details)%(?..%s) $(usercolor '%#') ${_UTEXT}"
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
     RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
