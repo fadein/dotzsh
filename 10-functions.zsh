@@ -234,3 +234,11 @@ _increase_number() {
   (( diff = $#BUFFER - $prelength ))
   (( CURSOR = last + diff ))
 }
+
+urbandictionary() {
+    if [[ $# == 0 ]]; then
+        1>&2 echo Usage: $0 SEARCH_TERM
+        return 1
+    fi
+    $BROWSER "https://www.urbandictionary.com/define.php?term=$1"
+}
