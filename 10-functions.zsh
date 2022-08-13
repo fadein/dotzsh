@@ -235,10 +235,35 @@ _increase_number() {
   (( CURSOR = last + diff ))
 }
 
+# look up the definition of a word on urbandictionary.com
 urbandictionary() {
     if [[ $# == 0 ]]; then
         1>&2 echo Usage: $0 SEARCH_TERM
         return 1
     fi
-    $BROWSER "https://www.urbandictionary.com/define.php?term=$1"
+    [[ -n $BROWSER ]] && $BROWSER "https://www.urbandictionary.com/define.php?term=$1" || print "https://www.urbandictionary.com/define.php?term=$1"
+}
+
+# Open the current Git repo's 1st remote web page (if present)
+repo () {
+	zmodload zsh/regex
+	local URL
+	if git status >/dev/null 2>&1 ; then
+        URL=$(git remote -v 2>/dev/null | head -n 1 | cut -f 2)
+		if [[ $URL -regex-match ^(git@[^:]+:[^/]+/[^/ ]+) ]]; then
+			URL=$MATCH
+			URL=${URL/:/\/}
+			URL=${URL/git@/https:\/\/}
+		elif [[ $URL -regex-match ^(https://[^:]+:[^/]+/[^/]+) ]]; then
+			:
+		else
+			print "Unrecognized URL '$URL'"
+			return
+		fi
+		[[ -n $BROWSER ]] && $BROWSER $URL || print $URL
+    elif [[ $? == 128 ]]; then
+		print "This is not a Git repository"
+	else
+        print "else?"
+	fi
 }
