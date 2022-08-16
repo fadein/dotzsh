@@ -42,7 +42,7 @@ refresh() {
 clown () {
     zmodload zsh/regex
     if [[ -z $1 ]]; then
-        print "Usage: $0 <HTTPS git url> [DEST_NAME]"
+        print 1>&2 "Usage: $0 <HTTPS git url> [DEST_NAME]"
         return 1
     fi
 
@@ -51,7 +51,7 @@ clown () {
     if [[ $1 -regex-match ^(git@[^:]+:[^/]+/[^/]+) ]]; then
         # SSH-style URL
         URL=$MATCH
-    else
+    elif [[ $1 -regex-match ^http ]]; then
         # https-style URL
         URL=${1/http*:\/\//}
         URL=${URL#*@}
@@ -61,6 +61,13 @@ clown () {
         else
             URL=git@$URL
         fi
+    elif [[ $1 -regex-match [^/]+/[^/]+ ]]; then
+        # URL is a path like username/cs1440-last-first-assn#
+        # Prepend the GitLab SSH URL
+        URL=git@gitlab.cs.usu.edu:$1
+    else
+        print 1>&2 Invalid URL
+        return 1
     fi
 
     # If $2 is unset and the URL looks like an assignment
@@ -69,11 +76,14 @@ clown () {
     local DEST
     if [[ -n $2 ]]; then
         DEST=$2
+        print "Cloning $URL into $DEST..."
     elif [[ $URL -regex-match git@gitlab.cs.usu.edu:[^/]+/cs[0-9]{4}-(.*)-assn([0-9])(.git)?$ ]]; then
         DEST="${match[1]}-a${match[2]}"
+        print "Cloning $URL into $DEST..."
+    else
+        print "Cloning $URL..."
     fi
 
-    print "Cloning $URL..."
     git clone $URL $DEST
 }
 
