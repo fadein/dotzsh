@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.13"
-    DATE="Thu Jan  6 09:10:21 MST 2022"
+ VERSION="1.13.1"
+    DATE="Wed Aug 17 12:01:06 MDT 2022"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -202,7 +202,7 @@ env() {
 	fi
 
 	_TODO+=(
-		"\$ $SLACKPKG install-new"
+		"\$ $SLACKPKG install-new || true"
 		"\$ $SLACKPKG upgrade-all"
 		"\$ recordTimeOfLastUpdate" # Store the date of this update in /tmp
 		"Merge .new files under /etc"
