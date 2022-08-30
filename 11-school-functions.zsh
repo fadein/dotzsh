@@ -92,10 +92,10 @@ clown () {
 find-student() {
     if [[ -z $1 ]]; then
         print "Locate a student in a course"
-        print "Usage: $0 'Student Name'"
+        print "Usage: $0 Student Name"
         return 1
     fi
-    grep -i $1 $BASE/$SEMESTYR/*/Roster/{roster,email}*.csv | sort
+    grep -i "$*" $BASE/$SEMESTYR/*/Roster/{roster,email}*.csv | sort
 }
 
 # This version of `find-student` searches all courses' rosters across all semesters
@@ -105,8 +105,8 @@ find-student+() {
 
     if [[ -z $1 ]]; then
         print "Locate a student in a course"
-        print "Usage: $0 'Student Name'"
+        print "Usage: $0 Student Name"
         return 1
     fi
-    grep -i $1 $BASE/{Fa,Sp,Su}??/cs*/Roster/{roster,email}*.csv | sort
+    grep -i "$*" $BASE/{Fa,Sp,Su}??/cs*/Roster/{roster,email}*.csv | sort
 }
