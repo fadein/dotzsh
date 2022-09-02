@@ -27,7 +27,7 @@ refresh() {
             # put myself back on the master branch so the pull will cleanly
             # apply if/when I'm working on a topic branch
             echodo git checkout master
-            echodo git pull --recurse-submodules=on-demand
+            echodo git pull --recurse-submodules=on-demand origin master
             (
                 echodo cd Notes
                 echodo git checkout master
