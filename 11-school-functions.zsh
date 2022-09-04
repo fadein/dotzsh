@@ -2,22 +2,21 @@
 SEMESTYR=Fa22
 BASE=/home/fadein/school
 
-# Show a command and then run it
-# When the environment variable DRYRUN is non-empty, do not
-# actually make any changes, but only show what would be done
-echodo() {
-	print -P "\n%B%~ %% %b%F{green}$@%f"
-	if [[ -z $DRYRUN ]]; then
-		$@
-	else
-		true
-	fi
-}
-
-
 refresh() {
     for REPO in $BASE/$SEMESTYR/*/.git; do
         (
+            # Show a command and then run it
+            # When the environment variable DRYRUN is non-empty, do not
+            # actually make any changes, but only show what would be done
+            echodo() {
+                print -P "\n%B%~ %% %b%F{green}$@%f"
+                if [[ -z $DRYRUN ]]; then
+                    $@
+                else
+                    true
+                fi
+            }
+
             SHUSH=1 cd $REPO/..
             # This Zsh construct returns 'false' when this repo has uncommitted changes
             # The following print command prints the repo's name red in that case
