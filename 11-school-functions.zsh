@@ -23,39 +23,42 @@ refresh() {
             [[ -z $(git status --porcelain) ]]
             print -P "%f${REPO//[[:print:]]/=}\n%(?.%F{green}.%F{red})$REPO%f%b\n${REPO//[[:print:]]/=}"
 
+            if [[ -a Notes/.git ]]; then
+                (
+                    echodo cd Notes
+                    echodo git checkout master
+
+                    if ! echodo git pull publish master; then
+                        print -P "\n%F{yellow}%BPulling%b%f Notes/ from %F{green}%Bpublish%b%f failed; You must manually address this\n"
+                        return 1
+                    fi
+
+                    if ! echodo git pull origin master; then
+                        print -P "\n%F{yellow}%BPulling%b%f Notes/ from %F%B{cyan}origin%b%f failed; You must manually address this\n"
+                        return 1
+                    fi
+
+                    if ! echodo git push publish master; then
+                        print "\n%F{red}%BPushing%b%f Notes/ to %F{green}%Bpublish%b%f failed; You must manually address this\n"
+                        return 1
+                    fi
+
+                    if ! echodo git push origin master; then
+                        print "\n%F{red}%BPushing%b%f Notes/ to %F{cyan}%Borigin%b%f failed; You must manually address this\n"
+                        return 1
+                    fi
+                )
+            fi
+
             # put myself back on the master branch so the pull will cleanly
             # apply if/when I'm working on a topic branch
             echodo git checkout master
             echodo git pull --recurse-submodules=on-demand origin master
-            (
-                echodo cd Notes
-                echodo git checkout master
-
-                if ! echodo git pull publish master; then
-                    print -P "\n%F{yellow}%BPulling%b%f Notes/ from %F{green}%Bpublish%b%f failed; You must manually address this\n"
-                    return 1
-                fi
-
-                if ! echodo git pull origin master; then
-                    print -P "\n%F{yellow}%BPulling%b%f Notes/ from %F%B{cyan}origin%b%f failed; You must manually address this\n"
-                    return 1
-                fi
-
-                if ! echodo git push publish master; then
-                    print "\n%F{red}%BPushing%b%f Notes/ to %F{green}%Bpublish%b%f failed; You must manually address this\n"
-                    return 1
-                fi
-
-                if ! echodo git push origin master; then
-                    print "\n%F{red}%BPushing%b%f Notes/ to %F{cyan}%Borigin%b%f failed; You must manually address this\n"
-                    return 1
-                fi
-            )
             echodo git push origin master
             print
         )
     done
-    ding
+    ding true
 }
 
 
