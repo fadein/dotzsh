@@ -19,3 +19,5 @@ done
     || true
 
 # vim:set expandtab foldmethod=indent:
+
+[[ -n "$_TUTR" ]] && source $_TUTR || true  # shell tutorial shim DO NOT MODIFY
