@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.16"
-   DATE="Sun May  1 06:41:36 MDT 2022"
+VERSION="0.10.17"
+   DATE="Wed Aug 24 20:08:24 MDT 2022"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -84,7 +84,7 @@ _ward_council_email() {
 
 _youth_council_email() {
 	cat <<-EM > $CHURCH/youth_council_email
-	Youth Council Meeting Sunday @ 7:30am
+	Youth Council Meeting Sunday @ 8:00am
 	To: ${(j:, :)YOUTH_COUNCIL}
 
 	Spiritual Thought & Song: ~~~~~~~

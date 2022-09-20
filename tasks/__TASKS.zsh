@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.13
-# Date:    Tue Apr 26 20:26:55 MDT 2022
+# Version: 1.13.1
+# Date:    Mon Aug 22 20:49:53 MDT 2022
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -96,7 +96,7 @@ if ! functions prettySeconds >/dev/null; then
 		local -a result
 
 		# convert raw seconds into an array=(seconds minutes hours)
-		while [[ $seconds -ne 0 ]]; do
+		while (( $seconds != 0 )); do
 			result=( $(( $seconds % 60 )) ${result[@]})
 			seconds=$(( $seconds / 60))
 		done

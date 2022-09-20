@@ -10,6 +10,7 @@
 #
 # This function works in conjunction with the following shell script and crontab snippet
 # ~/.local/bin/recycle.sh:
+#
 #  #!/bin/sh
 #
 #  # Empty the recycle bin
@@ -20,7 +21,7 @@
 #
 # crontab:
 #  Take out the trash every 2 hours
-#  00 */2   *   *  *          $HOME/bin/recycle.sh
+#  00 */2   *   *  *          $HOME/.local/bin/recycle.sh
 
 recycle() {
     if (( $# < 1 )); then

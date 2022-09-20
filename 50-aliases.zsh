@@ -63,6 +63,7 @@ alias lss=less
 alias maek=make
 alias mak=make
 alias mor=more
+alias mplayre=mplayer
 alias mroe=more
 alias pgerp='pgrep -l'
 alias pyhton=python
