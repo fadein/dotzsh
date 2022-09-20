@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.17"
-   DATE="Wed Aug 24 20:08:24 MDT 2022"
+VERSION="0.10.18"
+   DATE="Thu Sep 15 22:08:17 MDT 2022"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -36,7 +36,7 @@ WARD_COUNCIL=(
 	"Elder's Quorum President (Gustavo Flores)"
 	"Relief Society President (Shannon Eliason)"
 	"Sunday School President (James Fritzler)"
-	"Young Women's President (Eva Conde)"
+	"Young Women's President (Jana Anderson)"
 	"Primary President (Jennifer Parker)"
 	"Ward Mission Leader (Derald Clark)"
 	)
