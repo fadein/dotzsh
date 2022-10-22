@@ -82,29 +82,24 @@ if ! functions pause >/dev/null; then
 	pause() { read -p "Press [Enter] to continue "; }
 fi
 
-#
-# translate seconds into a timestamp "HH:MM:SS"
 if ! functions prettySeconds >/dev/null; then
 	prettySeconds() {
-		# DESCRIPTION:
-		#    Display seconds as a timestamp in the format HH:MM:SS
-		# PARAMETERS:
-		#    (Optional) Number of seconds as an integer; if this is not given the value of $SECONDS is used instead
-		# SIDE EFFECTS AND RETURN:
-		#    Display the timestamp
-		local seconds=${1:-$SECONDS}
+		local -i seconds=${1:-$SECONDS}
 		local -a result
+		local -i DD HH MM SS
 
-		# convert raw seconds into an array=(seconds minutes hours)
-		while (( $seconds != 0 )); do
-			result=( $(( $seconds % 60 )) ${result[@]})
-			seconds=$(( $seconds / 60))
+		for factor in 60 60 24; do
+			(( seconds == 0 )) && break
+			result=($(( seconds % factor )) ${result[@]})
+			seconds=$(( seconds / factor ))
 		done
+		(( seconds != 0 )) && result=($seconds ${result[@]})
 
 		case ${#result[@]} in
-			3) printf '%02d:%02d:%02d\n' ${result[@]} ;;
-			2) printf '%02d:%02d\n' ${result[@]} ;;
-			1) printf '00:%02d\n' ${result[@]} ;;
+			4) printf '%dd %02d:%02d:%02d' ${result[@]} ;;
+			3) printf '%02d:%02d:%02d' ${result[@]} ;;
+			2) printf '%02d:%02d' ${result[@]} ;;
+			1) printf '00:%02d' ${result[@]} ;;
 		esac
 	}
 fi
