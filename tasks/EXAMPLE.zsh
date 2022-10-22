@@ -176,7 +176,7 @@ env() {
     # The utility functions defined in __TASKS.zsh are removed from the
     # environment by default.  If you'd like to keep one around, put
     # its name into this list.
-    _KEEP_FUNCTIONS=(die)
+    _KEEP_FUNCTIONS=(die prettySeconds)
 
 	# Print a useful message to remind the user what to do next
 	>&1 <<MESSAGE
