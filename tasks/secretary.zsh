@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.18"
-   DATE="Thu Sep 15 22:08:17 MDT 2022"
+VERSION="0.10.19"
+   DATE="Sat Nov 12 15:42:55 MST 2022"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -123,7 +123,7 @@ env() {
         "Note which weekly/quarterly interviews happen this Sunday"
         "Who has handbook training in bishopric meeting?"
         "Make a new bishopric agenda"
-        "Email the bishopric, alert whoever has the training"
+        "Text the bishopric, alert whoever has the training"
 	)
 
 	# if next Sunday is a 4th Sunday
@@ -139,13 +139,13 @@ env() {
 			_TODO+=(
 				"If we are holding a 2nd meeting, who has spiritual thought in the 2nd meeting?"
 				"If we are holding a 2nd meeting, make an agenda"
-				"If we are holding a 2nd meeting, email attendees")
+				"If we are holding a 2nd meeting, contact attendees")
 			;;
 		<1-7>|<15-21>)  # 1st & 3rd Sunday = Ward Council
 			_TODO+=(
 				"Who has spiritual thought in Ward Council?"
 				"Make a Ward Council agenda"
-				"Email Ward Council attendees")
+				"Contact Ward Council attendees")
 			;;
 	esac
 
