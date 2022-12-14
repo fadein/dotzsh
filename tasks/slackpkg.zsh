@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.13.1"
-    DATE="Wed Aug 17 12:01:06 MDT 2022"
+ VERSION="1.13.2"
+    DATE="Wed Dec 14 13:02:05 MST 2022"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -77,18 +77,17 @@ rpiKernelUpdateInstrs() {
 usage() {
 	>&1 <<-MESSAGE
 	
-	### package logs
+	### Package logs
 	/var/log/packages
 	/var/log/removed_packages
 	
-	### slackpkg ChangeLog location:
-	/var/lib/slackpkg/ChangeLog.txt
+	### View the Slackware ChangeLog
+	slackpkg show-changelog
 	
-	
-	Run this command to install new packages added since last update:
+	### Install new packages added since last update:
 	\$ $SLACKPKG install-new
 	
-	Run this command when you're ready to upgrade the set of installed packages:
+	### When you're ready to upgrade the set of installed packages:
 	\$ $SLACKPKG upgrade-all
 	
 	MESSAGE
