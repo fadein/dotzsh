@@ -86,5 +86,5 @@ else
 	linkToHome $HERE/zshenv        .zshenv
 
     # Pre-build autoload functions
-    make
+    cd $(dirname $0) && make
 fi
