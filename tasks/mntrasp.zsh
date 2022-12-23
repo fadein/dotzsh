@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/bin/zsh
 
 PURPOSE="Mount/unmount /mnt/rasp"
 VERSION="1.1"

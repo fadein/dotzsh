@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/env zsh
 
 PURPOSE="Broadcast sacrament meeting"
 VERSION="1.6"
