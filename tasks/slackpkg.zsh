@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.13.2"
-    DATE="Wed Dec 14 13:02:05 MST 2022"
+ VERSION="1.13.3"
+    DATE="Thu Dec 22 23:20:06 MST 2022"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -204,7 +204,7 @@ env() {
 		"\$ $SLACKPKG install-new || true"
 		"\$ $SLACKPKG upgrade-all"
 		"\$ recordTimeOfLastUpdate" # Store the date of this update in /tmp
-		"Merge .new files under /etc"
+		"\$ $SLACKPKG new-config" # Merge .new files under /etc"
 	)
 
 	# add this host's name if I'm running multilib here
@@ -239,12 +239,12 @@ env() {
 
 			if [[ -n $UPDATED ]]; then
 				_TODO+=(
-					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER)"
+					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
 					"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
 				)
 			else
 				_TODO+=(
-					"Run \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER)"
+					"Run \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
 					"Run cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
 				)
 			fi
