@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.13.3"
-    DATE="Thu Dec 22 23:20:06 MST 2022"
+ VERSION="1.13.4"
+    DATE="Thu Dec 29 22:31:07 MST 2022"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -54,9 +54,10 @@ kernelUpdateInstrs() {
 	Next, re-create the initrd by running this command, inserting the version
 	number of the new kernel:
 
-	    # /usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k 5.10.6
+	    # /usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k 5.19.17 -a '-l colehack'
 
-	It should echo back a command including a big list of kernel modules
+	It should echo back a command including a big list of kernel modules.
+	Wrap that command in '$()' to execute it
 	MSG
 }
 
