@@ -42,6 +42,7 @@ alias pd=pushd
 alias perld='perl -de0'
 alias pgrep='pgrep -l'
 alias pwd='pwd -P'
+alias qrencode='qrencode -t ansi'
 alias rm='rm -i'
 alias topu="top -u $USER"
 alias vimdiff='vim -d'
