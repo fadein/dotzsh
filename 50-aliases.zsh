@@ -57,6 +57,7 @@ alias ehco=echo
 alias fiel=file
 alias grpe=grep
 alias gti=git
+alias igt=git
 alias ivm=vim
 alias jods=jobs
 alias les=less
