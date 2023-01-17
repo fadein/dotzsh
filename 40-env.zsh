@@ -21,6 +21,7 @@ export EDITOR=/usr/bin/vim
 export EDIT=$EDITOR
 export TMPDIR=/tmp
 export TMP=/tmp
+export XDG_CONFIG_HOME=~/.config
 
 #
 # Personal recycle bin - see `fn_util/recycle`

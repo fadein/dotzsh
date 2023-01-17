@@ -1,15 +1,20 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.10.19"
-   DATE="Sat Nov 12 15:42:55 MST 2022"
+VERSION="0.11"
+   DATE="Mon Jan 16 21:44:11 MST 2023"
  AUTHOR="erik"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
 # suppress launch of browser by prefixing command with BROWSER=
 BROWSER=${BROWSER-firefox}
-CHURCH=~/Documents/Church
+
+if [[ -x =xdg-user-dir ]]; then
+	CHURCH=$(xdg-user-dir DOCUMENTS)/Church
+else
+	CHURCH=~/Documents/Church
+fi
 
 BISHOPRIC=(
 	"Jeff King"
