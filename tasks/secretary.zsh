@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.11"
-   DATE="Mon Jan 16 21:44:11 MST 2023"
+VERSION="0.11.1"
+   DATE="Sun Jan 22 09:40:52 MST 2023"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -19,7 +19,7 @@ fi
 BISHOPRIC=(
 	"Jeff King"
 	"Greg Nichols"
-	"Jacob Hunsaker"
+	"Johnny Decker"
 	)
 
 CLERK="Justin Campbell"
@@ -49,16 +49,16 @@ WARD_COUNCIL=(
 
 YOUTH_COUNCIL=(
 	$BISHOPRIC
-	"Priest Quorum 1st Assistant (Andy Decker)"
-	"Teacher's & Deacon's Quorum Presidents (Jack Decker, Conner Chesley)"
-	"Young Women Class Presidents (Tess Hoglund, Kate Gunnell)"
-	"Young Women President"
+	"Priest Quorum 1st Assistant (Jordan Chesley)"
+	"Teacher's & Deacon's Quorum Presidents (Max Gunnell, Will Falor)"
+	"Young Women Class Presidents (Mia Flores)"
+	"Young Women President (Jana Anderson)"
 	)
 
 
 _bishopric_email() {
 	cat <<-EM > $CHURCH/bishopric_email
-	Bishopric Meeting Sunday @ 6:30am
+	Bishopric Meeting Sunday @ 8:30am
 	To: ${(j:, :)BISHOPRIC}, ${(j:, :)SEC_CLERK}, ${(j:, :)HIGH_COUNCIL}
 
 	Handbook Training: Bro. ~~~~~~~
@@ -73,7 +73,7 @@ _bishopric_email() {
 
 _ward_council_email() {
 	cat <<-EM > $CHURCH/ward_council_email
-	Ward Council Meeting Sunday @ 7:30am
+	Ward Council Meeting Sunday @ 9:30am
 	To:  ${(j:, :)WARD_COUNCIL}
 
 	Spiritual Thought & Song: ~~~~~~~
@@ -89,7 +89,7 @@ _ward_council_email() {
 
 _youth_council_email() {
 	cat <<-EM > $CHURCH/youth_council_email
-	Youth Council Meeting Sunday @ 8:00am
+	Youth Council Meeting Sunday @ 9:30am
 	To: ${(j:, :)YOUTH_COUNCIL}
 
 	Spiritual Thought & Song: ~~~~~~~
