@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.7.3"
-    DATE="Thu Mar 24 12:32:58 MDT 2022"
+ VERSION="1.7.4"
+    DATE="Sat Feb 18 11:23:34 2023"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -57,8 +57,9 @@ env() {
 
     # Miscellaneous hints and commands
     _HELP["ls /var/log/apt/"]="APT log files; history GitLab upgrades"
-    _HELP['/opt/gitlab/embedded/service/gitlab-shell/hooks']="Location of server hook scripts"
-    _HELP['curl -s "https://packages.gitlab.com/gpg.key" | apt-key add -']="Update GitLab's package GPG signing key"
+    _HELP["/opt/gitlab/embedded/service/gitlab-shell/hooks"]="Location of server hook scripts"
+    _HELP["curl -s "https://packages.gitlab.com/gpg.key" | apt-key add -"]="Update GitLab's package GPG signing key"
+    _HELP["/var/opt/gitlab/gitlab-rails/uploads"]="Location where GitLab stores uploaded files/artifacts"
 
     print "Run 'help' to learn about other tools you can run in this task"
 }
