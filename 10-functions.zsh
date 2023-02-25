@@ -22,6 +22,11 @@ for FN in $fns; do
 done
 
 
+# Defined as a function instead of an alias b/c I like to use
+# this in conjunction with the 'noglob' precommand modifier;
+# Since the modifier comes in command position, the alias expansion
+# would be suppressed
+qrencode() { command qrencode -t ANSI $@; }
 
 # this little gem lets me say .. .. .. to go back three directories
 ..() {
