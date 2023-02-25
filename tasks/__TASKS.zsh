@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.13.1
-# Date:    Mon Aug 22 20:49:53 MDT 2022
+# Version: 1.13.2
+# Date:    Sat Jan  7 15:34:59 MST 2023
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -79,7 +79,7 @@ fi
 #
 # Wait for user to press [Enter]
 if ! functions pause >/dev/null; then
-	pause() { read -p "Press [Enter] to continue "; }
+	pause() { read "?Press [Enter] to continue "; }
 fi
 
 if ! functions prettySeconds >/dev/null; then
