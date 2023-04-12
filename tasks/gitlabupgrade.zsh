@@ -1,38 +1,37 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.7.4"
-    DATE="Sat Feb 18 11:23:34 2023"
+ VERSION="1.8"
+    DATE="Wed 12 Apr 2023 12:24:48 PM MDT"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
 
 setup() {
     [[ -z $STY && -z $TMUX ]] && die "Not using a terminal muxer?  That's just too risky for me."
-	raisePrivs || true
+    raisePrivs || true
 }
 
 env() {
     _KEEP_FUNCTIONS=(prettySeconds)
 
-	local HOURS=4
-	if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
-		apt update
-	else
-		printf "'apt update' has been run within the past $HOURS hours, skipping...\n\n"
-	fi
+    local HOURS=4
+    if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
+        apt update
+    else
+        printf "'apt update' has been run within the past $HOURS hours, skipping...\n\n"
+    fi
 
-	_TODO=(
-		'$ apt list --upgradable'
-		'$ gitlab-ctl status'
-		'$ apt upgrade -y'
-		'$ gitlab-ctl status'
-		"Make sure the post-receive.pl hook still works by pushing a commit"
-		"Retire the webpage broadcast message"
-		'$ cd; mv gitlab.msg gitlab.msg.old'
+    _TODO=(
+        '$ apt list --upgradable'
+        '$ gitlab-ctl status'
+        '$ apt upgrade -y'
+        '$ gitlab-ctl status'
+        "Make sure the post-receive.pl hook still works by pushing a commit"
+        "Retire the webpage broadcast message"
         '$ check-logfile-permissions'
-		'$ if [[ -f /var/run/reboot-required ]]; then print Reboot is required; else print Reboot is NOT required; fi'
-	)
+        '$ if [[ -f /var/run/reboot-required ]]; then print Reboot is required; else print Reboot is NOT required; fi'
+    )
 
     typeset -gA _HELP
     _HELP[help]="This function"
@@ -49,16 +48,38 @@ env() {
     }
 
     BACKUPSDIR=/var/opt/gitlab/backups
+	BACKUPSDEST=viking-dyn:/mnt/rasp/fadein/backups
     _HELP[backup-gitlab]="Back up GitLab's PostgreSQL database to $BACKUPSDIR"
     backup-gitlab() {
         ding gitlab-backup create
-        printf "\nBackup created in $BACKUPSDIR\nNow 'scp' it to viking-dyn:/mnt/rasp/fadein/backups\n"
+        printf "\nBackup created in $BACKUPSDIR\nNow run 'xfer BACKUP.tar to send it to $BACKUPSDEST\n"
     }
+
+	_HELP[xfer]="Transfer the backup to viking-dyn"
+	xfer() {
+		if [[ -z $1 ]]; then
+			1>&2 print "Usage: xfer BACKUPFILENAME"
+			1>&2 print "  Just the stem of the filename, no dirs and without _gitlab_backup.tar"
+			return 1
+		elif [[ ! -f $BACKUPSDIR/${1}_gitlab_backup.tar ]]; then
+			1>&2 print "Error: the file '${1}_gitlab_backup.tar' does not exist in $BACKUPSDIR"
+			return 2
+		fi
+		print scp $BACKUPSDIR/${1}_gitlab_backup.tar $BACKUPSDEST
+		if [[ $? == 0 ]]; then
+			echo -e "\a"
+		else
+			for ding in {0..2}; do
+				echo -ne "\a"
+				sleep 1
+			done
+		fi
+	}
 
     # Miscellaneous hints and commands
     _HELP["ls /var/log/apt/"]="APT log files; history GitLab upgrades"
     _HELP["/opt/gitlab/embedded/service/gitlab-shell/hooks"]="Location of server hook scripts"
-    _HELP["curl -s "https://packages.gitlab.com/gpg.key" | apt-key add -"]="Update GitLab's package GPG signing key"
+    _HELP['curl -s "https://packages.gitlab.com/gpg.key" | apt-key add -']="Update GitLab's package GPG signing key"
     _HELP["/var/opt/gitlab/gitlab-rails/uploads"]="Location where GitLab stores uploaded files/artifacts"
 
     print "Run 'help' to learn about other tools you can run in this task"
@@ -67,7 +88,7 @@ env() {
 
 # Report on time spent on this task
 cleanup() {
-	echo This upgrade took $( prettySeconds ) to complete
+    echo This upgrade took $( prettySeconds ) to complete
 }
 
 
