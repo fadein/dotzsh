@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.8"
-    DATE="Wed 12 Apr 2023 12:24:48 PM MDT"
+ VERSION="1.8.1"
+    DATE="Fri 05 May 2023 10:23:26 AM MDT"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -52,7 +52,7 @@ env() {
     _HELP[backup-gitlab]="Back up GitLab's PostgreSQL database to $BACKUPSDIR"
     backup-gitlab() {
         ding gitlab-backup create
-        printf "\nBackup created in $BACKUPSDIR\nNow run 'xfer BACKUP.tar to send it to $BACKUPSDEST\n"
+        printf "\nBackup created in $BACKUPSDIR\nNow run 'xfer BACKUP_NAME_STEM to send it to $BACKUPSDEST\n"
     }
 
 	_HELP[xfer]="Transfer the backup to viking-dyn"
@@ -65,7 +65,7 @@ env() {
 			1>&2 print "Error: the file '${1}_gitlab_backup.tar' does not exist in $BACKUPSDIR"
 			return 2
 		fi
-		print scp $BACKUPSDIR/${1}_gitlab_backup.tar $BACKUPSDEST
+		scp $BACKUPSDIR/${1}_gitlab_backup.tar $BACKUPSDEST
 		if [[ $? == 0 ]]; then
 			echo -e "\a"
 		else
