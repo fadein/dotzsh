@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.13.4"
-    DATE="Thu Dec 29 22:31:07 MST 2022"
+ VERSION="1.14"
+    DATE="Fri May  5 14:25:22 MDT 2023"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -99,6 +99,20 @@ recordTimeOfLastUpdate() {
 	head -n1 /var/lib/slackpkg/ChangeLog.txt > $LAST_UPDATE_FILE
 }
 
+
+assert-initrd-has-colehack() {
+	if ! tar ztf /usr/share/mkinitrd/keymaps.tar.gz | grep -q colehack; then
+		print "Adding colehack.bmap to /usr/share/mkinitrd/keymaps.tar.gz..."
+		loadkeys -b colehack > colehack.bmap
+		gunzip -c /usr/share/mkinitrd/keymaps.tar.gz > /tmp/keymaps.tar
+		tar -rvf /tmp/keymaps.tar colehack.bmap
+		gzip -f /tmp/keymaps.tar
+		mv -f /usr/share/mkinitrd/keymaps.tar.gz{,.bak}
+		mv /tmp/keymaps.tar.gz /usr/share/mkinitrd/keymaps.tar.gz
+	else
+		print "colehack.bmap is already present"
+	fi
+}
 
 getSARPIpkg() {
 	if [[ -f $1.txz ]]; then
@@ -236,21 +250,9 @@ env() {
 			_TODO+=(
 				"$ cd /boot/efi/EFI/Slackware/"
 				"$ cp /boot/vmlinuz*(.) ."
-			)
-
-			if [[ -n $UPDATED ]]; then
-				_TODO+=(
-					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
-					"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
-				)
-			else
-				_TODO+=(
-					"Run \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
-					"Run cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
-				)
-			fi
-
-			_TODO+=(
+				"$ assert-initrd-has-colehack"
+				"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
+				"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
 				"Make the new kernel become the 1st entry in elilo.conf"
 			)
 		;;

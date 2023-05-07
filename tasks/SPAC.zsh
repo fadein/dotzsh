@@ -1,0 +1,1 @@
+/home/fadein/school/SPAC.git/SPAC.zsh

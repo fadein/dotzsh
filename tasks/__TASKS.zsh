@@ -86,7 +86,6 @@ if ! functions prettySeconds >/dev/null; then
 	prettySeconds() {
 		local -i seconds=${1:-$SECONDS}
 		local -a result
-		local -i DD HH MM SS
 
 		for factor in 60 60 24; do
 			(( seconds == 0 )) && break
