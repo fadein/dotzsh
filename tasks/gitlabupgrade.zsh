@@ -13,7 +13,7 @@ setup() {
 }
 
 env() {
-    _KEEP_FUNCTIONS=(prettySeconds)
+    _KEEP_FUNCTIONS=(prettySeconds echodo)
 
     local HOURS=4
     if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
@@ -48,7 +48,7 @@ env() {
     }
 
     BACKUPSDIR=/var/opt/gitlab/backups
-	BACKUPSDEST=viking-dyn:/mnt/rasp/fadein/backups
+	BACKUPSDEST=viking-dyn:/mnt/rasp/fadein/backups/GitLab
     _HELP[backup-gitlab]="Back up GitLab's PostgreSQL database to $BACKUPSDIR"
     backup-gitlab() {
         ding gitlab-backup create
@@ -65,8 +65,14 @@ env() {
 			1>&2 print "Error: the file '${1}_gitlab_backup.tar' does not exist in $BACKUPSDIR"
 			return 2
 		fi
-		scp $BACKUPSDIR/${1}_gitlab_backup.tar $BACKUPSDEST
-		if [[ $? == 0 ]]; then
+
+		echodo rsync -av /etc/gitlab/config_backup $BACKUPSDEST
+		RSYNC_R=$?
+
+		echodo scp $BACKUPSDIR/${1}_gitlab_backup.tar $BACKUPSDEST
+		SCP_R=$?
+
+		if [[ $SCP_R == $RSYNC_R && $RSYNC_R == 0 ]]; then
 			echo -e "\a"
 		else
 			for ding in {0..2}; do

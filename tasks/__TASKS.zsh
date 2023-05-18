@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.13.2
-# Date:    Sat Jan  7 15:34:59 MST 2023
+# Version: 1.14
+# Date:    Thu 18 May 2023 05:07:34 PM MDT
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -75,6 +75,22 @@ if ! functions warn >/dev/null; then
 		return 1
 	}
 fi
+
+#
+# Show a command and then run it
+# When the environment variable DRYRUN is non-empty, do not
+# actually make any changes, but only show what would be done
+if ! functions echodo >/dev/null; then
+	echodo() {
+		print $@
+		if [[ -z $DRYRUN ]]; then
+			$@
+		else
+			true
+		fi
+	}
+fi
+
 
 #
 # Wait for user to press [Enter]
@@ -243,7 +259,7 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 
 	#clean up the environment
 	for F in setup spawn cleanup env die prettySeconds persistentTodo \
-		pause warn raisePrivs dropPrivsAndSpawn; do
+		pause warn raisePrivs dropPrivsAndSpawn echodo; do
 		[[ -z "$_KEEP_FUNCTIONS[(r)$F]" ]] && unfunction $F 2>/dev/null
 	done
 	unset _KEEP_FUNCTIONS
