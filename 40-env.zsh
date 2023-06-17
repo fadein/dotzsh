@@ -16,7 +16,7 @@ SAVEHIST=1337
 #
 # Global environment variables
 export PAGER='less -r'
-export LESS='-MFX'
+export LESS='-R'
 export EDITOR=/usr/bin/vim
 export EDIT=$EDITOR
 export TMPDIR=/tmp

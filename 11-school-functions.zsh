@@ -1,5 +1,5 @@
 # vim: set ft=zsh expandtab:
-SEMESTYR=Sp23
+SEMESTYR=Su23
 BASE=/home/fadein/school
 
 refresh() {
