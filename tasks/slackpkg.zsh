@@ -217,18 +217,18 @@ env() {
 	fi
 
 	_TODO+=(
-		"\$ $SLACKPKG install-new || true"
-		"\$ $SLACKPKG upgrade-all"
-		"\$ recordTimeOfLastUpdate" # Store the date of this update in /tmp
-		"\$ $SLACKPKG new-config" # Merge .new files under /etc"
+		"$ $SLACKPKG install-new || true"
+		"$ $SLACKPKG upgrade-all"
+		"$ recordTimeOfLastUpdate" # Store the date of this update in /tmp
+		"$ $SLACKPKG new-config" # Merge .new files under /etc"
 	)
 
 	# add this host's name if I'm running multilib here
 	case $HOSTNAME in
 		nevermind*)
 			_TODO+=(
-				"\$ $SLACKPKG upgrade multilib"
-				"\$ $SLACKPKG install multilib"
+				"$ $SLACKPKG upgrade multilib"
+				"$ $SLACKPKG install multilib"
 			)
 			;;
 	esac
