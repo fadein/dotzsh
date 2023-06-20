@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.14"
-    DATE="Fri May  5 14:25:22 MDT 2023"
+ VERSION="1.15"
+    DATE="Mon Jun 19 19:06:51 MDT 2023"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -10,6 +10,7 @@ TASKNAME=$0:t:r
 SLACKPKG=/usr/sbin/slackpkg
 NICE=/usr/bin/nice
 LAST_UPDATE_FILE=/var/lib/slackpkg/last_update
+REBOOT_FILE=/var/run/needs_restarting
 
 
 setup() {
@@ -280,6 +281,10 @@ env() {
 			;;
 
 	esac
+
+	_TODO+=(
+        "$ [[ -f $REBOOT_FILE ]] && System must be restarted || print System DOES NOT need to be restarted"
+	)
 
 	usage
 }
