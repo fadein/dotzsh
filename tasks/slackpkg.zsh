@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.15.1"
-    DATE="Mon Jun 19 19:20:50 MDT 2023"
+ VERSION="1.15.2"
+    DATE="Mon Jun 19 19:34:13 MDT 2023"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -160,8 +160,9 @@ getAllSARPIpkgs() {
 }
 
 setSARPIvars() {
+	print "Browse to $BASE and check the BuildLog\n"
 	while true; do
-		for V in KVER DATE; do
+		for V in DATE KVER BUILD TAG ARCH; do
 			vared -p "Set value for $V=" $V
 		done
 		read -k1 '?Proceed? [Y/n] '
@@ -259,12 +260,12 @@ env() {
 		;;
 
 		armv7l)
-			BASE=https://slackware.uk/sarpi/rpi3/current-armv7
-			KVER=5.15.13
-			ARCH=armv7-1
-			BUILD=slackcurrent
-			DATE=06Jan22
+			BASE=https://slackware.uk/sarpi/rpi3/15.0-armv7/
+			DATE=14Jun23
+			KVER=6.1.32
+			BUILD=slack15.0
 			TAG=sp1
+			ARCH=armv7-1
 
 			if [[ ! -d SARPI ]]; then
 				mkdir SARPI
