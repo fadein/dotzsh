@@ -1,15 +1,15 @@
 #!/bin/zsh
 
 PURPOSE="Log into viking"
-VERSION=0.3
-   DATE="Sat Aug 12 10:59:40 MDT 2017"
+VERSION=0.4
+   DATE="Sat Jun 24 22:18:43 MDT 2023"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
 TASKNAME=$0:t:r
 
 SSH=/usr/bin/ssh
-CMD="exec /home/fadein/bin/comms.tmux"
+CMD="exec /home/fadein/.local/bin/comms.tmux"
 
 HOME_WIFI="get your own internet"
 INTRANET_HOST=viking2.falor
