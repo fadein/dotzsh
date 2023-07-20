@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.11.1"
-   DATE="Sun Jan 22 09:40:52 MST 2023"
+VERSION="0.11.2"
+   DATE="Thu Jul 20 13:13:05 MDT 2023"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -50,7 +50,7 @@ WARD_COUNCIL=(
 YOUTH_COUNCIL=(
 	$BISHOPRIC
 	"Priest Quorum 1st Assistant (Jordan Chesley)"
-	"Teacher's & Deacon's Quorum Presidents (Max Gunnell, Will Falor)"
+	"Teacher's & Deacon's Quorum Presidents (Max Gunnell, Rhett Gunnell)"
 	"Young Women Class Presidents (Mia Flores)"
 	"Young Women President (Jana Anderson)"
 	)
@@ -89,7 +89,7 @@ _ward_council_email() {
 
 _youth_council_email() {
 	cat <<-EM > $CHURCH/youth_council_email
-	Youth Council Meeting Sunday @ 9:30am
+	Youth Council Meeting Sunday @ 10:00am
 	To: ${(j:, :)YOUTH_COUNCIL}
 
 	Spiritual Thought & Song: ~~~~~~~
