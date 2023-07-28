@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.15.2"
-    DATE="Mon Jun 19 19:34:13 MDT 2023"
+ VERSION="1.15.3"
+    DATE="Fri Jul 28 12:51:55 MDT 2023"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -255,7 +255,7 @@ env() {
 				"$ assert-initrd-has-colehack"
 				"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
 				"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
-				"Make the new kernel become the 1st entry in elilo.conf"
+				"$ vim elilo.conf"
 			)
 		;;
 
