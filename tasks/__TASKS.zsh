@@ -265,7 +265,7 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 	unset _KEEP_FUNCTIONS
 
 	#
-	# Do not allow tasks to be recursively entering into
+	# Do not allow tasks to be recursively entered
 elif [[ -n "$TASK" ]]; then
 	>&1 <<-NORECURSION
 	$TASKNAME error:

@@ -1,8 +1,8 @@
 #!/bin/zsh
 
-PURPOSE="Log into viking"
+PURPOSE="Log into Viking2 with TMUX"
 VERSION=0.4
-   DATE="Sat Jun 24 22:18:43 MDT 2023"
+   DATE="Sat Jun 24 20:12:06 MDT 2023"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
