@@ -14,6 +14,10 @@ HISTSIZE=1337
 SAVEHIST=1337
 
 #
+# DIR_COLORS for `ls` and other tools
+[[ -r ~/.dircolors ]] && eval "$(dircolors ~/.dircolors -b)"
+
+#
 # Global environment variables
 export PAGER='less -r'
 export LESS='-R'
@@ -22,6 +26,7 @@ export EDIT=$EDITOR
 export TMPDIR=/tmp
 export TMP=/tmp
 export XDG_CONFIG_HOME=~/.config
+
 
 #
 # Personal recycle bin - see `fn_util/recycle`
