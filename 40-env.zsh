@@ -23,6 +23,18 @@ export TMPDIR=/tmp
 export TMP=/tmp
 export XDG_CONFIG_HOME=~/.config
 
+
+#
+# Colorized man pages in less(1)
+# https://www.howtogeek.com/683134/how-to-display-man-pages-in-color-on-linux/
+export LESS_TERMCAP_md=$'\e[01;36m'
+export LESS_TERMCAP_me=$'\e[0m'
+export LESS_TERMCAP_us=$'\e[01;33m'
+export LESS_TERMCAP_ue=$'\e[0m'
+export LESS_TERMCAP_so=$'\e[47;90m'
+export LESS_TERMCAP_se=$'\e[0m'
+
+
 #
 # Personal recycle bin - see `fn_util/recycle`
 export RECYCLE=~/.recycle
