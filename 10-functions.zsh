@@ -276,9 +276,9 @@ repo () {
 
 ssh-keycheck() {
     if [[ -n $1 ]]; then
-        ssh-keyscan gitlab.cs.usu.edu 2>/dev/null | ssh-keygen -lf -
+        ssh-keyscan $* 2>/dev/null | ssh-keygen -lf -
     else
-        1>&2 print Usage: $0 HOST 
+        1>&2 print "Usage: $0 [ssh-keyscan options] HOSTS"
         return 1
     fi
 }
