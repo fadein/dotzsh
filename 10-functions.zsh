@@ -272,3 +272,13 @@ repo () {
         print "else?"
 	fi
 }
+
+
+ssh-keycheck() {
+    if [[ -n $1 ]]; then
+        ssh-keyscan gitlab.cs.usu.edu 2>/dev/null | ssh-keygen -lf -
+    else
+        1>&2 print Usage: $0 HOST 
+        return 1
+    fi
+}
