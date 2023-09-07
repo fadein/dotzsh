@@ -272,3 +272,13 @@ repo () {
         print "else?"
 	fi
 }
+
+
+ssh-keycheck() {
+    if [[ -n $1 ]]; then
+        ssh-keyscan $* 2>/dev/null | ssh-keygen -lf -
+    else
+        1>&2 print "Usage: $0 [ssh-keyscan options] HOSTS"
+        return 1
+    fi
+}
