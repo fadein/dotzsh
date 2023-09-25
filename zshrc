@@ -1,6 +1,5 @@
 # fadein's zshrc
-
-[[ -r ~/.dircolors ]] && eval "$(dircolors ~/.dircolors -b)"
+# vim:set expandtab foldmethod=indent:
 
 # Source global definitions
 [[ -r /etc/zsh/zprofile ]] && source /etc/zsh/zprofile
@@ -17,7 +16,3 @@ done
 [[ -n "$TASK" && -x ~/.zsh/tasks/$TASK.zsh ]] \
     && source ~/.zsh/tasks/$TASK.zsh $TASK \
     || true
-
-# vim:set expandtab foldmethod=indent:
-
-[[ -n "$_TUTR" ]] && source $_TUTR || true  # shell tutorial shim DO NOT MODIFY

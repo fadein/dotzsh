@@ -14,6 +14,10 @@ HISTSIZE=1337
 SAVEHIST=1337
 
 #
+# DIR_COLORS for `ls` and other tools
+[[ -r ~/.dircolors ]] && eval "$(dircolors ~/.dircolors -b)"
+
+#
 # Global environment variables
 export PAGER='less -r'
 export LESS='-R'
