@@ -38,6 +38,12 @@ setup() {
 		$DD if=/dev/urandom bs=64 count=1 2>/dev/null \
 			| $BASE64 > $_TASK_TMPFIL
 	fi
+
+    # The CLEANUP_TRAPS array variable contains names of signals
+    # upon which the cleanup() function will be called.
+    # HUP is a good choice because this ensures the task is
+    # cleaned up if the controlling terminal is closed
+    CLEANUP_TRAPS=(HUP)
 }
 
 # how do you want to start your shell

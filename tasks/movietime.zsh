@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Movie Time!"
-VERSION="0.0"
-   DATE="Fri Apr 21 21:58:57 MDT 2023"
+VERSION="1.0"
+   DATE="Sun Oct  1 14:13:26 MDT 2023"
  AUTHOR="Erik"
 
 PROGNAME=$0
@@ -22,6 +22,7 @@ setup() {
             killall -SIGUSR1 conky
             ;;
     esac
+    CLEANUP_TRAPS=(HUP)
 }
 
 

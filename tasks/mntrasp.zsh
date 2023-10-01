@@ -17,6 +17,7 @@ setup() {
     fi
     raisePrivs
     $MOUNT /mnt/rasp
+    CLEANUP_TRAPS=(HUP)
 }
 
 spawn() {
@@ -24,6 +25,7 @@ spawn() {
 }
 
 cleanup() {
+    logger mntrasp cleanup
     if $MOUNT | grep -q /mnt/rasp; then
         $UMOUNT /mnt/rasp
     fi

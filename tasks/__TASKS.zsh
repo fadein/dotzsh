@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.14
-# Date:    Thu 18 May 2023 05:07:34 PM MDT
+# Version: 1.15
+# Date:    Sun Oct  1 14:05:24 MDT 2023
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -146,6 +146,10 @@ fi
 if [[ 0 == "$#" && -z "$TASK" ]]; then
 
 	if functions setup >/dev/null; then setup || exit $?; fi
+
+	if functions cleanup >/dev/null && [[ -n $CLEANUP_TRAPS ]]; then
+		trap cleanup ${CLEANUP_TRAPS[@]}
+	fi
 
 	if functions spawn >/dev/null; then
 		spawn
