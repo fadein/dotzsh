@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
-PURPOSE="Play on nethack.alt.org"
-VERSION="1.0"
-   DATE="Sun Sep 24 21:29:03 MDT 2023"
+PURPOSE="Play on nethack.alt.org or hardfought.org"
+VERSION="2.0"
+   DATE="Sat Sep 30 22:36:58 MDT 2023"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -10,13 +10,16 @@ TASKNAME=$0:t:r
 
 setup() {
     setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
+    clear
+    print $'Entering the Dungeons of Doom...\033]710;xft:hack:pixelsize=48:antialias=true\007'
+    tcd --scheme=nethack
 }
 
-env() {
-    clear
-    print $'\033]710;xft:hack:pixelsize=48:antialias=true\007Entering the Dungeons of Doom...'
-    tcd --scheme=nethack
-    ssh nethack@alt.org
+spawn() {
+    case $TASKNAME in
+        nao) ssh nethack@alt.org ;;
+        hardfought) ssh nethack@hardfought.org ;;
+    esac
 }
 
 cleanup() {
