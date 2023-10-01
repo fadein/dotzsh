@@ -8,6 +8,8 @@ alias csi=csi\ -q
 alias ctags='ctags --fields=+iaS --extra=+fq'
 alias curl='curl -A "Mozilla/4.0"'
 alias date='date +"%a, %b %e %Y  %R %Z"'
+alias diff='diff --color=auto'
+alias diffu='diff --color=auto -u'
 alias df='df -h'
 alias dmesg="dmesg -H"
 alias du='du -h'

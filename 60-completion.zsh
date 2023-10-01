@@ -1,5 +1,5 @@
 # enable the completion system
-fpath=($HOME/.zsh/completion/ $fpath)
+fpath=($HOME/.zsh/completion $fpath)
 autoload -U $HOME/.zsh/completion/*(:t)
 autoload -U compinit; compinit -u -d ~/.zsh/compdump
 
