@@ -1,41 +1,49 @@
 #!/bin/env zsh
 
 PURPOSE="Play on nethack.alt.org or hardfought.org"
-VERSION="2.0"
-   DATE="Sat Sep 30 22:36:58 MDT 2023"
+VERSION="3.0"
+   DATE="Sun Oct 15 20:52:27 MDT 2023"
  AUTHOR="erik"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
 
-setup() {
-    setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
-    clear
-    print $'Entering the Dungeons of Doom...\033]710;xft:hack:pixelsize=48:antialias=true\007'
-    tcd --palette
-    tcd --scheme=NetHack
-}
 
-spawn() {
-    case $TASKNAME in
-        nao) ssh nethack@alt.org ;;
-        hardfought) ssh nethack@hardfought.org ;;
-    esac
-}
-
-cleanup() {
-    setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll
-}
-
-source $0:h/__TASKS.zsh
-
-# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 expandtab:
-
+declare -a LC  # [columns lines]
 
 # use tput(1) to find the dimensions of the terminal
 # save in the global array LC
 get-size() {
     LC=($(tput cols lines))
+}
+
+countdown() {
+    if [[ $# -lt 1 ]]; then
+        echo 'Usage: countdown SECONDS [CMD ARGS]'
+        return 1
+    fi
+
+    local N I
+    N=$1
+    I=1
+    shift
+    [[ $# -ge 1 ]] && echo "Running '$@' in "
+
+    until [[ $N -eq 0 ]]; do
+        if [[ $((I % 10)) -eq 0 ]]; then
+            echo "$N... "
+        else
+            echo -n "$N... "
+        fi
+
+        sleep 1
+        ((N--, I++))
+    done
+    echo Done
+
+    if [[ $# -ge 1 ]]; then
+        eval $@
+    fi
 }
 
 nethack-right-size() {
@@ -46,16 +54,9 @@ nethack-right-size() {
     STEP=2
 
     declare -a TARGET_SIZE=(130 36)
-    declare -a LC  # [columns lines]
     declare -a ORIG_SIZE  # [columns lines]
-    ORIG_FONT_SIZE=
-    GOOD=
-
-    if ! tcd --scheme | grep -q nethack; then
-        tcd --scheme=nethack
-        sleep .25
-    fi
-
+    local ORIG_FONT_SIZE=
+    local GOOD=
 
     # get the current size of the screen so I can reset back to the original size
     # if we fail to find a good match
@@ -69,7 +70,7 @@ nethack-right-size() {
         print "\033]710;xft:hack:pixelsize=${i}:antialias=true\007"
         # print "[H[2JTrying font size $i..."
         print "Trying font size $i..."
-        sleep .05
+        sleep .15
         get-size
         print "At font size $i dimensions are ${LC[1]}x${LC[2]}"
 
@@ -94,14 +95,37 @@ nethack-right-size() {
         print "Failed to find a good font size and I don't know what size to reset to. Sorry!"
 
     elif [[ -n $GOOD ]]; then
-        case $(basename $0) in
-            nethack) /usr/games/nethack ;;
-            hardfought) ssh nethack@hardfought.org ;;
-            *) echo "Name of this script is $0; I'm unsure which game to play" ;;
-        esac
+        return 0
 
     else
         print "Never found a good font size"
+        return 1
 
     fi
 }
+
+
+setup() {
+    if nethack-right-size; then
+        setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
+        clear
+        countdown 3 print Entering the Dungeons of Doom from ${TTY:t2}...
+    else
+        return 1
+    fi
+}
+
+spawn() {
+        case $TASKNAME in
+            nao) ssh nethack@alt.org ;;
+            hardfought) ssh nethack@hardfought.org ;;
+        esac
+}
+
+cleanup() {
+    setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll
+}
+
+source $0:h/__TASKS.zsh
+
+# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 expandtab:
