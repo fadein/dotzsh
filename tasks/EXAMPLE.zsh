@@ -24,13 +24,15 @@ RM=/usr/bin/rm
 SUDO=/usr/bin/sudo
 TEMPFILE=/usr/bin/tempfile
 
-export _TASK_TMPFIL=${_TASK_TMPFIL:-}
 
 #
 # Instructions to run one time to set up your environment.  You
 # could download a file, update a repository, sync a database, etc.
+#
+# Variables exported here are visible to the sub-shell and in cleanup()
 setup() {
 	print "EXAMPLE setup()"
+	export _TASK_TMPFIL=${_TASK_TMPFIL:-}
 
 	if [[ -d /dev/shm && -x $DD && -x $BASE64 ]]; then
 		_TASK_TMPFIL=$( $TEMPFILE -d /dev/shm )
@@ -39,11 +41,11 @@ setup() {
 			| $BASE64 > $_TASK_TMPFIL
 	fi
 
-    # The CLEANUP_TRAPS array variable contains names of signals
-    # upon which the cleanup() function will be called.
-    # HUP is a good choice because this ensures the task is
-    # cleaned up if the controlling terminal is closed
-    CLEANUP_TRAPS=(HUP)
+	# The CLEANUP_TRAPS array variable contains names of signals
+	# upon which the cleanup() function will be called.
+	# HUP is a good choice because this ensures the task is
+	# cleaned up if the controlling terminal is closed
+	CLEANUP_TRAPS=(HUP)
 }
 
 # how do you want to start your shell
@@ -65,7 +67,7 @@ spawn() {
 env() {
 	print "EXAMPLE env()"
 	export _FOR_EXAMPLE="This task was created on $DATE"
-    export _WHEN_STARTED="This task was begun at $(date)"
+	export _WHEN_STARTED="This task was begun at $(date)"
 
 	if [[ -d /dev/shm && -x /dev/shm ]]; then
 		cd /dev/shm
@@ -73,7 +75,7 @@ env() {
 	else
 		print "\tY U NO /dev/shm??"
 	fi
- 
+
 	#
 	# A todo list.  If this variable isn't instantiated, there
 	# will be no todo() function in your task environment.
@@ -86,23 +88,23 @@ env() {
 		"type 'todo help' for instructions"
 		"$ todo next"
 		"Whoops! You stepped over this item")
-	if [[ -n $_TASK_TMPFIL ]]; then
-		_TODO+="$ cat $_TASK_TMPFIL"
-	fi
-	_TODO+="This is the last todo list item"
+		if [[ -n $_TASK_TMPFIL ]]; then
+			_TODO+="$ cat $_TASK_TMPFIL"
+		fi
+		_TODO+="This is the last todo list item"
 
 	# GLOBAL FOR HELP FUNCTION
-    # Put into this association the name of a function followed by a brief description;
-    # The user will then be able to run a function 'help' that will show defined functions
-    # along with your provided descripion
+	# Put into this association the name of a function followed by a brief description;
+	# The user will then be able to run a function 'help' that will show defined functions
+	# along with your provided descripion
 	typeset -gA _HELP
 
 	#
 	# a private, task-specific helper function
-    _HELP+=("example" "a private, task-specific helper function")
+	_HELP+=("example" "a private, task-specific helper function")
 	example() {
 		print "For example, $_FOR_EXAMPLE"
-        print $_WHEN_STARTED
+		print $_WHEN_STARTED
 
 		if [[ -n $_TASK_TMPFIL ]]; then
 			print "Here is your personalized noise"
@@ -110,110 +112,108 @@ env() {
 		fi
 	}
 
-    _HELP+=("colors" "See if your terminal renders all of the ANSI terminal color codes")
-    colors() {
-        # Copyright (C) 2011 by Yu-Jie Lin
-        #
-        # Permission is hereby granted, free of charge, to any person obtaining a copy
-        # of this software and associated documentation files (the "Software"), to deal
-        # in the Software without restriction, including without limitation the rights
-        # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-        # copies of the Software, and to permit persons to whom the Software is
-        # furnished to do so, subject to the following conditions:
-        #
-        # The above copyright notice and this permission notice shall be included in
-        # all copies or substantial portions of the Software.
-        #
-        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-        # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-        # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-        # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-        # THE SOFTWARE.
+	_HELP+=("colors" "See if your terminal renders all of the ANSI terminal color codes")
+	colors() {
+		# Copyright (C) 2011 by Yu-Jie Lin
+		#
+		# Permission is hereby granted, free of charge, to any person obtaining a copy
+		# of this software and associated documentation files (the "Software"), to deal
+		# in the Software without restriction, including without limitation the rights
+		# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+		# copies of the Software, and to permit persons to whom the Software is
+		# furnished to do so, subject to the following conditions:
+		#
+		# The above copyright notice and this permission notice shall be included in
+		# all copies or substantial portions of the Software.
+		#
+		# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+		# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+		# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+		# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+		# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+		# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+		# THE SOFTWARE.
 
-        fmt="%3d \e[%dmSGR \e[31mSGR \e[44mSGR\e[49m \e[39m\e[44mSGR\e[0m"
-        echo
-        echo "SGR ($fmt)"
-        echo
-        for i in {1..25} ; do
-                a=()
-                for j in {0..75..25}; do
-                        a=("${a[@]}" "$((i+j))" "$((i+j))")
-                done
-                printf "$fmt $fmt $fmt $fmt\n" "${a[@]}"
-        done
-        echo
-        for i in {100..110..4} ; do
-                a=()
-                for j in {0..3}; do
-                        a=("${a[@]}" "$((i+j))" "$((i+j))")
-                done
-                printf "$fmt $fmt $fmt $fmt\n" "${a[@]}"
-        done
+		fmt="%3d \e[%dmSGR \e[31mSGR \e[44mSGR\e[49m \e[39m\e[44mSGR\e[0m"
+		echo SGR
+		for i in {1..25} ; do
+			a=()
+			for j in {0..75..25}; do
+				a=("${a[@]}" "$((i+j))" "$((i+j))")
+			done
+			printf "$fmt $fmt $fmt $fmt\n" "${a[@]}"
+		done
+		echo
+		for i in {100..110..4} ; do
+			a=()
+			for j in {0..3}; do
+				a=("${a[@]}" "$((i+j))" "$((i+j))")
+			done
+			printf "$fmt $fmt $fmt $fmt\n" "${a[@]}"
+		done
 
-        fmt="\e[48;5;%dm   \e[0m"
-        echo
-        echo "256 Colors ($fmt)"
-        echo
-        for i in {0..7} ; do printf "%3d " "$i" ; done
-        for i in {232..243} ; do printf "%3d " "$i" ; done ; echo
-        for i in {0..7} ; do printf "$fmt " "$i" ; done
-        for i in {232..243} ; do printf "$fmt " "$i" ; done ; echo
+		fmt="\e[48;5;%dm   \e[0m"
+		echo
+		echo "256 Colors"
+		echo
+		for i in {0..7} ; do printf "%3d " "$i" ; done
+		for i in {232..243} ; do printf "%3d " "$i" ; done ; echo
+		for i in {0..7} ; do printf "$fmt " "$i" ; done
+		for i in {232..243} ; do printf "$fmt " "$i" ; done ; echo
 
-        for i in {8..15} ; do printf  "%3d " "$i" ; done ;
-        for i in {244..255} ; do printf "%3d " "$i" ; done ; echo
-        for i in {8..15} ; do printf "$fmt " "$i" ; done ;
-        for i in {244..255} ; do printf "$fmt " "$i" ; done ; echo
-        echo
+		for i in {8..15} ; do printf  "%3d " "$i" ; done ;
+		for i in {244..255} ; do printf "%3d " "$i" ; done ; echo
+		for i in {8..15} ; do printf "$fmt " "$i" ; done ;
+		for i in {244..255} ; do printf "$fmt " "$i" ; done ; echo
+		echo
 
-        fmt="%3d \e[38;5;0m\e[48;5;%dm___\e[0m"
-        for i in {16..51} ; do
-                a=()
-                for j in {0..196..36}; do
-                        a=("${a[@]}" "$((i+j))" "$((i+j))")
-                done
-                printf "$fmt $fmt $fmt $fmt $fmt $fmt\n" "${a[@]}"
-        done
-    }
+		fmt="%3d \e[38;5;0m\e[48;5;%dm___\e[0m"
+		for i in {16..51} ; do
+			a=()
+			for j in {0..196..36}; do
+				a=("${a[@]}" "$((i+j))" "$((i+j))")
+			done
+			printf "$fmt $fmt $fmt $fmt $fmt $fmt\n" "${a[@]}"
+		done
+	}
 
 
-    #
-    # The utility functions defined in __TASKS.zsh are removed from the
-    # environment by default.  If you'd like to keep one around, put
-    # its name into this list.
-    _KEEP_FUNCTIONS=(die prettySeconds)
+	#
+	# The utility functions defined in __TASKS.zsh are removed from the
+	# environment by default.  If you'd like to keep one around, put
+	# its name into this list.
+	_KEEP_FUNCTIONS=(die prettySeconds)
 
 	# Print a useful message to remind the user what to do next
-	>&1 <<MESSAGE
+	>&1 <<-MESSAGE
 
-###
-######
-############
-########################
-#########################################
+	###
+	######
+	############
+	########################
+	#########################################
 
-This example task tries to chdir into /dev/shm.
-You will be restored to your former shell at its
-former location when you quit this shell.
+	This example task tries to chdir into /dev/shm.
+	You will be restored to your former shell at its
+	former location when you quit this shell.
 
-A helpful function, example() is defined for you
-as well.  It will also go away when you exit this
-shell.
+	A helpful function, example() is defined for you
+	as well.  It will also go away when you exit this
+	shell.
 
-The text appearing above your prompt is your todo
-list.  You can interact with it through the todo()
-shell function.  Run 'todo help' for instructions.
+	The text appearing above your prompt is your todo
+	list.  You can interact with it through the todo()
+	shell function.  Run 'todo help' for instructions.
 
-Run 'help' for usage information regarding commands
-within this environment.
+	Run 'help' for usage information regarding commands
+	within this environment.
 
-#########################################
-########################
-############
-######
-###
-MESSAGE
+	#########################################
+	########################
+	############
+	######
+	###
+	MESSAGE
 }
 
 #
@@ -227,11 +227,11 @@ cleanup() {
 		$RM -f $_TASK_TMPFIL
 	fi
 
-	print You hacked on that for $( prettySeconds $SECONDS )
+	print You hacked on that for $( prettySeconds )
 }
 
 #
 # Tie it all together
 source $0:h/__TASKS.zsh
 
-# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 expandtab:
+# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 shiftwidth=4 noexpandtab:
