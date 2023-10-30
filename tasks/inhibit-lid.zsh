@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 PURPOSE="Temporarily inhibit suspend on laptop lid close"
-VERSION=1.0
-   DATE="Sun Oct  1 14:32:52 MDT 2023"
+VERSION=1.1
+   DATE="Mon Oct 30 10:59:50 MDT 2023"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
@@ -30,6 +30,10 @@ setup() {
 	 \_/\_/|_||_\___|_||_| |_|_\__,_| \__|_\___/__/\___\__,_|
 	
 	:
+}
+
+spawn() {
+    dropPrivsAndSpawn $ZSH_NAME
 }
 
 cleanup() {

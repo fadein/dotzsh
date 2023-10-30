@@ -87,11 +87,12 @@ env() {
 		"$ false"
 		"type 'todo help' for instructions"
 		"$ todo next"
-		"Whoops! You stepped over this item")
-		if [[ -n $_TASK_TMPFIL ]]; then
-			_TODO+="$ cat $_TASK_TMPFIL"
-		fi
-		_TODO+="This is the last todo list item"
+		"Whoops! You stepped over this item"
+	)
+	if [[ -n $_TASK_TMPFIL ]]; then
+		_TODO+="$ cat $_TASK_TMPFIL"
+	fi
+	_TODO+="This is the last todo list item"
 
 	# GLOBAL FOR HELP FUNCTION
 	# Put into this association the name of a function followed by a brief description;
