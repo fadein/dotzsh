@@ -2,7 +2,9 @@
 # User-specific aliases
 #
 alias clipi="xclip -sel clip -i"
+alias clipin="xclip -sel clip -i"
 alias clipo="xclip -sel clip -o"
+alias clipout="xclip -sel clip -o"
 alias cp='cp -i'
 alias csi=csi\ -q
 alias ctags='ctags --fields=+iaS --extra=+fq'
