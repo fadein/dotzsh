@@ -58,6 +58,7 @@ alias ecoh=echo
 alias ehco=echo
 alias fiel=file
 alias grpe=grep
+alias got=git
 alias gti=git
 alias igt=git
 alias ivm=vim
