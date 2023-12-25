@@ -62,10 +62,12 @@ _dotdotcomp() {
 
 
 # this hook function decides which commands are added to the shell's history
-zshaddhistory() {
-    emulate -L zsh
-    [[ ! $1 =~ '^(fg|bg)\s*$' ]]
-}
+if [[ $ZSH_VERSION != 5.2 ]]; then
+    zshaddhistory() {
+        emulate -L zsh
+        [[ ! $1 =~ '^(fg|bg)\s*$' ]]
+    }
+fi
 
 
 # Display directory notes
