@@ -92,7 +92,6 @@ alias :x=exit
 #
 # 1337 h4X0r 4L14535
 #
-alias bye=exit
 alias copy='cp -i'
 alias del='rm -i'
 alias deltree='rm -rf'
