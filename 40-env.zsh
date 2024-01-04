@@ -20,6 +20,7 @@ SAVEHIST=1337
 #
 # Global environment variables
 export PAGER='less -r'
+# export LESS='-MFX'   # commented out for grading script
 export LESS='-R'
 export EDITOR=/usr/bin/vim
 export EDIT=$EDITOR
