@@ -12,21 +12,18 @@ countdown() {
     N=$1
     I=1
     shift
-    [[ $# -ge 1 ]] && echo "Running '$@' in "
+
+    local MSG CEOL
+    CEOL=$(tput el 2>&1)  # "clear to EOL" escape sequence, if available
+    [[ $? == 0 ]] && MSG=$CEOL
+    [[ $# -ge 1 ]] && MSG=${MSG}"Running '$@' in "
 
     until [[ $N -eq 0 ]]; do
-        if [[ $((I % 10)) -eq 0 ]]; then
-            echo "$N... "
-        else
-            echo -n "$N... "
-        fi
-
+        printf $'%s%d...\r' "$MSG" $N
         sleep 1
         ((N--, I++))
     done
-    echo Done
+    echo
 
-    if [[ $# -ge 1 ]]; then
-        eval $@
-    fi
+    [[ $# -ge 1 ]] && eval $@
 }

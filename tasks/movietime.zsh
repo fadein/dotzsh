@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Movie Time!"
-VERSION="1.0"
-   DATE="Sun Oct  1 14:13:26 MDT 2023"
+VERSION="1.2"
+   DATE="Sun Dec 24 20:07:49 MST 2023"
  AUTHOR="Erik"
 
 PROGNAME=$0
@@ -10,6 +10,7 @@ TASKNAME=$0:t:r
 
 
 setup() {
+    backlighter !
     case $HOSTNAME in
         endeavour|columbia)
             # Set the DPI for Firefox
@@ -32,10 +33,11 @@ cleanup() {
             echo Xft.dpi: 200 | xrdb -quiet -override
             xrandr --output eDP-1 --mode 3840x2160 --output HDMI-1 --off --auto
             sleep .25
-            picom & disown
+            picom &>/dev/null & disown
             killall -SIGUSR1 conky
             ;;
     esac
+    backlighter @
 }
 
 source $0:h/__TASKS.zsh
