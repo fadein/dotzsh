@@ -1,11 +1,10 @@
-# vim: set ft=zsh expandtab:
+# vim: set filetype=zsh noexpandtab:
 
 # Simple recycle bin implementation.  Moves files into $RECYCLE, after which they are deleted after a few days.
 # Relies on realpath(1) to preserve file's original path name.
 #
-# Ensure these variables are defined in the environment:
+# Ensure this variable is defined in your environment:
 #  export RECYCLE=~/.recycle
-#  export RECYCLE_DAYS=30
 #
 #
 # This function works in conjunction with the following shell script and crontab snippet
@@ -20,55 +19,93 @@
 #  find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS -exec rm -rf '{}' +
 #
 # crontab:
-#  Take out the trash every 2 hours
+#  # Take out the trash every 2 hours
 #  00 */2   *   *  *          $HOME/.local/bin/recycle.sh
 
 recycle() {
-    if (( $# < 1 )); then
-        print Usage: recycle FILE_OR_DIR...
-    else
-        if [[ -z $RECYCLE ]]; then
-            print "Error: env var $RECYCLE undefined; set to recycle bin directory and exportt"
-            return 1
-        elif [[ ! -d $RECYCLE ]]; then
-            print Creating recycle bin $RECYCLE
-            if ! mkdir $RECYCLE; then
-                print "Error: Failed to create recycle bin $RECYCLE"
-                return 1
-            fi
-        fi
-        local SUCCESS=0
-        until (( $# < 1 )); do
+	if (( $# < 1 )); then
+		print Usage: recycle FILE_OR_DIR...
+	else
+		if [[ -z $RECYCLE ]]; then
+			print "Error: env var $RECYCLE undefined; set to recycle bin directory and export"
+			return 1
+		elif [[ ! -d $RECYCLE ]]; then
+			print Creating recycle bin $RECYCLE
+			if ! mkdir -p $RECYCLE; then
+				print "Error: Failed to mkdir recycle bin $RECYCLE"
+				return 1
+			fi
+			if [[ ! -x $HOME/.local/bin/recycle.sh ]]; then
+				print Creating directory '$HOME/.local/bin'
+				if ! mkdir -p $HOME/.local/bin; then
+					print "Error: Failed to mkdir $HOME/.local/bin"
+					return 1
+				fi
+				print Creating helper script $HOME/.local/bin/recycle.sh
+				cat <<-RECYCLE > $HOME/.local/bin/recycle.sh
+				#!/bin/sh
+				
+				# Empty the recycle bin
+				RECYCLE=$RECYCLE
+				RECYCLE_DAYS=30
+				logger -- find \$RECYCLE -mindepth 1 -ctime +\$RECYCLE_DAYS -exec rm -rf '{}' +
+				find \$RECYCLE -mindepth 1 -ctime +\$RECYCLE_DAYS -exec rm -rf '{}' +
+				RECYCLE
 
-            if [[ -e $1 ]]; then
-                # preserve this file's original path name
-                local DEST=$(realpath $1)
-                DEST=$RECYCLE/${DEST//\//:}
+				print Marking recycle.sh executable
+				chmod +x $HOME/.local/bin/recycle.sh
 
-                # Append a suffix in case there is already a file in the recycle bin with this name
-                local I=0 TRY=$DEST
-                while [[ -e $TRY ]]; do
-                    TRY=$DEST.$(( I++ ))
-                done
-                DEST=$TRY
+				print Updating crontab
+				CRONTMP=$(mktemp)
+				crontab -l > $CRONTMP
+				cat <<-CRON >> $CRONTMP
 
-                print "Recycling '$1' as '$DEST'..."
+				# Take out the trash every 2 hours
+				00 */2   *   *  *          $HOME/.local/bin/recycle.sh
+				CRON
+				crontab $CRONTMP
+				rm -f $CRONTMP
 
-                if mv $1 $DEST; then
-                    (( SUCCESS++ ))
-                fi
+				cat <<-MSG
 
-            else
-                print "'$1' doesn't exist"
-            fi
+				Recycled files are removed after 30 days
+				Edit $HOME/.local/bin/recycle.sh to adjust the expiration date
 
-            shift
-        done
+				MSG
+			fi
+		fi
+		local SUCCESS=0
+		until (( $# < 1 )); do
 
-        if (( SUCCESS == 1 )); then
-            print This file will be deleted in $RECYCLE_DAYS days
-        elif (( SUCCESS > 1 )); then
-            print These files will be deleted in $RECYCLE_DAYS days
-        fi
-    fi
+			if [[ -e $1 ]]; then
+				# preserve this file's original path name
+				local DEST=$(realpath $1)
+				DEST=$RECYCLE/${DEST//\//:}
+
+				# Append a suffix in case there is already a file in the recycle bin with this name
+				local I=0 TRY=$DEST
+				while [[ -e $TRY ]]; do
+					TRY=$DEST.$(( I++ ))
+				done
+				DEST=$TRY
+
+				print "Recycling '$1' as '$DEST'..."
+
+				if mv $1 $DEST; then
+					(( SUCCESS++ ))
+				fi
+
+			else
+				print "'$1' doesn't exist"
+			fi
+
+			shift
+		done
+
+		if (( SUCCESS == 1 )); then
+			print This file will be deleted in $RECYCLE_DAYS days
+		elif (( SUCCESS > 1 )); then
+			print These files will be deleted in $RECYCLE_DAYS days
+		fi
+	fi
 }
