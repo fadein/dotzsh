@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.15.3"
-    DATE="Fri Jul 28 12:51:55 MDT 2023"
+ VERSION="1.15.4"
+    DATE="Sun Jan 21 20:45:46 MST 2024"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -284,7 +284,7 @@ env() {
 	esac
 
 	_TODO+=(
-        "$ [[ -s $REBOOT_FILE ]] && print System must be restarted || print System DOES NOT need to be restarted"
+        "$ [[ -s $REBOOT_FILE ]] && { print System must be restarted because of:; nl $REBOOT_FILE } || print System DOES NOT need to be restarted"
 	)
 
 	usage
