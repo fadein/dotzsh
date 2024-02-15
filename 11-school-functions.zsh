@@ -62,7 +62,7 @@ refresh() {
 }
 
 
-clown () {
+clown() {
     zmodload zsh/regex
     if [[ -z $1 ]]; then
         print 1>&2 "Usage: $0 <HTTPS git url> [DEST_NAME]"
@@ -84,6 +84,10 @@ clown () {
         else
             URL=git@$URL
         fi
+    elif [[ $1 -regex-match gitlab.cs.usu.edu:[^/]+/[^/]+ ]]; then
+        # URL is a path like gitlab.cs.usu.edu:username/cs1440-last-first-assn#
+        # Prepend git@
+        URL=git@$1
     elif [[ $1 -regex-match [^/]+/[^/]+ ]]; then
         # URL is a path like username/cs1440-last-first-assn#
         # Prepend the GitLab SSH URL
