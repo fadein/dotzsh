@@ -31,16 +31,24 @@ env() {
 	EMERGENCY_DEST=/bin
 	NPROC=/usr/bin/nproc
 
-	OPTS_EMERGENCY=(--with-features=small --disable-gui --disable-gpm --disable-acl)
-	OPTS_REGULAR=(--with-features=huge
-        --enable-termtruecolor
+	OPTS_EMERGENCY=(
+        --with-features=tiny
+        --with-modified-by="░▒▓█fadein"
+        --disable-acl
+        --disable-gpm
+        --disable-gui
+        --disable-vim9
+    )
+
+	OPTS_REGULAR=(
+        --with-modified-by="░▒▓█fadein"
+        --with-features=huge
+        --disable-canberra     # no sound
+        --disable-gui          # no gvim, but keep X11 interop
+        --disable-netbeans
         --disable-perlinterp
         --disable-pythoninterp
         --disable-terminal
-        --disable-balloon_eval
-        --disable-browse
-        --disable-libcall
-        --disable-netbeans
         )
 
 	#Count number of CPUs in this system and add one
