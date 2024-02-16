@@ -61,6 +61,7 @@ env() {
 		)
 
 	_KEEP_FUNCTIONS+=warn
+	_KEEP_FUNCTIONS+=prettySeconds
     typeset -gA _HELP
 
     _HELP[emergencyVi]="Statically-linked emergency Vi (requires only glibc and ncurses; give a param to not strip)"
@@ -71,6 +72,7 @@ env() {
 		[[ -n $SUDO ]] && $SUDO -v
 
 		(
+        local BEFORE=$SECONDS
 		cd $BUILDDIR/src
 
 		if ! nice make distclean; then rm -f auto/config.cache; fi
@@ -100,6 +102,8 @@ env() {
 		if ! $SUDO cp vim $EMERGENCY_DEST/vi; then
 			warn FAILED to copy vim to $EMERGENCY_DEST/vi
 		fi
+
+        print Done in $(prettySeconds $(( $SECONDS - $BEFORE )) )
 		)
 	}
 
@@ -111,6 +115,7 @@ env() {
 		[[ -n $SUDO ]] && $SUDO -v
 
 		(
+        local BEFORE=$SECONDS
 		cd $BUILDDIR/src
 
 		if ! nice make distclean; then rm -f auto/config.cache; fi
@@ -134,6 +139,8 @@ env() {
 			if ! nice $SUDO make STRIP=true installvimbin; then return; fi
 			print "${DEST}/bin/vim is not stripped"
 		fi
+
+        print Done in $(prettySeconds $(( $SECONDS - $BEFORE )) )
 		)
 	}
 
