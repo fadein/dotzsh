@@ -6,7 +6,7 @@ alias clipin="xclip -sel clip -i"
 alias clipo="xclip -sel clip -o"
 alias clipout="xclip -sel clip -o"
 alias cp='cp -i'
-alias csi=csi\ -q
+alias csi='csi -wq'
 alias ctags='ctags --fields=+iaS --extra=+fq'
 alias curl='curl -A "Mozilla/4.0"'
 alias date='date +"%a, %b %e %Y  %R %Z"'
@@ -44,6 +44,7 @@ alias nl='nl -ba'
 alias pd=pushd
 alias perld='perl -de0'
 alias pgrep='pgrep -l'
+alias pseudo=sudo
 alias pwd='pwd -P'
 alias rm='rm -i'
 alias topu="top -u $USER"
