@@ -20,7 +20,6 @@ SAVEHIST=1337
 #
 # Global environment variables
 export PAGER='less -r'
-# export LESS='-MFX'   # commented out for grading script
 export LESS='-R'
 export EDITOR=/usr/bin/vim
 export EDIT=$EDITOR
@@ -45,28 +44,25 @@ export LESS_TERMCAP_se=$'\e[0m'
 export RECYCLE=~/.recycle
 export RECYCLE_DAYS=30
 
-# typeset -U -g constrains these vars to contain only unique elements
-typeset -U -g PATH path
-for D in /usr/local/bin ~/.local/bin /usr/local/sbin /usr/sbin /sbin ~/bin ~/.zsh/tasks; do
+# typeset -U constrains these vars to contain only unique elements
+# typeset -T ties a colon-separated scalar (uppercase) to a array (lowercase)
+typeset -U -g -T PATH path
+for D in ~/bin ~/.local/bin /usr/local/bin /usr/local/sbin /usr/sbin /sbin ~/.zsh/tasks; do
     [[ -d $D ]] && path=($D:A $path)
 done
 
-typeset -U -g FPATH fpath
+typeset -U -g -T FPATH fpath
 for D in ~/.zsh/functions; do
     [[ -d $D ]] && fpath=($D:A $fpath)
 done
 
 #
 # Add to MANPATH and cull out duplicates
-for D in /usr/local/man /usr/local/share/man /usr/man /usr/share/man /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
-    [[ -d $D ]] && MANPATH+=:$D:A
+typeset -U -g -T MANPATH manpath
+for D in ~/.local/share/man /usr/local/share/man /usr/local/man /usr/share/man /usr/man /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
+    [[ -d $D ]] && manpath=($D:A $manpath)
 done
 
-export MANPATH
-if declare -F uniquify >/dev/null; then
-    #remove duplicate entries from MANPATH, FPATH
-    [[ -n $MANPATH ]] && MANPATH=$(uniquify $MANPATH)
-fi
 
 #
 # Chose a search engine based on what day of the year it is if that gets
