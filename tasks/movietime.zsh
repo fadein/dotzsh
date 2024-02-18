@@ -22,6 +22,10 @@ setup() {
             killall picom
             killall -SIGUSR1 conky
             ;;
+
+        apollo)
+            xrandr --output HDMI-1 --auto --same-as eDP-1 --set audio on
+            ;;
     esac
     CLEANUP_TRAPS=(HUP)
 }
@@ -35,6 +39,10 @@ cleanup() {
             sleep .25
             picom &>/dev/null & disown
             killall -SIGUSR1 conky
+            ;;
+
+        apollo)
+            xrandr --output HDMI-1 --off --auto
             ;;
     esac
     backlighter @
