@@ -56,11 +56,9 @@ for D in ~/.zsh/functions; do
     [[ -d $D ]] && fpath=($D:A $fpath)
 done
 
-#
-# Add to MANPATH and cull out duplicates
 typeset -U -g -T MANPATH manpath
-for D in ~/.local/share/man /usr/local/share/man /usr/local/man /usr/share/man /usr/man /var/lib/share/man /opt/cam/man /opt/csm/man /opt/freeware/man; do
-    [[ -d $D ]] && manpath=($D:A $manpath)
+for D in $HOME/.local/share/man /usr/local/man /usr/local/share/man /usr/man /usr/share/man /var/lib/share/man /opt/freeware/man; do
+    [[ -d $D ]] && MANPATH+=:$D:A
 done
 
 
@@ -79,7 +77,3 @@ export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
 unset sengines
 
 export GOPATH=$HOME/devel/go
-
-#
-# Set a restrictive umask
-# umask 0027
