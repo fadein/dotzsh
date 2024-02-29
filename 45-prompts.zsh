@@ -172,7 +172,7 @@ function plain() {
 #The jobcount is colored red if non-zero.
 function colorful() {
     PROMPT="$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %m)%(?..%s) %~ %# $_UTEXT"
-    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 
@@ -180,7 +180,7 @@ function colorful() {
 #the jobcount.  The jobcount is colored red if non-zero.
 function screen() {
     PROMPT="$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %m)%(?..%s) %~ %# $_UTEXT"
-    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 function _git_branch_details() {
@@ -288,7 +288,7 @@ function git() {
     PROMPT="$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(hostcolor %4~)\$(_git_branch_details)%(?..%s) $(usercolor '%#') ${_UTEXT}"
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
-    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 
@@ -497,7 +497,7 @@ function mingw() {
     local UNAME NL
     UNAME=$(uname)
     NL=$'\n'
-    [[ -n $COURSE_NUM ]] && RPROMPT="[%F{cyan}$SUBJECT:u$COURSE_NUM%f]"
+    [[ -n $COURSE_NUM ]] && RPROMPT="[%F{cyan}$SUBJECT:u$COURSE_NUM${class+*}%f]"
     PROMPT="$NL%F{green}%n@%m %F{magenta}$UNAME %F{yellow}%~%F{cyan}\$(__git_ps1)%f$NL%(!.#.$%  "
 }
 ###############################################
