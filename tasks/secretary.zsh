@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.11.2"
-   DATE="Thu Jul 20 13:13:05 MDT 2023"
+VERSION="0.12"
+   DATE="Sat Mar 2 2024"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -15,92 +15,6 @@ if [[ -x =xdg-user-dir ]]; then
 else
 	CHURCH=~/Documents/Church
 fi
-
-BISHOPRIC=(
-	"Jeff King"
-	"Greg Nichols"
-	"Johnny Decker"
-	)
-
-CLERK="Justin Campbell"
-
-SEC_CLERK=(
-	"Erik Falor"
-	$CLERK
-	)
-
-HIGH_COUNCIL=(
-	"Mark Anderson"
-	)
-
-
-WARD_COUNCIL=(
-	$SEC_CLERK
-	$HIGH_COUNCIL
-	$BISHOPRIC
-	"Elder's Quorum President (Gustavo Flores)"
-	"Relief Society President (Shannon Eliason)"
-	"Sunday School President (James Fritzler)"
-	"Young Women's President (Jana Anderson)"
-	"Primary President (Jennifer Parker)"
-	"Ward Mission Leader (Derald Clark)"
-	)
-
-
-YOUTH_COUNCIL=(
-	$BISHOPRIC
-	"Priest Quorum 1st Assistant (Jordan Chesley)"
-	"Teacher's & Deacon's Quorum Presidents (Max Gunnell, Rhett Gunnell)"
-	"Young Women Class Presidents (Mia Flores)"
-	"Young Women President (Jana Anderson)"
-	)
-
-
-_bishopric_email() {
-	cat <<-EM > $CHURCH/bishopric_email
-	Bishopric Meeting Sunday @ 8:30am
-	To: ${(j:, :)BISHOPRIC}, ${(j:, :)SEC_CLERK}, ${(j:, :)HIGH_COUNCIL}
-
-	Handbook Training: Bro. ~~~~~~~
-	Meeting Agenda:
-	~~~~~~~
-
-	See you Sunday morning!
-	-- Erik
-	EM
-}
-
-
-_ward_council_email() {
-	cat <<-EM > $CHURCH/ward_council_email
-	Ward Council Meeting Sunday @ 9:30am
-	To:  ${(j:, :)WARD_COUNCIL}
-
-	Spiritual Thought & Song: ~~~~~~~
-
-	Meeting Agenda:
-	~~~~~~~
-
-	See you Sunday morning!
-	-- Erik
-	EM
-}
-
-
-_youth_council_email() {
-	cat <<-EM > $CHURCH/youth_council_email
-	Youth Council Meeting Sunday @ 10:00am
-	To: ${(j:, :)YOUTH_COUNCIL}
-
-	Spiritual Thought & Song: ~~~~~~~
-
-	Agenda: ~~~~~~~
-
-	See you Sunday morning!
-	-- Erik
-	EM
-}
-
 
 setup() {
 	if [[ -n $BROWSER ]]; then
@@ -115,11 +29,6 @@ setup() {
 
 	[[ ! -d $CHURCH ]] && mkdir -p $CHURCH
 	cd $CHURCH
-
-	# Update the email templates
-	_bishopric_email
-	_ward_council_email
-	_youth_council_email
 }
 
 
@@ -136,20 +45,23 @@ env() {
 		<22-28>) # Fourth Sunday = Bishopric Youth Committee
 			_TODO+=(
 				"Remind bishop to contact BYC conductor (YM=odd months, YW=even)"
+				"Make a BYC agenda"
+				"Shorten agenda URL"
 				"Text bishopric youth committee members"
-				"Email adults involved with bishopric youth committee"
 			)
 			;;
 		<29-31>) # Fifth Sunday = Whatever
 			_TODO+=(
 				"If we are holding a 2nd meeting, who has spiritual thought in the 2nd meeting?"
 				"If we are holding a 2nd meeting, make an agenda"
+				"Shorten agenda URL"
 				"If we are holding a 2nd meeting, contact attendees")
 			;;
 		<1-7>|<15-21>)  # 1st & 3rd Sunday = Ward Council
 			_TODO+=(
 				"Who has spiritual thought in Ward Council?"
 				"Make a Ward Council agenda"
+				"Shorten agenda URL"
 				"Contact Ward Council attendees")
 			;;
 	esac
@@ -158,7 +70,6 @@ env() {
         "Check sacrament hymns"
         "Copy sacrament agenda from last time"
 		"Get conductor & speakers from Bishopric agenda"
-		"Get prayers from ${${=CLERK}[1]}"  # ${=VAR} splits str->array on whitespace
     )
 
 	cal $(command date -d 'next sunday' +'%d %m %Y')
