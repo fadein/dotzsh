@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Tempdir: create a temporary directory under CWD; erase it when done"
-VERSION="1.2"
-   DATE="Wed Oct 21 22:08:40 MDT 2020"
+VERSION="1.2.1"
+   DATE="Sun Mar 24 21:54:09 MDT 2024"
  AUTHOR="fadein"
 
 PROGNAME=$0
@@ -34,6 +34,7 @@ cleanup() {
             ;;
         *)
             rm -rf $_TMPDIR 
+            print Removed $_TMPDIR
             ;;
     esac
 }
