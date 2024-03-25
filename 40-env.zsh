@@ -56,7 +56,7 @@ for D in ~/.zsh/functions; do
     [[ -d $D ]] && fpath=($D:A $fpath)
 done
 
-typeset -U -g -T MANPATH manpath
+typeset -U -g -x -T MANPATH manpath
 for D in $HOME/.local/share/man /usr/local/man /usr/local/share/man /usr/man /usr/share/man /var/lib/share/man /opt/freeware/man; do
     [[ -d $D ]] && MANPATH+=:$D:A
 done
