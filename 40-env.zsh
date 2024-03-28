@@ -62,6 +62,13 @@ for D in $HOME/.local/share/man /usr/local/man /usr/local/share/man /usr/man /us
 done
 
 
+case $OSTYPE in
+    darwin*)
+        export LSCOLORS=exGxFxdaCxDaDaahadecec
+        ;;
+esac
+
+
 #
 # Chose a search engine based on what day of the year it is if that gets
 # boring, change the %j below to %s for seconds since epoch
