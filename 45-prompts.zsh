@@ -171,7 +171,7 @@ function plain() {
 
 #The jobcount is colored red if non-zero.
 function colorful() {
-    PROMPT="$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %m)%(?..%s) %~ %# $_UTEXT"
+    PROMPT="$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~ %# $_UTEXT"
     RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 

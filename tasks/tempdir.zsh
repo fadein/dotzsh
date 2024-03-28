@@ -1,4 +1,4 @@
-#!/bin/env zsh
+#!/usr/bin/env zsh
 
 PURPOSE="Tempdir: create a temporary directory under CWD; erase it when done"
 VERSION="1.2.1"

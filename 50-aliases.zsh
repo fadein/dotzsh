@@ -26,17 +26,7 @@ alias gdb='gdb -q'
 alias grep='grep -n --color=auto'
 alias grepi='grep -i -n --color=auto'
 alias grev='grep -vn --color=auto'
-alias l='ls --color=auto -F'
-alias la='ls --color=auto -Fa'
-alias ll='ls --color=auto -Flh'
-alias lla='ls --color=auto -Flha'
-alias lld='ls --color=auto -Flhd'
 alias lolcat='lolcat -v .85'
-alias ls='ls --color=auto -F'
-alias lsd='ls --color=auto -Fd'
-alias lsq='ls --quoting-style=shell-escape'
-alias lt='ls --color=auto --full-time -Ft'
-alias ltr='ls --color=auto -Fltr'
 alias lynx='lynx -use_mouse'
 alias mplayer='mplayer -af scaletempo'
 alias mv='mv -i'
@@ -51,6 +41,35 @@ alias rm='rm -i'
 alias topu="top -u $USER"
 alias vimdiff='vim -d'
 alias which="which -p"
+
+
+#
+# OS-specific
+#
+case $OSTYPE in
+    darwin*)
+        alias l='ls -F --color=yes'
+        alias la='ls -Fa --color=yes'
+        alias ll='ls -Flh --color=yes'
+        alias lla='ls -Flha --color=yes'
+        alias lld='ls -Flhd --color=yes'
+        alias ls='ls -F --color=yes'
+        alias lsd='ls -Fd --color=yes'
+        alias ltr='ls -Fltr --color=yes'
+        ;;
+    linux*|*)
+        alias l='ls --color=auto -F'
+        alias la='ls --color=auto -Fa'
+        alias ll='ls --color=auto -Flh'
+        alias lla='ls --color=auto -Flha'
+        alias lld='ls --color=auto -Flhd'
+        alias ls='ls --color=auto -F'
+        alias lsd='ls --color=auto -Fd'
+        alias lsq='ls --quoting-style=shell-escape'
+        alias lt='ls --color=auto --full-time -Ft'
+        alias ltr='ls --color=auto -Fltr'
+        ;;
+esac
 
 #
 # because I can't spell...

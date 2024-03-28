@@ -1,6 +1,9 @@
 # fadein's zshrc
 # vim:set expandtab foldmethod=indent:
 
+# CodeWhisperer pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/codewhisperer/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/codewhisperer/shell/zshrc.pre.zsh"
+
 # Source global definitions
 [[ -r /etc/zsh/zprofile ]] && source /etc/zsh/zprofile
 
@@ -18,3 +21,8 @@ done
     || true
 
 [[ -n "$_TUTR" ]] && source $_TUTR || true  # shell tutorial shim DO NOT MODIFY
+
+# CodeWhisperer post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/codewhisperer/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/codewhisperer/shell/zshrc.post.zsh"
+
+# vim:set expandtab foldmethod=indent:

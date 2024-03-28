@@ -78,7 +78,7 @@ if [ 0"$1" = 0"-r" ]; then
 	removeLink .zshenv
 else
 	# Resolve the location of this script
-	HERE=$(dirname $(readlink -f $0))
+	HERE=$(pwd)
 
 	# Link these files and directories into $HOME
 	linkToHome $HERE               .zsh
