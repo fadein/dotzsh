@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/env zsh
 
 PURPOSE="Temporarily inhibit suspend on laptop lid close"
 VERSION=1.1

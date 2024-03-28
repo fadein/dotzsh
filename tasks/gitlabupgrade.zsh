@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/env zsh
 
  PURPOSE="GitLab server update task"
  VERSION="1.8.1"

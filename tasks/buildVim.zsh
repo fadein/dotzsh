@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/env zsh
 
 PURPOSE='Rebuild Vim from GitHub'
 VERSION="1.10"
