@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.15.4"
-    DATE="Sun Jan 21 20:45:46 MST 2024"
+ VERSION="1.15.5"
+    DATE="Wed Apr 10 17:50:14 MDT 2024"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -37,6 +37,7 @@ setup() {
 			;;
 	esac
 }
+
 
 # Spawn a (nice) child shell
 # This will be a root shell by virtue of raisePrivs() having been run in setup()
@@ -76,6 +77,7 @@ rpiKernelUpdateInstrs() {
 	MSG
 }
 
+
 usage() {
 	>&1 <<-MESSAGE
 	
@@ -114,6 +116,17 @@ assert-initrd-has-colehack() {
 		print "colehack.bmap is already present"
 	fi
 }
+
+
+needs-restart() {
+	if [[ -s $REBOOT_FILE ]]; then
+		print System must be restarted because of:
+		nl $REBOOT_FILE
+	else
+		print System DOES NOT need to be restarted
+	fi
+}
+
 
 getSARPIpkg() {
 	if [[ -f $1.txz ]]; then
@@ -158,6 +171,7 @@ getAllSARPIpkgs() {
 		getSARPIpkg $F
 	done
 }
+
 
 setSARPIvars() {
 	print "Browse to $BASE and check the BuildLog\n"
@@ -283,12 +297,11 @@ env() {
 
 	esac
 
-	_TODO+=(
-        "$ [[ -s $REBOOT_FILE ]] && { print System must be restarted because of:; nl $REBOOT_FILE } || print System DOES NOT need to be restarted"
-	)
+	_TODO+=( "$ needs-restart" )
 
 	usage
 }
+
 
 # vim: set noexpandtab:
 source $0:h/__TASKS.zsh
