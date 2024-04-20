@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.12"
-   DATE="Sat Mar 2 2024"
+VERSION="0.12.1"
+   DATE="Sat Apr 20 2024"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -46,7 +46,7 @@ env() {
 			_TODO+=(
 				"Remind bishop to contact BYC conductor (YM=odd months, YW=even)"
 				"Make a BYC agenda"
-				"Shorten agenda URL"
+				"Shorten agenda URL and test it"
 				"Text bishopric youth committee members"
 			)
 			;;
