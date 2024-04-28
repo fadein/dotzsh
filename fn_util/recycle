@@ -27,84 +27,101 @@ recycle() {
 		print Usage: recycle FILE_OR_DIR...
 	else
 		if [[ -z $RECYCLE ]]; then
-			print "Error: env var $RECYCLE undefined; set to recycle bin directory and export"
+			print 1>&2 "Error: env var $RECYCLE undefined; set to recycle bin directory and export"
 			return 1
-		elif [[ ! -d $RECYCLE ]]; then
-			print Creating recycle bin $RECYCLE
+		fi
+
+		if [[ ! -d $RECYCLE ]]; then
+			print 1>&2 Creating recycle bin $RECYCLE
 			if ! mkdir -p $RECYCLE; then
-				print "Error: Failed to mkdir recycle bin $RECYCLE"
+				print 1>&2 "Error: Failed to mkdir recycle bin $RECYCLE"
 				return 1
 			fi
-			if [[ ! -x $HOME/.local/bin/recycle.sh ]]; then
-				print Creating directory '$HOME/.local/bin'
-				if ! mkdir -p $HOME/.local/bin; then
-					print "Error: Failed to mkdir $HOME/.local/bin"
-					return 1
-				fi
-				print Creating helper script $HOME/.local/bin/recycle.sh
-				cat <<-RECYCLE > $HOME/.local/bin/recycle.sh
-				#!/bin/sh
-				
-				# Empty the recycle bin
-				RECYCLE=$RECYCLE
-				RECYCLE_DAYS=30
-				logger -- find \$RECYCLE -mindepth 1 -ctime +\$RECYCLE_DAYS -exec rm -rf '{}' +
-				find \$RECYCLE -mindepth 1 -ctime +\$RECYCLE_DAYS -exec rm -rf '{}' +
-				RECYCLE
-
-				print Marking recycle.sh executable
-				chmod +x $HOME/.local/bin/recycle.sh
-
-				print Updating crontab
-				CRONTMP=$(mktemp)
-				crontab -l > $CRONTMP
-				cat <<-CRON >> $CRONTMP
-
-				# Take out the trash every 2 hours
-				00 */2   *   *  *          $HOME/.local/bin/recycle.sh
-				CRON
-				crontab $CRONTMP
-				rm -f $CRONTMP
-
-				cat <<-MSG
-
-				Recycled files are removed after 30 days
-				Edit $HOME/.local/bin/recycle.sh to adjust the expiration date
-
-				MSG
-			fi
 		fi
-		local SUCCESS=0
-		until (( $# < 1 )); do
 
-			if [[ -e $1 ]]; then
+		if [[ ! -x $HOME/.local/bin/recycle.sh ]]; then
+			print Creating directory '$HOME/.local/bin'
+			if ! mkdir -p $HOME/.local/bin; then
+				print 1>&2 "Error: Failed to mkdir $HOME/.local/bin"
+				return 1
+			fi
+			print Creating helper script $HOME/.local/bin/recycle.sh
+			cat <<-RECYCLE > $HOME/.local/bin/recycle.sh
+			#!/bin/sh
+			
+			# Empty the recycle bin
+			RECYCLE=$RECYCLE
+			RECYCLE_DAYS=30
+			logger -- find \$RECYCLE -mindepth 1 -ctime +\$RECYCLE_DAYS -exec rm -rf '{}' +
+			find \$RECYCLE -mindepth 1 -ctime +\$RECYCLE_DAYS -exec rm -rf '{}' +
+			RECYCLE
+
+			print Marking recycle.sh executable
+			chmod +x $HOME/.local/bin/recycle.sh
+
+			print Updating crontab
+			CRONTMP=$(mktemp)
+			crontab -l > $CRONTMP
+			cat <<-CRON >> $CRONTMP
+
+			# Take out the trash every 2 hours
+			00 */2   *   *  *          $HOME/.local/bin/recycle.sh
+			CRON
+			crontab $CRONTMP
+			rm -f $CRONTMP
+
+			cat <<-MSG
+
+			Recycled files are removed after 30 days
+			Edit $HOME/.local/bin/recycle.sh to adjust the expiration date
+
+			MSG
+		fi
+
+		local arg
+		local force interact
+		while getopts 'fi' arg; do
+			case $arg in
+				f) unset interact ;;
+				i) interact=1 ;;
+			esac
+		done
+
+		local success=0
+		for arg in ${argv[$OPTIND,-1]}; do
+			if [[ -e $arg ]]; then
 				# preserve this file's original path name
-				local DEST=$(realpath $1)
-				DEST=$RECYCLE/${DEST//\//:}
+				local dest=$(realpath $arg)
+				dest=$RECYCLE/${dest//\//:}
 
 				# Append a suffix in case there is already a file in the recycle bin with this name
-				local I=0 TRY=$DEST
-				while [[ -e $TRY ]]; do
-					TRY=$DEST.$(( I++ ))
+				local i=0 try=$dest
+				while [[ -e $try ]]; do
+					try=$dest.$(( i++ ))
 				done
-				DEST=$TRY
+				dest=$try
 
-				print "Recycling '$1' as '$DEST'..."
-
-				if mv $1 $DEST; then
-					(( SUCCESS++ ))
+				if [[ -n $interact ]]; then
+					read -rsk "?Recycle '$arg' as '$dest' [y/n]?"
+					print
+					if [[ $REPLY != [Yy]* ]]; then
+						continue
+					fi
+				else
+					print "Recycling '$arg' as '$dest'..."
+				fi
+				if command mv $arg $dest; then
+					(( success++ ))
 				fi
 
 			else
-				print "'$1' doesn't exist"
+				print 1>&2 "'$arg' doesn't exist"
 			fi
-
-			shift
 		done
 
-		if (( SUCCESS == 1 )); then
+		if (( success == 1 )); then
 			print This file will be deleted in $RECYCLE_DAYS days
-		elif (( SUCCESS > 1 )); then
+		elif (( success > 1 )); then
 			print These files will be deleted in $RECYCLE_DAYS days
 		fi
 	fi
