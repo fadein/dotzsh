@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.15.5"
-    DATE="Wed Apr 10 17:50:14 MDT 2024"
+ VERSION="1.15.6"
+    DATE="Fri May  3 12:33:43 MDT 2024"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -68,12 +68,14 @@ rpiKernelUpdateInstrs() {
 	cat <<-MSG
 	Viking2 is an RPi3 Armv7 w/Hard float
 
-	The files come from https://slackware.uk/sarpi/rpi3/current-armv7/
+	Downloads page: https://sarpi.penthux.net/index.php?p=downloads#installer
 	General instructions: https://sarpi.penthux.net/index.php?p=installer
 
-	* Visit https://slackware.uk/sarpi/rpi3/current-armv7/ to see Kernel version and build date
+	* Visit the downloads page to see Kernel version and build date
 	* VER=(kernel version) DATE=(06Jan22)
 	* Ensure that ARCH=(armv7-1), TAG=(sp1) and BUILD=(slackcurrent) are all correct
+
+	Review this message by running 'rpiKernelUpdateInstrs'
 	MSG
 }
 
@@ -192,6 +194,7 @@ env() {
 	typeset -gA _HELP
 	_HELP+=(usage "Instructions for using this task"
 	        kernelUpdateInstrs "EFI+ELILO kernel configuration"
+			rpiKernelUpdateInstrs "SARPI instructions for ARM"
 	)
 
 	# ring the bell after the update is received
@@ -293,6 +296,8 @@ env() {
 			"$ cp -R /mnt/mmcblk0p1 $(uname -r).bak"
 			"$ command cp -R /boot/* /mnt/mmcblk0p1"
 			)
+
+			rpiKernelUpdateInstrs
 			;;
 
 	esac
