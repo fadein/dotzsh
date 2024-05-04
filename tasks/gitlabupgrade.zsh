@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.8.1"
-    DATE="Fri 05 May 2023 10:23:26 AM MDT"
+ VERSION="1.8.2"
+    DATE="Fri 03 May 2024 11:03:21 PM MDT"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
