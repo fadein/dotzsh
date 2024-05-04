@@ -66,13 +66,9 @@ env() {
 			return 2
 		fi
 
-		echodo rsync -av /etc/gitlab/config_backup $BACKUPSDEST
-		RSYNC_R=$?
+		echodo rsync -avv --info=progress2 /etc/gitlab/config_backup $BACKUPSDIR/${1}_gitlab_backup.tar $BACKUPSDEST
 
-		echodo scp $BACKUPSDIR/${1}_gitlab_backup.tar $BACKUPSDEST
-		SCP_R=$?
-
-		if [[ $SCP_R == $RSYNC_R && $RSYNC_R == 0 ]]; then
+		if [[ $? == 0 ]]; then
 			echo -e "\a"
 		else
 			for ding in {0..2}; do
