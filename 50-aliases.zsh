@@ -100,14 +100,18 @@ alias sls=ls
 #
 # vi commands
 #
-alias :close='echo Cannot close last window'
+alias /=grep
+alias :close='echo E444: Cannot close last window'
 alias :e=vim
+alias :ls=ls
 alias :q!=exit
 alias :q=exit
 alias :qa=exit
-alias :r='<'
-alias :w="echo Th15 1Sn\'7 vi, 5Uc\|\<4\!"
+alias :r=less
+alias :w!='echo E503: is not a file or writable device'
+alias :w='echo "E505: is read-only (add ! to override)"'
 alias :wq=exit
+alias :x!=exit
 alias :x=exit
 
 #
