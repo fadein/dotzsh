@@ -83,4 +83,7 @@ zmodload zsh/datetime
 export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
 unset sengines
 
-export GOPATH=$HOME/devel/go
+if [[ -d $HOME/devel/go ]]; then
+    export GOPATH=$HOME/devel/go
+    [[ -d $GOPATH/bin ]] && PATH+=:${GOPATH:A}/bin
+fi
