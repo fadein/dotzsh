@@ -1,15 +1,26 @@
 #!/bin/env zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.8.2"
-    DATE="Fri 03 May 2024 11:03:21 PM MDT"
+ VERSION="1.8.3"
+    DATE="Thu 16 May 2024"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
 
+REBOOT_FILE=/var/run/reboot-required
+
 setup() {
     [[ -z $STY && -z $TMUX ]] && die "Not using a terminal muxer?  That's just too risky for me."
     raisePrivs || true
+}
+
+needs-restart() {
+	if [[ -s $REBOOT_FILE ]]; then
+		print System must be restarted because of:
+		nl $REBOOT_FILE.pkgs
+	else
+		print System DOES NOT need to be restarted
+	fi
 }
 
 env() {
@@ -30,7 +41,7 @@ env() {
         "Make sure the post-receive.pl hook still works by pushing a commit"
         "Retire the webpage broadcast message"
         '$ check-logfile-permissions'
-        '$ if [[ -f /var/run/reboot-required ]]; then print Reboot is required; else print Reboot is NOT required; fi'
+        '$ needs-restart'
     )
 
     typeset -gA _HELP
