@@ -13,9 +13,18 @@ HISTFILE=~/.zsh/history
 HISTSIZE=1337
 SAVEHIST=1337
 
+
 #
 # DIR_COLORS for `ls` and other tools
-[[ -r ~/.dircolors ]] && eval "$(dircolors ~/.dircolors -b)"
+case $OSTYPE in
+    darwin*)
+        export LSCOLORS=exGxFxdaCxDaDaahadecec
+        ;;
+    *)
+        [[ -r ~/.dircolors ]] && eval "$(dircolors ~/.dircolors -b)"
+        ;;
+esac
+
 
 #
 # Global environment variables
@@ -26,6 +35,12 @@ export EDIT=$EDITOR
 export TMPDIR=/tmp
 export TMP=/tmp
 export XDG_CONFIG_HOME=~/.config
+if [[ -d $HOME/devel/go ]]; then
+    export GOPATH=$HOME/devel/go:/usr/share/gocode
+else
+    export GOPATH=/usr/share/gocode
+fi
+[[ -d $GOPATH/bin ]] && PATH+=:${GOPATH:A}/bin
 
 
 #
@@ -44,6 +59,8 @@ export LESS_TERMCAP_se=$'\e[0m'
 export RECYCLE=~/.recycle
 export RECYCLE_DAYS=30
 
+
+#
 # typeset -U constrains these vars to contain only unique elements
 # typeset -T ties a colon-separated scalar (uppercase) to a array (lowercase)
 typeset -U -g -T PATH path
@@ -62,13 +79,6 @@ for D in $HOME/.local/share/man /usr/local/man /usr/local/share/man /usr/man /us
 done
 
 
-case $OSTYPE in
-    darwin*)
-        export LSCOLORS=exGxFxdaCxDaDaahadecec
-        ;;
-esac
-
-
 #
 # Chose a search engine based on what day of the year it is if that gets
 # boring, change the %j below to %s for seconds since epoch
@@ -82,8 +92,3 @@ zmodload zsh/datetime
 #add one because zsh arrays are 1-indexed
 export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
 unset sengines
-
-if [[ -d $HOME/devel/go ]]; then
-    export GOPATH=$HOME/devel/go
-    [[ -d $GOPATH/bin ]] && PATH+=:${GOPATH:A}/bin
-fi
