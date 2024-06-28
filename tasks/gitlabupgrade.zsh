@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.8.3"
-    DATE="Thu 16 May 2024"
+ VERSION="1.8.4"
+    DATE="Sat 01 Jun 2024"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -77,7 +77,7 @@ env() {
 			return 2
 		fi
 
-		echodo rsync -avv --info=progress2 /etc/gitlab/config_backup $BACKUPSDIR/${1}_gitlab_backup.tar $BACKUPSDEST
+		echodo time rsync -avv --info=progress2 /etc/gitlab/config_backup $BACKUPSDIR/${1}_gitlab_backup.tar $BACKUPSDEST
 
 		if [[ $? == 0 ]]; then
 			echo -e "\a"
