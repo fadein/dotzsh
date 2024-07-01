@@ -284,3 +284,25 @@ ssh-keycheck() {
         return 1
     fi
 }
+
+
+# Syntactic sugar for `chmod --recursive -w $1 $2...`
+# In the GNU Coreutils' impl of chmod, omitting the [ugoa] user specifier
+# fromthe permission behaves like "a", but umask is respected
+lock() {
+	if [[ -z "$1" ]]; then
+		print Usage: lock FILES...
+        print Mark FILES (and directories) as read-only
+		return 1
+	fi
+    chmod --recursive -w "$@"
+}
+
+unlock() {
+	if [[ -z "$1" ]]; then
+		print Usage: unlock FILES...
+        print Mark FILES (and directories) as writable
+		return 1
+	fi
+    chmod --recursive +w "$@"
+}
