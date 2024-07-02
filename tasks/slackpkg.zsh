@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.15.6"
-    DATE="Fri May  3 12:33:43 MDT 2024"
+ VERSION="1.15.7"
+    DATE="Tue Jul  2 2024"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -19,7 +19,7 @@ setup() {
 	
 	local HOURS=4 CHANGELOG=/var/lib/slackpkg/ChangeLog.txt
 	if [[ ( ! -f $CHANGELOG ) || $(stat --format=%Y $CHANGELOG) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
-		$SLACKPKG update
+		$SLACKPKG update || die "'$SLACKPKG update' failed"
 	else
 		print "'slackpkg update' has been run within the past $HOURS hours, skipping..."
 	fi
@@ -86,9 +86,12 @@ usage() {
 	### Package logs
 	/var/log/packages
 	/var/log/removed_packages
-	
+
 	### View the Slackware ChangeLog
 	slackpkg show-changelog
+	
+	### Slackpkg metadata
+	/var/lib/slackpkg/CHECKSUMS.md5
 	
 	### Install new packages added since last update:
 	\$ $SLACKPKG install-new
