@@ -29,7 +29,6 @@ esac
 #
 # Global environment variables
 export PAGER='less -r'
-export LESS='-R'
 export EDITOR=/usr/bin/vim
 export EDIT=$EDITOR
 export TMPDIR=/tmp
@@ -44,8 +43,9 @@ fi
 
 
 #
-# Colorized man pages in less(1)
+# less(1) pager configuration, including colorized man pages
 # https://www.howtogeek.com/683134/how-to-display-man-pages-in-color-on-linux/
+export LESS='--RAW-CONTROL-CHARS --jump-target=3'
 export LESS_TERMCAP_md=$'\e[01;36m'
 export LESS_TERMCAP_me=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[01;33m'
