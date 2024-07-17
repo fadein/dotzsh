@@ -22,7 +22,8 @@ setup() {
 			https://docs.google.com/document/d/1_IaASzBuJGxxLkk58LpNGUdSdCyYXuS0p5gEADiwNVw/edit \
 			https://docs.google.com/spreadsheets/d/1SRNa8kKWCzNE_VRsf-m5KQm-ky9y3dMYtpsamF1mMOM/edit \
 			https://drive.google.com/drive/folders/1gGZF3WEEe2mB_DIAZdbdA9SbWXKyWeo7 \
-			"https://lcr.churchofjesuschrist.org/messaging?lang=eng" \
+			https://tinyurl.com \
+			https://lcr.churchofjesuschrist.org/ \
 			https://calendar.google.com/calendar/u/0/r/week \
 			https://tinyurl.com \
 			>/dev/null 2>&1 &
