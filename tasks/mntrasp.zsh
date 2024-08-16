@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Mount/unmount /mnt/rasp"
-VERSION="1.1"
-   DATE="Fri Jul  7 17:22:04 MDT 2017"
+VERSION="1.2"
+   DATE="Fri Aug 16 2024"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -27,7 +27,7 @@ spawn() {
 cleanup() {
     logger mntrasp cleanup
     if $MOUNT | grep -q /mnt/rasp; then
-        $UMOUNT /mnt/rasp
+        $UMOUNT --force /mnt/rasp
     fi
 }
 
