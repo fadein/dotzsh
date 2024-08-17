@@ -3,7 +3,7 @@ SEMESTYR=Fa24
 BASE=/home/fadein/school
 
 refresh() {
-    for REPO in $BASE/$SEMESTYR/*/.git; do
+    for REPO in $BASE/$SEMESTYR/*/.git $BASE/emails/.git $BASE/navigation/.git; do
         (
             # Show a command and then run it
             # When the environment variable DRYRUN is non-empty, do not
@@ -39,12 +39,12 @@ refresh() {
                     fi
 
                     if ! echodo git push publish master; then
-                        print "\n%F{red}%BPushing%b%f Notes/ to %F{green}%Bpublish%b%f failed; You must manually address this\n"
+                        print -P "\n%F{red}%BPushing%b%f Notes/ to %F{green}%Bpublish%b%f failed; You must manually address this\n"
                         return 1
                     fi
 
                     if ! echodo git push origin master; then
-                        print "\n%F{red}%BPushing%b%f Notes/ to %F{cyan}%Borigin%b%f failed; You must manually address this\n"
+                        print -P "\n%F{red}%BPushing%b%f Notes/ to %F{cyan}%Borigin%b%f failed; You must manually address this\n"
                         return 1
                     fi
                 )
