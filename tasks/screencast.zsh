@@ -1,14 +1,15 @@
 #!/bin/env zsh
 
 PURPOSE="Recording a screencast with Vokoscreen + Flowblade w/ custom MLT"
-VERSION="1.7"
-   DATE="Wed Sep  8 12:13:49 MDT 2021"
+VERSION="2.0"
+   DATE="Tue Aug 20 2024"
  AUTHOR="Erik Falor"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
 
-VIDEOS=~/Videos/
+VIDEOS=$HOME/docs/videos
+PICS=$HOME/docs/pictures
 
 setup() {
 	xset s off -dpms
@@ -24,13 +25,21 @@ setup() {
 			;;
 	esac
 
-	if [[ -f ~/.config/vokoscreenNG/vokoscreenNG.conf ]]; then
-		perl -pi -e 's!(VideoPath=).*!$1/home/fadein/Videos!' ~/.config/vokoscreenNG/vokoscreenNG.conf
+	# Assert my default settings
+	if [[ -f ~/.config/vokoscreenNG/vokoscreenNG.ini ]]; then
+		sed -i \
+			-e "s#VideoPath=.*#VideoPath=$VIDEOS#" \
+			-e "s#ImagePath=.*#ImagePath=$PICS#" \
+			-e "s#comboBoxAudioCodec=.*#comboBoxAudioCodec=vorbis#" \
+			-e "s#comboBoxFormat=.*#comboBoxFormat=webm#" \
+			-e "s#checkBoxShowInSystray=.*#checkBoxShowInSystray=false#" \
+			-e "s#checkBoxShowInSystrayAlternative=.*#checkBoxShowInSystrayAlternative=false#" \
+			-e "s#sliderScreencastCountDown=.*#sliderScreencastCountDown=3#" \
+			$HOME/.config/vokoscreenNG/vokoscreenNG.ini
 	fi
 
-	if ! [[ -d $VIDEOS ]]; then
-		mkdir -p $VIDEOS
-	fi
+	[[ -d $VIDEOS ]] || mkdir -p $VIDEOS
+	[[ -d $PICS ]] || mkdir -p $PICS
 
 	# create Flowblade render args file
 	if ! [[ -f $VIDEOS/webm.rargs ]]; then
@@ -73,19 +82,20 @@ usage() {
 	# Using vokoscreen
 
 	1.  *Display* Record fullscreen on eDP1: 1920x1080
-		*	Disable magnification
-		*   Set a countdown of 3 seconds, wait until the countdown screen completely disappears before speaking
+	    *   Disable magnification
+	    *   Set a countdown of 3 seconds, wait until the countdown screen completely disappears before speaking
 
 	2.  *Audio*
-		*   Select _Yeti Stereo Microphone Analog Stereo_
-		*   Deselect all *Monitor* inputs, including _Monitor of Yeti ..._
+	    *   Select _Yeti Stereo Microphone Analog Stereo_
+	    *   Deselect all *Monitor* inputs, including _Monitor of Yeti ..._
 
 	3.  *Video*
-		*   Keep the defaults:
-			- 25 fps
-			- Format: webm
-			- Videocodec: mpeg4
-			- Audiocodec: libmp3lame
+	    *   Keep the defaults:
+	        - 25 fps
+	        - Format: webm
+	        - Videocodec: VP8
+	        - Audiocodec: vorbis
+	    *   These defaults (especially Vorbis) enable Canvas to auto-caption the video
 
 
 	# Uploading to Canvas
