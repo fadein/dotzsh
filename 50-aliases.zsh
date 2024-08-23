@@ -37,6 +37,7 @@ alias perld='perl -de0'
 alias pgrep='pgrep -l'
 alias pseudo=sudo
 alias pwd='pwd -P'
+alias rl=readlink
 alias rm='rm -i'
 alias topu="top -u $USER"
 alias vimdiff='vim -d'
