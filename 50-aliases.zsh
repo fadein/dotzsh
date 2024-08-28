@@ -104,6 +104,7 @@ alias sls=ls
 alias /=ack
 alias :close='echo E444: Cannot close last window'
 alias :e=vim
+alias :ex=vim
 alias :ls=ls
 alias :q!=exit
 alias :q=exit
