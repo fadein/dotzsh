@@ -101,7 +101,7 @@ alias sls=ls
 #
 # vi commands
 #
-alias /=grep
+alias /=ack
 alias :close='echo E444: Cannot close last window'
 alias :e=vim
 alias :ls=ls
