@@ -81,6 +81,7 @@ alias ehco=echo
 alias fiel=file
 alias grpe=grep
 alias got=git
+alias gitlog='git log'
 alias gti=git
 alias igt=git
 alias ivm=vim
