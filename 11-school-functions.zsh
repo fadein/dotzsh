@@ -104,8 +104,8 @@ clown() {
     if [[ -n $2 ]]; then
         DEST=$2
         print "Cloning $URL into $DEST..."
-    elif [[ $URL -regex-match git@gitlab.cs.usu.edu:[^/]+/cs[0-9]{4}-(.*)-assn([0-9])(.git)?$ ]]; then
-        DEST="${match[1]}-a${match[2]}"
+    elif [[ $URL -regex-match git@gitlab.cs.usu.edu:[^/]+/cs[0-9]{4}-(.*)-(assn|proj)([0-9](\.[0-9])?)(.git)?$ ]]; then
+        DEST="${match[1]}-${match[2]:0:1}${match[3]}"
         print "Cloning $URL into $DEST..."
     else
         print "Cloning $URL..."
