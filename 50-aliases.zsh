@@ -75,6 +75,7 @@ esac
 #
 # because I can't spell...
 #
+alias cdx=cd
 alias cs=cd
 alias ecoh=echo
 alias ehco=echo
