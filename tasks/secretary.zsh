@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.12.3"
-   DATE="Fri Aug 9 2024"
+VERSION="0.12.4"
+   DATE="Fri Sep  6 2024"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -69,7 +69,8 @@ env() {
 
 	_TODO+=(
         "Check sacrament hymns"
-        "Copy sacrament agenda from last time"
+		"Revert changes from previous Sacrament agenda"
+        "Make a copy of the previous Sacrament agenda"
 		"Get conductor & speakers from Bishopric agenda"
     )
 
