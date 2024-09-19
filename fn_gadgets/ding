@@ -1,20 +1,30 @@
-# vim: set ft=zsh expandtab:
+# vim: set ft=bash:
 
 # ding is a command-modifier, much like `time` or `sudo`
 # Ring the bell once when the supplied command succeeds, thrice when it has failed
 # The command's own exit code is returned to the shell
-ding() {
-    # run the supplied command, preserving its return code
-    eval $@
+ding () {
+    # Zsh only - emulate POSIX sh behavior
+    [[ -n $ZSH_NAME ]] && emulate -L sh
+
+    # Disable globbing for the duration of the subshell
+    ( set -f; eval $* )
+
+    # Keep the return value to pass on to our caller
     local retval=$?
 
     if [[ $retval == 0 ]]; then
         echo -e "\a"
     else
-        for ding in {0..2}; do
-            echo -ne "\a"; sleep 1
+        for ding in {0..2}
+        do
+            echo -ne "\a"
+            sleep 1
         done
     fi
-
     return $retval
 }
+
+
+# Tested in Bash 5.2.26(1)-release
+# Tested in Zsh 5.9

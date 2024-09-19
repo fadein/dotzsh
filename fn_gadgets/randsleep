@@ -1,25 +1,21 @@
-# vim: set ft=zsh expandtab:
+#!/bin/sh
+# The shebang line is for use as a stand-alone script
+# vim: set ft=bash:
 
-# Sleep for a random number of seconds (inclusive)
-# With one argument, sleep between 1 and N seconds
-# Two arguments, sleep between N and M seconds
-randsleep() {
-    if [[ $# -eq 0 ]]; then
-        1>&2 echo "Usage: randsleep [min=1] max"
-        return 1
-    elif [[ $# -eq 2 ]]; then
-        local min=$1 max=$2
-    else
-        local min=1 max=$1
-    fi
-
-    ## swap if max < min
-    if (( max < min )); then
-        (( max = max + min ))
-        (( min = max - min ))
-        (( max = max - min ))
-    fi
-
-    (( diff = max - min))
-    sleep $(( $RANDOM % ( diff + 1) + min ))
-}
+randsleep () {  # delete this line to make a stand-alone script
+	if (( $# == 0 )); then
+		echo "Usage: randsleep [min=1] max" >&2
+		return 1
+	elif (( $# == 2 )); then
+		local min=$1 max=$2
+	else
+		local min=1 max=$1
+	fi
+	if (( max < min )); then
+		(( max = max + min ))
+		(( min = max - min ))
+		(( max = max - min ))
+	fi
+	(( diff = max - min))
+	command sleep $(( $RANDOM % ( diff + 1) + min ))
+}  # delete this line to make a stand-alone script

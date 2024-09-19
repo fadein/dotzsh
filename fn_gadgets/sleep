@@ -1,0 +1,47 @@
+# vim: set ft=bash:
+
+# IMPORTANT!  This gadget requires the date(1) utility from the GNU Coreutils package.
+#
+# To find out if you have the right version, run `date --version` and look for this output:
+#   date (GNU coreutils) 9.5
+#   Copyright (C) 2024 Free Software Foundation, Inc.
+#   License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+#   This is free software: you are free to change and redistribute it.
+#   There is NO WARRANTY, to the extent permitted by law.
+#
+#   Written by David MacKenzie.
+
+
+# A powered up version of sleep(1) that parses human-readable timestamps with date(1).
+# Fancy time parsing is triggered when the 1st argument is "until" or "for".
+#
+# Otherwise, its arguments are passed straight through to sleep(1).
+#
+# e.g.
+#   $ sleep for 2 minutes
+#   $ sleep for 3 hours
+#   $ sleep for a day
+#   $ sleep until tomorrow
+#   $ sleep until 7 pm
+#   $ sleep until december 25 6:30 am
+#
+# These invocations work as expected:
+#   $ sleep 1
+#   $ sleep 30
+#   $ sleep .25
+sleep() {
+    if (( $# >= 2 )) && [[ $1 == until || $1 == for ]]; then
+        shift  # discard keyword "until" or "for"
+        local then=$(command date --date="$*" +%s)
+        local now=$(command date +%s)
+        local duration=$(( then - now ))
+        if (( duration > 0 )); then
+            command sleep $duration
+        fi
+    else
+        command sleep $*
+    fi
+}
+
+# Tested in Bash 5.1
+# Tested in Zsh 5.9

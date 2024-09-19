@@ -1,29 +1,31 @@
-# vim: set ft=zsh expandtab:
+# vim: set ft=bash:
 
 # countdown is a command-modifier, much like `time` or `sudo`
 # Print a dramatic countdown timer before running a command
+#
+# When run with no command it simply counts down to zero
 countdown() {
-    if [[ $# -lt 1 ]]; then
-        echo 'Usage: countdown SECONDS [CMD ARGS]'
-        return 1
-    fi
+	if [[ $# -lt 1 ]]; then
+		echo 'Usage: countdown SECONDS [CMD ARGS]'
+		return 1
+	fi
+	local N=$1
+	shift
+	local MSG CEOL=$(tput el 2>&1)
 
-    local N I
-    N=$1
-    I=1
-    shift
+	[[ $? -eq 0 ]] && MSG=$CEOL
+	[[ $# -ge 1 ]] && MSG=${MSG}"Running '$@' in "
 
-    local MSG CEOL
-    CEOL=$(tput el 2>&1)  # "clear to EOL" escape sequence, if available
-    [[ $? == 0 ]] && MSG=$CEOL
-    [[ $# -ge 1 ]] && MSG=${MSG}"Running '$@' in "
+	until [[ $N -le 0 ]]; do
+		printf $'\r%s%d...' "$MSG" $N
+		sleep 1
+		((N--))
+	done
+	echo
 
-    until [[ $N -eq 0 ]]; do
-        printf $'%s%d...\r' "$MSG" $N
-        sleep 1
-        ((N--, I++))
-    done
-    echo
-
-    [[ $# -ge 1 ]] && eval $@
+	[[ $# -ge 1 ]] && eval $@
 }
+
+
+# Tested in Bash 5.2.26(1)-release
+# Tested in Zsh 5.9
