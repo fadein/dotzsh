@@ -23,6 +23,8 @@ alias findd='find . -type d -name'
 alias findf='find . -type f -name'
 alias free='free -m'
 alias gdb='gdb -q'
+alias gi=git
+alias gitc=git
 alias grep='grep -n --color=auto'
 alias grepi='grep -i -n --color=auto'
 alias grev='grep -vn --color=auto'
