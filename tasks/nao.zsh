@@ -9,15 +9,6 @@ PROGNAME=$0
 TASKNAME=$0:t:r
 
 
-declare -a cols_lines  # [columns lines]
-
-# use tput(1) to find the dimensions of the terminal
-# save in the global array cols_lines
-get-size() {
-    cols_lines=($(tput cols lines))
-}
-
-
 countdown() {
     if [[ $# -lt 1 ]]; then
         echo 'Usage: countdown SECONDS [CMD ARGS]'
@@ -47,12 +38,24 @@ countdown() {
     fi
 }
 
+
+declare -a cols_lines  # [columns lines]
+
+# use tput(1) to find the dimensions of the terminal
+# save in the global array cols_lines
+get-size() {
+    cols_lines=($(tput cols lines))
+}
+
+
 nethack-right-size() {
-    VERSION="1.1"
+    VERSION="1.2"
 
     declare -r max=76
     declare -r min=12
     declare -r step=2
+    declare -r X=1
+    declare -r Y=2
 
     declare -a target_size=(131 36)  # ( columns lines )
     declare -a orig_size             # ( columns lines )
@@ -62,8 +65,8 @@ nethack-right-size() {
     # get the current size of the screen so I can reset back to the original size
     # if we fail to find a good match
     get-size
-    if (( ${cols_lines[1]} == ${target_size[1]} && ${cols_lines[2]} == ${target_size[2]} )); then
-        print "${cols_lines[1]} == ${target_size[1]} && ${cols_lines[2]} == ${target_size[2]}"
+    if (( ${cols_lines[$X]} == ${target_size[$X]} && ${cols_lines[$Y]} == ${target_size[$Y]} )); then
+        print "${cols_lines[$X]} == ${target_size[$X]} && ${cols_lines[$Y]} == ${target_size[$Y]}"
         print "This font size is just right..."
 
         return
@@ -79,15 +82,15 @@ nethack-right-size() {
         print "Trying font size $i..."
         sleep .15
         get-size
-        print "At font size $i dimensions are ${cols_lines[1]}x${cols_lines[2]}"
+        print "At font size $i dimensions are ${cols_lines[$X]}x${cols_lines[$Y]}"
 
-        if (( ${cols_lines[1]} == ${orig_size[1]} && ${cols_lines[2]} == ${orig_size[2]} )); then
+        if (( ${cols_lines[$X]} == ${orig_size[$X]} && ${cols_lines[$Y]} == ${orig_size[$Y]} )); then
             orig_font_size=$i
             print "The original font size was $i"
         fi
 
-        if (( ${cols_lines[1]} >= ${target_size[1]} && ${cols_lines[2]} >= ${target_size[2]} )); then
-            print "${cols_lines[1]} >= ${target_size[1]} && ${cols_lines[2]} >= ${target_size[2]}"
+        if (( ${cols_lines[$X]} >= ${target_size[$X]} && ${cols_lines[$Y]} >= ${target_size[$Y]} )); then
+            print "${cols_lines[$X]} >= ${target_size[$X]} && ${cols_lines[$Y]} >= ${target_size[$Y]}"
             print "Font size $i is just right..."
             good=1
             break
@@ -97,16 +100,18 @@ nethack-right-size() {
     if [[ -z $good && -n $orig_font_size ]]; then
         print "Appropriate font size not found; restoring to original size"
         print "\033]710;xft:hack:pixelsize=${orig_font_size}:antialias=true\007"
+        return 1
 
     elif [[ -z $good && -z $orig_font_size ]]; then
         print "Failed to find a good font size and I don't know what size to reset to. Sorry!"
+        return 2
 
     elif [[ -n $good ]]; then
         return 0
 
     else
-        print "Failed to find a good font size"
-        return 1
+        print "How did we arrive at line $LINENO?"
+        return 3
 
     fi
 }
