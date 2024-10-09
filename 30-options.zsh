@@ -7,7 +7,7 @@ setopt append_history
 setopt auto_cd
 setopt auto_continue
 setopt brace_ccl
-setopt no_cd_able_vars
+setopt no_cdable_vars
 setopt extended_glob
 setopt extended_history
 setopt hist_ignore_dups

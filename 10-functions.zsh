@@ -61,11 +61,16 @@ _dotdotcomp() {
 #complete -o filenames -F _dotdotcomp ..
 
 
-# this hook function decides which commands are added to the shell's history
+# This hook function decides which commands are added to the shell's history
+# If it returns status 1, the command is not saved in history,
+# though it lingers until the next command is run
 if [[ $ZSH_VERSION != 5.2 ]]; then
     zshaddhistory() {
         emulate -L zsh
-        [[ ! $1 =~ '^(fg|bg)\s*$' ]]
+        [[ ! $1 =~ '^(fg|bg)\s*' ]]
+        # local res=$?  # debugging
+        # print "zshaddhistory($1) => $res"
+        # return $res
     }
 fi
 
