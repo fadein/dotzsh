@@ -1,9 +1,6 @@
 # vim: set ft=zsh expandtab:
 
 
-# enable edit-command-line functionality
-autoload -U edit-command-line && zle -N edit-command-line
-
 # other misc. helpful functions
 autoload zmv zargs zcalc
 
