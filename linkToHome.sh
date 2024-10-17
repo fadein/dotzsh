@@ -85,6 +85,4 @@ else
 	linkToHome $HERE/zshrc         .zshrc
 	linkToHome $HERE/zshenv        .zshenv
 
-    # Pre-build autoload functions
-    cd $(dirname $0) && make
 fi

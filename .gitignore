@@ -3,4 +3,5 @@ calc_history
 compdump
 history
 *.zwc
+*.zwc.old
 *.sw[pon]

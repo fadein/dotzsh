@@ -3,15 +3,19 @@
 # other misc. helpful functions
 autoload zmv zargs zcalc zrecompile
 
+
 # Import other useful functions, as needed
-for FN in \
+for fndir in \
     ~/.zsh/fn_util    \
     ~/.zsh/fn_gadgets \
     ~/.zsh/fn_linux   \
     ; do
-    fpath=($FN $fpath)
-    autoload -Uw $FN
+    [[ ! -d $fndir ]] && continue
+    zrecompile -p -M ${fndir}.zwc ${fndir}/*
+    fpath=($fndir.zwc $fpath)
+    autoload -Uw $fndir.zwc
 done
+unset fndir
 
 
 # Defined as a function instead of an alias b/c I like to use
