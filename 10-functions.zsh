@@ -1,19 +1,14 @@
 # vim: set ft=zsh expandtab:
 
-
 # other misc. helpful functions
-autoload zmv zargs zcalc
-
-
-fns=(
-    ~/.zsh/fn_util
-    ~/.zsh/fn_gadgets
-    ~/.zsh/fn_linux
-    # ~/.zsh/fn_school
-    )
+autoload zmv zargs zcalc zrecompile
 
 # Import other useful functions, as needed
-for FN in $fns; do
+for FN in \
+    ~/.zsh/fn_util    \
+    ~/.zsh/fn_gadgets \
+    ~/.zsh/fn_linux   \
+    ; do
     fpath=($FN $fpath)
     autoload -Uw $FN
 done
