@@ -1,0 +1,25 @@
+# vim: set ft=zsh expandtab:
+
+# Open the current Git repo's 1st remote web page (if present)
+repo () {
+	zmodload zsh/regex
+	local URL
+	if git status >/dev/null 2>&1 ; then
+        URL=$(git remote -v 2>/dev/null | head -n 1 | cut -f 2)
+		if [[ $URL -regex-match ^(git@[^:]+:[^/]+/[^/ ]+) ]]; then
+			URL=$MATCH
+			URL=${URL/:/\/}
+			URL=${URL/git@/https:\/\/}
+		elif [[ $URL -regex-match ^(https://[^:]+:[^/]+/[^/]+) ]]; then
+			:
+		else
+			print "Unrecognized URL '$URL'"
+			return
+		fi
+		[[ -n $BROWSER ]] && $BROWSER $URL || print $URL
+    elif [[ $? == 128 ]]; then
+		print "This is not a Git repository"
+	else
+        print "repo: how did we hit the else case?"
+	fi
+}

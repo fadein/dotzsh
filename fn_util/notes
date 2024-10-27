@@ -1,0 +1,11 @@
+# vim: set ft=zsh expandtab:
+
+# Display directory notes
+# When passed a filename as an argument, link that file to the name .notes
+notes() {
+    if [[ $# != 0 ]]; then
+        ln -fs $1 .notes
+    fi
+
+    [[ -r .notes && -z "$SHUSH" ]] && { fmt -${COLUMNS:-80} -s .notes; echo; }
+}

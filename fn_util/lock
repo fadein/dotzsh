@@ -1,0 +1,13 @@
+# vim: set ft=zsh expandtab:
+
+# Syntactic sugar for `chmod --recursive -w $1 $2...`
+# In the GNU Coreutils' impl of chmod, omitting the [ugoa] user specifier
+# from the permission behaves like "a", but umask is respected
+lock() {
+	if [[ -z "$1" ]]; then
+		print Usage: lock FILES...
+        print Mark FILES (and directories) as read-only
+		return 1
+	fi
+    chmod --recursive -w "$@"
+}

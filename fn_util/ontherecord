@@ -1,0 +1,14 @@
+# vim: set ft=zsh expandtab:
+
+# Resume history recording in this shell
+ontherecord() {
+	umask ${_OLDUMASK:-027}
+	if [[ -n "$OLDHISTFILE" ]]; then
+		HISTFILE=$OLDHISTFILE
+		unset OLDHISTFILE
+	fi
+	if [[ -n "$HISTSIZE" ]]; then
+		HISTSIZE=$OLDHISTSIZE
+		unset OLDHISTSIZE
+	fi
+}

@@ -1,0 +1,16 @@
+# vim: set ft=zsh expandtab:
+
+# Suspend history recording in this shell
+offtherecord() {
+    export _OLDUMASK=$(umask)
+    umask 027
+	if [[ -n "$HISTFILE" ]]; then
+		OLDHISTFILE=$HISTFILE
+		unset HISTFILE
+	fi
+	if [[ -n "$HISTSIZE" ]]; then
+		OLDHISTSIZE=$HISTSIZE
+		HISTSIZE=0
+	fi
+	[[ -n "$@" ]] && $@ || true
+}

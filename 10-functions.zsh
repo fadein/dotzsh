@@ -1,6 +1,6 @@
 # vim: set ft=zsh expandtab:
 
-# other misc. helpful functions
+# autoload misc. Zsh functions
 autoload zmv zargs zcalc zrecompile
 
 # Functions using these variables have been moved under fn_school
@@ -8,7 +8,7 @@ SEMESTYR=Fa24
 BASE=$HOME/school
 
 
-# Import other useful functions, as needed
+# Autoload functions
 for fndir in \
     ~/.zsh/fn_util    \
     ~/.zsh/fn_gadgets \
@@ -22,12 +22,6 @@ for fndir in \
 done
 unset fndir
 
-
-# Defined as a function instead of an alias b/c I like to use
-# this in conjunction with the 'noglob' precommand modifier;
-# Since the modifier comes in command position, the alias expansion
-# would be suppressed
-qrencode() { command qrencode -t ANSI $@; }
 
 # this little gem lets me say .. .. .. to go back three directories
 ..() {
@@ -76,97 +70,36 @@ if [[ $ZSH_VERSION != 5.2 ]]; then
 fi
 
 
-# Display directory notes
-# When passed a filename as an argument, link that file to the name .notes
-notes() {
-    if [[ $# != 0 ]]; then
-        ln -fs $1 .notes
-    fi
-
-    [[ -r .notes && -z "$SHUSH" ]] && { fmt -${COLUMNS:-80} -s .notes; echo; }
-}
-
-# if entering a directory with a special .notes file echo its contents
-[[ 0 == ${+chpwd_functions} || 0 == $chpwd_functions[(I)notes] ]] \
-	&& chpwd_functions+=(notes)
+if functions notes >/dev/null; then
+    # if entering a directory with a special .notes file echo its contents
+    [[ 0 == ${+chpwd_functions} || 0 == $chpwd_functions[(I)notes] ]] \
+        && chpwd_functions+=(notes)
+fi
 
 
-# Returns true when empty output is piped in; false otherwise
-# Useful for detecting when a command produces any output at all
-empty() { sed -ne '/./{q1};2{q2}'; }
-
-
-# Split an environment variable on a delimiter (default ':')
-# and return the nth item
-nth () {
-	if [ "$#" -lt 2 ]; then
-		echo Too few arguments to nth: "$*";
-		echo Usage: nth \<position\> \<list\> \<delimiter\>;
-		return 65;
-	fi;
-	local PATHS=$2
-	local DELIMIT=${3-":"};
-	if [ "0" = `expr index $PATHS $DELIMIT` ]; then
-		PATHS=$(eval echo \$$PATHS)
-	fi
-	echo $PATHS | cut -d$DELIMIT -f$1
-}
-
-# aliases using nth
-alias first='nth 1'
-alias second='nth 2'
-alias third='nth 3'
-alias fourth='nth 4'
-alias fifth='nth 5'
-alias sixth='nth 6'
-alias seventh='nth 7'
-alias eighth='nth 8'
-alias ninth='nth 9'
-alias tenth='nth 10'
-alias 1st='nth 1'
-alias 2nd='nth 2'
-alias 3rd='nth 3'
-alias 4th='nth 4'
-alias 5th='nth 5'
-alias 6th='nth 6'
-alias 7th='nth 7'
-alias 8th='nth 8'
-alias 9th='nth 9'
-alias 10th='nth 10'
-
-# turn off history recording
-offtherecord() {
-    export _OLDUMASK=$(umask)
-    umask 027
-	if [[ -n "$HISTFILE" ]]; then
-		OLDHISTFILE=$HISTFILE
-		unset HISTFILE
-	fi
-	if [[ -n "$HISTSIZE" ]]; then
-		OLDHISTSIZE=$HISTSIZE
-		HISTSIZE=0
-	fi
-	[[ -n "$@" ]] && $@ || true
-}
-alias otr=offtherecord
-otx() {
-	[[ -n "$@" ]] && otr exec $@
-}
-
-# turn on history recording
-ontherecord() {
-	umask ${_OLDUMASK:-027}
-	if [[ -n "$OLDHISTFILE" ]]; then
-		HISTFILE=$OLDHISTFILE
-		unset OLDHISTFILE
-	fi
-	if [[ -n "$HISTSIZE" ]]; then
-		HISTSIZE=$OLDHISTSIZE
-		unset OLDHISTSIZE
-	fi
-}
-
-
+if functions nth >/dev/null; then
+    # aliases using nth
+    alias first='nth 1'
+    alias second='nth 2'
+    alias third='nth 3'
+    alias fourth='nth 4'
+    alias fifth='nth 5'
+    alias sixth='nth 6'
+    alias seventh='nth 7'
+    alias eighth='nth 8'
+    alias ninth='nth 9'
+    alias tenth='nth 10'
+    alias 1st='nth 1'
+    alias 2nd='nth 2'
+    alias 3rd='nth 3'
+    alias 4th='nth 4'
+    alias 5th='nth 5'
+    alias 6th='nth 6'
+    alias 7th='nth 7'
+    alias 8th='nth 8'
+    alias 9th='nth 9'
+    alias 10th='nth 10'
+fi
 
 
 zle -N increase-char _increase_char
@@ -246,69 +179,4 @@ _increase_number() {
 #  fi
   (( diff = $#BUFFER - $prelength ))
   (( CURSOR = last + diff ))
-}
-
-# look up the definition of a word on urbandictionary.com
-urbandictionary() {
-    if [[ $# == 0 ]]; then
-        1>&2 echo Usage: $0 SEARCH_TERM
-        return 1
-    fi
-    [[ -n $BROWSER ]] && $BROWSER "https://www.urbandictionary.com/define.php?term=$1" || print "https://www.urbandictionary.com/define.php?term=$1"
-}
-
-# Open the current Git repo's 1st remote web page (if present)
-repo () {
-	zmodload zsh/regex
-	local URL
-	if git status >/dev/null 2>&1 ; then
-        URL=$(git remote -v 2>/dev/null | head -n 1 | cut -f 2)
-		if [[ $URL -regex-match ^(git@[^:]+:[^/]+/[^/ ]+) ]]; then
-			URL=$MATCH
-			URL=${URL/:/\/}
-			URL=${URL/git@/https:\/\/}
-		elif [[ $URL -regex-match ^(https://[^:]+:[^/]+/[^/]+) ]]; then
-			:
-		else
-			print "Unrecognized URL '$URL'"
-			return
-		fi
-		[[ -n $BROWSER ]] && $BROWSER $URL || print $URL
-    elif [[ $? == 128 ]]; then
-		print "This is not a Git repository"
-	else
-        print "else?"
-	fi
-}
-
-
-ssh-keycheck() {
-    if [[ -n $1 ]]; then
-        ssh-keyscan $* 2>/dev/null | ssh-keygen -lf -
-    else
-        1>&2 print "Usage: $0 [ssh-keyscan options] HOSTS"
-        return 1
-    fi
-}
-
-
-# Syntactic sugar for `chmod --recursive -w $1 $2...`
-# In the GNU Coreutils' impl of chmod, omitting the [ugoa] user specifier
-# fromthe permission behaves like "a", but umask is respected
-lock() {
-	if [[ -z "$1" ]]; then
-		print Usage: lock FILES...
-        print Mark FILES (and directories) as read-only
-		return 1
-	fi
-    chmod --recursive -w "$@"
-}
-
-unlock() {
-	if [[ -z "$1" ]]; then
-		print Usage: unlock FILES...
-        print Mark FILES (and directories) as writable
-		return 1
-	fi
-    chmod --recursive +w "$@"
 }

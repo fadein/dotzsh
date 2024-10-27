@@ -1,0 +1,5 @@
+# vim: set ft=zsh expandtab:
+
+# Returns true when empty output is piped in; false otherwise
+# Useful for detecting when a command produces any output at all
+empty() { sed -ne '/./{q1};2{q2}'; }
