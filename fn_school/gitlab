@@ -1,0 +1,30 @@
+# vim: set ft=zsh expandtab:
+
+# Open a repo's HTTPS GitLab page from its "origin" (or $1) remote
+gitlab() {
+	local URL
+	if git status > /dev/null 2>&1
+	then
+		URL=$(git remote get-url ${1:-origin})
+		if [[ $URL == git@* ]]
+		then
+			URL=${URL/:/\/}
+			URL=${URL/git@/https:\/\/}
+		elif [[ $URL = https://* ]]
+		then
+			:
+		else
+			echo "Unrecognized URL '$URL'" >&2
+			return 2
+		fi
+		if [[ -z $BROWSER ]]
+		then
+			echo Browse to $URL
+		else
+			$BROWSER $URL
+		fi
+	else
+		echo This is not a Git repository >&2
+		return 1
+	fi
+}

@@ -1,0 +1,11 @@
+# vim: set ft=zsh expandtab:
+
+# This version of `find-student` searches all courses' rosters in the current semester
+find-student() {
+    if [[ -z $1 ]]; then
+        print "Locate a student in a course"
+        print "Usage: $0 Student Name"
+        return 1
+    fi
+    grep -i "$*" $BASE/$SEMESTYR/*/Roster/{roster,email}*.csv | sort
+}

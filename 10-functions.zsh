@@ -3,12 +3,17 @@
 # other misc. helpful functions
 autoload zmv zargs zcalc zrecompile
 
+# Functions using these variables have been moved under fn_school
+SEMESTYR=Fa24
+BASE=$HOME/school
+
 
 # Import other useful functions, as needed
 for fndir in \
     ~/.zsh/fn_util    \
     ~/.zsh/fn_gadgets \
     ~/.zsh/fn_linux   \
+    ~/.zsh/fn_school  \
     ; do
     [[ ! -d $fndir ]] && continue
     zrecompile -p -M ${fndir}.zwc ${fndir}/*
