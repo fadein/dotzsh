@@ -1,0 +1,17 @@
+# vim: set ft=zsh noexpandtab:
+
+# List SSH host keys of the hosts given as args
+# Filters ssh-keyscan's output through ssh-keygen -l to render it more readable
+ssh-keylist() {
+	if [[ -n $1 ]]; then
+		ssh-keyscan $* 2>/dev/null | ssh-keygen -lf -
+	else
+		1>&2 cat <<-OUTPUT
+		List SSH host keys of the hosts given as args
+		Filters ssh-keyscan's output through ssh-keygen -l to render it more readable
+
+		Usage: $0 [ssh-keyscan options] HOSTS
+		OUTPUT
+		return 1
+	fi
+}
