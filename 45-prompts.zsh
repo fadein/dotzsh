@@ -39,6 +39,8 @@ if ! functions hostcolor >/dev/null; then
                     function hostcolor { print "%B%F{yellow}$1%f%b"; } ;;
                 mariner)
                     function hostcolor { print "%F{magenta}%K{black}$1%k%f"; } ;;
+                atlantis*)
+                    function hostcolor { print "%F{green}$1%f"; } ;;
                 *)
                     function hostcolor { print "%F{yellow}%K{black}$1%k%f"; } ;;
             esac ;;
