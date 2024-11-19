@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Play on nethack.alt.org or hardfought.org"
-VERSION="3.1"
-   DATE="Tue Oct 17 09:47:33 MDT 2023"
+VERSION="3.2"
+   DATE="Mon Nov 18 2024"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -118,11 +118,21 @@ nethack-right-size() {
 
 
 setup() {
+    if [[ -d $HOME/.local/bin/ && ! -x $HOME/.local/bin/nh.tty ]]; then
+        cat <<SHIM > $HOME/.local/bin/nh.tty
+#!/bin/zsh
+
+[[ -L /tmp/nethack.tty ]] && tcd --scheme=NetHack > /tmp/nethack.tty
+SHIM
+    chmod +x $HOME/.local/bin/nh.tty
+    fi
+
     if nethack-right-size; then
         setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
         clear
-        print Entering the Dungeons of Doom on ${TTY:t2} in
-        countdown 5
+        ln -sf $TTY /tmp/nethack.tty
+        print "After logging in run 'nh.tty' to fix the colors"
+        countdown 2
     else
         return 1
     fi
