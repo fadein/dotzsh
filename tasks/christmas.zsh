@@ -43,27 +43,18 @@ setup() {
             killall -SIGUSR1 conky
             ;;
 
-        apollo)
-            xrandr --output HDMI-1 --auto --same-as eDP-1 --set audio on
-            ;;
-
         atlantis*)
-            # pick a sick color scheme
+            # pick a festive color scheme
             tcd --scheme=christmas
 
-            # Set the DPI for Firefox/PyCharm
-            echo Xft.dpi: ${dpi:-120} | xrdb -quiet -override
+            killall picom
 
             if find-connected-displayport; then
                 DISPLAYPORT=$REPLY
 
                 # Make my screen match the resolution of the projector
-                xrandr --output eDP --mode 1920x1080 --auto --output $DISPLAYPORT --same-as eDP --auto
-
-                # restart PulseAudio so it knows that it can play sounds over HDMI
-                pactl exit
-                sleep .1
-                find-hdmi-sink-name && export hdmi_sink=$REPLY
+                xrandr --output eDP --mode 1920x1080 --auto
+                xrandr --output $DISPLAYPORT --same-as eDP --auto
             else
                 xrandr --output eDP --mode 1920x1080 --auto
             fi
@@ -73,6 +64,9 @@ setup() {
     CLEANUP_TRAPS=(HUP)
 }
 
+env() {
+    cd $HOME/christmas
+}
 
 cleanup() {
     case $HOSTNAME in
@@ -84,9 +78,12 @@ cleanup() {
             killall -SIGUSR1 conky
             ;;
 
-        apollo)
-            xrandr --output HDMI-1 --off --auto
+        atlantis*)
+            xrandr --output eDP --mode 2880x1920 --output $DISPLAYPORT --off --auto
+            picom &>/dev/null & disown
+            sleep .25
             ;;
+
     esac
     backlighter @
 }
