@@ -82,9 +82,9 @@ alias cs=cd
 alias ecoh=echo
 alias ehco=echo
 alias fiel=file
-alias grpe=grep
-alias got=git
 alias gitlog='git log'
+alias got=git
+alias grpe=grep
 alias gti=git
 alias igt=git
 alias ivm=vim
@@ -101,6 +101,7 @@ alias pyhton=python
 alias scd=cd
 alias sl=ls
 alias sls=ls
+alias vmi=vim
 
 #
 # vi commands
