@@ -120,6 +120,8 @@ alias :w='echo "E505: is read-only (add ! to override)"'
 alias :wq=exit
 alias :x!=exit
 alias :x=exit
+alias ZQ=exit
+alias ZZ=exit
 
 #
 # 1337 h4X0r 4L14535
