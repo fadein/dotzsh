@@ -1,0 +1,16 @@
+# vim: set ft=zsh expandtab:
+
+
+msec2time() {
+    while (( $# > 0 )); do
+        local t=$1
+        shift
+        if (( ${#t} > 3 )); then
+            t=${t:0:-3}
+        fi
+
+        TZ=GMT perl -e "print scalar localtime $t, \" GMT\n\""
+        TZ=MST perl -e "print scalar localtime $t, \" MST\n\""
+        echo
+    done
+}
