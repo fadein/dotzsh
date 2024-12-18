@@ -16,9 +16,14 @@ for fndir in \
     ~/.zsh/fn_school  \
     ; do
     [[ ! -d $fndir ]] && continue
+
     zrecompile -p -M ${fndir}.zwc ${fndir}/*
-    fpath=($fndir.zwc $fpath)
-    autoload -Uw $fndir.zwc
+    # zcompile ${fndir}.zwc ${fndir}/*
+
+    if [[ -f $fndir.zwc ]]; then
+        fpath=($fndir.zwc $fpath)
+        autoload -Uw $fndir.zwc
+    fi
 done
 unset fndir
 
