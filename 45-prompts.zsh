@@ -1,6 +1,3 @@
-# prompts.zsh
-
-
 # Timestamp in RPROMPT updates when command is run
 # Inspired by https://stackoverflow.com/questions/13125825/zsh-update-prompt-with-current-time-when-a-command-is-started
 #
@@ -64,56 +61,28 @@ case $UID in
 esac
 #}
 
+
 setopt prompt_subst
 function dim {
     print "${COLUMNS}x${LINES} "
 }
 
+
 # Render the window title for virtual terminals
-function title {
+function set-terminal-title {
     local ROOT=
-    if [[ "$UID" = 0 ]]; then
-        ROOT="* "
-    fi
-    case $TERM in
-        screen)
-            # Use these two for GNU Screen:
-            print -n $'\ek'${ROOT}$2$'\e'\\
-            print -n $'\e]0;'${ROOT}$*$'\a'
-            ;;
-        xterm*|rxvt*)
-            # Use this one instead for XTerms:
-            # XXX here the -P flag causes junk to be printed when the
-            # command contains Zsh prompt escape sequences
-            #
-            # The trouble is that sometimes I'll want these prompt
-            # escapes to be expanded (in the case of precmd()), and
-            # other times I don't (in the case of `print %f{blue}`)...
-            print -n $'\e]0;'${ROOT}$*$'\a'
-            ;;
-        screen.rxvt)
-            # I'm not sure the -R flag is called for here; it enables
-            # emulation of the BSD echo command.
-            # http://zsh.sourceforge.net/Doc/Release/Shell-Builtin-Commands.html#Shell-Builtin-Commands
-            # Anyhow, it seems that this block can be rolled up with
-            # the screen case above
-            print -nR $'\ek'${ROOT}$2$'\e'\\
-            print -n  $'\e]0;'${ROOT}$*$'\a'
-            ;;
-    esac
+    [[ $UID == 0 ]] && ROOT="* "
+    builtin print -n "\e]0;${ROOT}$@\a"
+    [[ $TERM == screen* ]] && builtin print -n "\ek${ROOT}$2\e\\"
 }
 
-# What's the difference between 'precmd' and 'preexec'?
-# I think precmd() happens right after the prompt is displayed, before a
-# command is input.
-#
-# preexec() must happen right after the user hits [Enter]
 
 # Set the XTerm window title property
 # The default value appears as "[host] zsh tty cwd"
 function precmd {
-    title "[${HOST%%.*}] " "zsh" "$PWD ${TTY#/dev/}"
+    set-terminal-title "[${HOST%%.*}] " "zsh" "$PWD ${TTY#/dev/}"
 }
+
 
 # Helper to set the terminal window's title to the running command,
 # even if that command is a job that has been returned to the
@@ -152,7 +121,7 @@ function preexec() {
                          # through to the next case
 
         *)
-            title "[$HOSTNAME] " $cmd[1]:t $cmd[2,-1]    # Not resuming a job,
+            set-terminal-title "[$HOSTNAME] " $cmd[1]:t $cmd[2,-1]    # Not resuming a job,
             return                                       # so we're all done
             ;;
     esac
@@ -163,13 +132,14 @@ function preexec() {
     # Could parse $rest here, but $jobtexts (via $jt) is easier.
     $cmd >>(read num rest
         cmd=(${(z)${(e):-\$jt$num}})
-        title '[%m] ' $cmd[1]:t $cmd[2,-1]) 2>/dev/null
+        set-terminal-title '[%m] ' $cmd[1]:t $cmd[2,-1]) 2>/dev/null
 }
 
 
 function plain() {
     PS1='%n@%m %~ %# '
 }
+
 
 #The jobcount is colored red if non-zero.
 function colorful() {
@@ -184,6 +154,7 @@ function screen() {
     PROMPT="$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %m)%(?..%s) %~ %# $_UTEXT"
     RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
+
 
 function _git_branch_details() {
     # split input on newlines
