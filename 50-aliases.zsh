@@ -10,9 +10,9 @@ alias csi='csi -wq'
 alias ctags='ctags --fields=+iaS --extra=+fq'
 alias curl='curl -A "Mozilla/4.0"'
 alias date='date +"%a, %b %e %Y  %R %Z"'
+alias df='df -h'
 alias diff='diff --color=auto'
 alias diffu='diff --color=auto -u'
-alias df='df -h'
 alias dmesg="dmesg -H"
 alias du='du -h'
 alias feh='feh --scale-down'
@@ -82,13 +82,16 @@ alias cs=cd
 alias ecoh=echo
 alias ehco=echo
 alias fiel=file
+alias gerp=grep
 alias gitlog='git log'
 alias got=git
 alias grpe=grep
 alias gti=git
 alias igt=git
 alias ivm=vim
+alias jbos=jobs
 alias jods=jobs
+alias jorbs=jobs
 alias les=less
 alias lss=less
 alias maek=make
@@ -101,6 +104,7 @@ alias pyhton=python
 alias scd=cd
 alias sl=ls
 alias sls=ls
+alias vm=vim
 alias vmi=vim
 
 #
@@ -114,7 +118,9 @@ alias :ls=ls
 alias :q!=exit
 alias :q=exit
 alias :qa=exit
+alias :r=cat
 alias :r=less
+alias :split=vim
 alias :w!='echo E503: is not a file or writable device'
 alias :w='echo "E505: is read-only (add ! to override)"'
 alias :wq=exit
@@ -130,27 +136,26 @@ alias copy='cp -i'
 alias del='rm -i'
 alias deltree='rm -rf'
 alias epoch='strftime %c'
-alias move='mv -i'
-alias screen-r=screen\ -r
-alias screenr=screen\ -r
-alias screern=screen\ -r
-alias epoch='strftime %c'
 alias gcc-defines='gcc -dM -E -x c - </dev/null | sort'
+alias move='mv -i'
+alias screen-r='screen -r'
+alias screenr='screen -r'
+alias screern='screen -r'
 
 #
 # suffix aliases
 #
 alias -s com=lynx
 alias -s conf=vim
-alias -s net=lynx
-alias -s org=lynx
-alias -s txt=vim
-alias -s docx=lowriter
 alias -s doc=lowriter
-alias -s odt=lowriter
-alias -s ods=localc
-alias -s xlsx=localc
-alias -s xls=localc
+alias -s docx=lowriter
+alias -s net=lynx
 alias -s odp=loimpress
-alias -s pptx=loimpress
+alias -s ods=localc
+alias -s odt=lowriter
+alias -s org=lynx
 alias -s ppt=loimpress
+alias -s pptx=loimpress
+alias -s txt=vim
+alias -s xls=localc
+alias -s xlsx=localc
