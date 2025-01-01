@@ -4,7 +4,7 @@
 autoload zmv zargs zcalc zrecompile
 
 # Functions using these variables have been moved under fn_school
-SEMESTYR=Fa24
+SEMESTYR=Sp25
 BASE=$HOME/school
 
 
