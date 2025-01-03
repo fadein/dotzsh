@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.15.7"
-    DATE="Tue Jul  2 2024"
+ VERSION="1.16"
+    DATE="Fri Jan  3 2025"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -11,13 +11,14 @@ SLACKPKG=/usr/sbin/slackpkg
 NICE=/usr/bin/nice
 LAST_UPDATE_FILE=/var/lib/slackpkg/last_update
 REBOOT_FILE=/var/run/needs_restarting
+CHANGELOG=/var/lib/slackpkg/ChangeLog.txt
 
 
 setup() {
 	raisePrivs
 	grep -qv '^#' /etc/slackpkg/mirrors || die "You need to uncomment one mirror from /etc/slackpkg/mirrors"
 	
-	local HOURS=4 CHANGELOG=/var/lib/slackpkg/ChangeLog.txt
+	local HOURS=4
 	if [[ ( ! -f $CHANGELOG ) || $(stat --format=%Y $CHANGELOG) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
 		$SLACKPKG update || die "'$SLACKPKG update' failed"
 	else
@@ -269,14 +270,28 @@ env() {
 				_TODO+=("The kernel wasn't updated; you may skip the following commands")
 			fi
 
-			_TODO+=(
-				"$ cd /boot/efi/EFI/Slackware/"
-				"$ cp /boot/vmlinuz*(.) ."
-				"$ assert-initrd-has-colehack"
-				"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
-				"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
-				"$ vim elilo.conf"
-			)
+			case $HOSTNAME in
+				atlantis*)
+					_TODO+=(
+					"$ cd /boot/efi/EFI/Slackware/"
+					"$ cp /boot/vmlinuz*(.) ."
+					"$ assert-initrd-has-colehack"
+					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
+					"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
+					"$ grub-mkconfig -o /boot/grub/grub.cfg"
+					)
+					;;
+				*)
+					_TODO+=(
+					"$ cd /boot/efi/EFI/Slackware/"
+					"$ cp /boot/vmlinuz*(.) ."
+					"$ assert-initrd-has-colehack"
+					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
+					"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
+					"$ vim elilo.conf"
+					)
+					;;
+			esac
 		;;
 
 		armv7l)
