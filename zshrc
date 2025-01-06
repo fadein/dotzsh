@@ -9,8 +9,8 @@ for F in ~/.zsh/[0-9][0-9]-*.zsh; do
     [[ -x $F ]] && source $F
 done
 
-# Load custom stuff from a local zshrc
-[[ -r ~/.$HOSTNAME.zshrc ]] && source ~/.$HOSTNAME.zshrc
+# Load custom stuff from a host-specific zshrc (if marked executable)
+[[ -x ~/.$HOSTNAME.zshrc ]] && source ~/.$HOSTNAME.zshrc
 
 # this snippet is required in zshrc for TASKS
 [[ -n "$TASK" && -x ~/.zsh/tasks/$TASK.zsh ]] \
