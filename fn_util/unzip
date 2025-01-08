@@ -3,5 +3,5 @@
 
 # I will *NEVER* care about the __MACOSX/* files macOS injects into every archive
 unzip() {
-	noglob command unzip $* -x __MACOSX/*
+	noglob command unzip $* -x __MACOSX/* */.DS_Store
 }
