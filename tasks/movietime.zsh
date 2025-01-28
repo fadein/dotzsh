@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Movie Time!"
-VERSION="1.3"
-   DATE="Tue Dec  3 2024"
+VERSION="1.4"
+   DATE="Mon Jan 27 2025"
  AUTHOR="Erik"
 
 PROGNAME=$0
@@ -48,9 +48,6 @@ setup() {
             ;;
 
         atlantis*)
-            # pick a sick color scheme
-            tcd --scheme=christmas
-
             # Set the DPI for Firefox/PyCharm
             echo Xft.dpi: ${dpi:-120} | xrdb -quiet -override
 
@@ -87,6 +84,12 @@ cleanup() {
         apollo)
             xrandr --output HDMI-1 --off --auto
             ;;
+
+        atlantis*)
+            echo Xft.dpi: 220 | xrdb -quiet -override
+            xrandr --output $DISPLAYPORT --off --output eDP --auto
+            ;;
+
     esac
     backlighter @
 }
