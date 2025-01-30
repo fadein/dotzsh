@@ -1,5 +1,8 @@
 # vim: set filetype=zsh noexpandtab:
 
+# DATE=Thu Jan 30 2025
+# VERSION=1.1
+
 # Simple recycle bin implementation.  Moves files into $RECYCLE, after which they are deleted after a few days.
 # Relies on realpath(1) to preserve file's original path name.
 #
@@ -21,6 +24,7 @@
 # crontab:
 #  # Take out the trash every 2 hours
 #  00 */2   *   *  *          $HOME/.local/bin/recycle.sh
+
 
 recycle() {
 	if (( $# < 1 )); then
@@ -51,9 +55,17 @@ recycle() {
 			
 			# Empty the recycle bin
 			RECYCLE=$RECYCLE
-			RECYCLE_DAYS=30
-			logger -- find \$RECYCLE -mindepth 1 -ctime +\$RECYCLE_DAYS -exec rm -rf '{}' +
-			find \$RECYCLE -mindepth 1 -ctime +\$RECYCLE_DAYS -exec rm -rf '{}' +
+			RECYCLE
+
+			cat <<-'RECYCLE' >> $HOME/.local/bin/recycle.sh
+			RECYCLE_DAYS=${RECYCLE_DAYS:-30}
+			logger -- find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS -exec rm -rf '{}' +
+			if [[ -n $DRYRUN ]]; then
+			    echo "find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS"
+			    find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS
+			else
+			    find $RECYCLE -mindepth 1 -ctime +$RECYCLE_DAYS -exec rm -rf '{}' +
+			fi
 			RECYCLE
 
 			print Marking recycle.sh executable
