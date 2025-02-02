@@ -5,6 +5,8 @@
 #
 # When run with no command it simply counts down to zero
 countdown() {
+    zmodload zsh/zselect
+
 	if [[ $# -lt 1 ]]; then
 		echo 'Usage: countdown SECONDS [CMD ARGS]'
 		return 1
@@ -18,7 +20,7 @@ countdown() {
 
 	until [[ $N -le 0 ]]; do
 		printf $'\r%s%d...' "$MSG" $N
-		sleep 1
+		zselect -t 100  # sleep for 100 centiseconds = 1 second
 		((N--))
 	done
 	echo
@@ -27,5 +29,4 @@ countdown() {
 }
 
 
-# Tested in Bash 5.2.26(1)-release
 # Tested in Zsh 5.9
