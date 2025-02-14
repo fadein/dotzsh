@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.16"
-    DATE="Fri Jan  3 2025"
+ VERSION="1.16.1"
+    DATE="Fri Feb 14 2025"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -28,7 +28,7 @@ setup() {
 	[[ -f $CHANGELOG ]] || die "The ChangeLog is missing; either '$SLACKPKG update' failed or something else went wrong"
 
 	case $HOSTNAME in
-		voyager2*|mariner*|endeavour|columbia)
+		atlantis|voyager2*|mariner*|endeavour|columbia)
 			if ! findmnt /boot/efi >/dev/null 2>&1; then
 				modprobe -a fat vfat nls_cp437 nls_iso8859-1 || die "Couldn't insert modules needed to mount /boot/efi"
 				mount /boot/efi || die "Couldn't mount /boot/efi"
