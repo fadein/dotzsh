@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.16.1"
-    DATE="Fri Feb 14 2025"
+ VERSION="1.17"
+    DATE="Tue Feb 18 2025"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -273,11 +273,9 @@ env() {
 			case $HOSTNAME in
 				atlantis*)
 					_TODO+=(
-					"$ cd /boot/efi/EFI/Slackware/"
-					"$ cp /boot/vmlinuz*(.) ."
 					"$ assert-initrd-has-colehack"
 					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
-					"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
+					"$ cp /boot/initrd.gz /boot/initrd-$KERNEL_VER.img"
 					"$ grub-mkconfig -o /boot/grub/grub.cfg"
 					)
 					;;
