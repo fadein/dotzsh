@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Movie Time!"
-VERSION="1.4"
-   DATE="Mon Jan 27 2025"
+VERSION="1.4.1"
+   DATE="Sat Feb 22 2025"
  AUTHOR="Erik"
 
 PROGNAME=$0
@@ -61,6 +61,7 @@ setup() {
                 pactl exit
                 sleep .1
                 find-hdmi-sink-name && export hdmi_sink=$REPLY
+                killall picom
             else
                 xrandr --output eDP --mode 1920x1080 --auto
             fi
@@ -88,6 +89,7 @@ cleanup() {
         atlantis*)
             echo Xft.dpi: 220 | xrdb -quiet -override
             xrandr --output $DISPLAYPORT --off --output eDP --auto
+            picom &>/dev/null & disown
             ;;
 
     esac
