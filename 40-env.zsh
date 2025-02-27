@@ -64,7 +64,7 @@ export RECYCLE_DAYS=30
 # typeset -U constrains these vars to contain only unique elements
 # typeset -T ties a colon-separated scalar (uppercase) to a array (lowercase)
 typeset -U -g -T PATH path
-for D in ~/bin ~/.local/bin /usr/local/bin /usr/local/sbin /usr/sbin /sbin ~/.zsh/tasks; do
+for D in /usr/local/bin /usr/local/sbin /usr/sbin /sbin ~/.local/bin  ~/.zsh/tasks; do
     [[ -d $D ]] && path=($D:A $path)
 done
 
