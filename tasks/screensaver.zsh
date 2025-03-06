@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Temporarily disable display powersave mode"
- VERSION=1.5
-    DATE="Thu Oct 10 2024"
+ VERSION=1.5.1
+    DATE="Thu Mar  6 2025"
   AUTHOR="Erik Falor <ewfalor@gmail.com>"
 PROGNAME=$0:t
 TASKNAME=$0:t:r
@@ -24,7 +24,7 @@ ___] |___ |  \ |___ |___ | \| ___] |  |  \/  |___ |  \
 }
 
 cleanup() {
-    print $'\x1b[0m'
+    print $'\x1b[0m\a'
     xset +dpms
     xset s on
     xset q | command grep "DPMS is"
