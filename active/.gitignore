@@ -1,0 +1,6 @@
+# Do not commit files stored here
+
+!.gitignore
+*
+
+# This directory holds symlinks to files under auxiliary/
