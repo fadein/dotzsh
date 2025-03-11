@@ -1,6 +1,6 @@
 typeset -a FIREFOXEN
 local FF
-for FF in /usr/local/stow/firefox-*(/); do
+for FF in /usr/local/stow/firefox-*(/N); do
     eval "${${FF%%.*}:t}() { $FF/bin/firefox; }"
     FIREFOXEN+=(${${FF%%.*}:t})
 done

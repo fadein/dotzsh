@@ -1,6 +1,6 @@
 typeset -a CHROMIUMS
 local CH
-for CH in /usr/local/stow/chromium-*(/); do
+for CH in /usr/local/stow/chromium-*(/N); do
     eval "${${CH%%.*}:t}() { $CH/bin/chrome; }"
     CHROMIUMS+=(${${CH%%.*}:t})
 done
