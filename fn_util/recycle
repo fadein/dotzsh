@@ -6,6 +6,8 @@
 # Simple recycle bin implementation.  Moves files into $RECYCLE, after which they are deleted after a few days.
 # Relies on realpath(1) to preserve file's original path name.
 #
+# See also 'restore'
+#
 # Ensure this variable is defined in your environment:
 #  export RECYCLE=~/.recycle
 #

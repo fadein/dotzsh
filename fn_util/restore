@@ -1,0 +1,47 @@
+# vim: set filetype=zsh noexpandtab:
+
+# DATE=Sat Mar 15 2025
+# VERSION=1.0
+
+# Restore a file from the recycle bin
+# See also 'recycle'
+
+
+restore() {
+	if (( $# == 0 )); then
+		1>&2 print "Usage: restore <recycled_file_path>..."
+		return 1
+	fi
+
+	local recycled_file
+	for recycled_file in "$@"; do
+		if [[ ! -e "$recycled_file" ]]; then
+			1>&2 print "Error: File '$recycled_file' does not exist; skipping"
+			continue
+		fi
+
+		# The recycled file's name contains its original abs. path.
+		# Trim off any bits of the file's current abs. path that may be present
+		local original_path="${recycled_file##*/}"
+
+		# Restore the file's original path
+		original_path="${original_path//://}"
+
+		# Ensure the original path starts from the root directory
+		if [[ "$original_path" != /* ]]; then
+			1>&2 print "Reconstructed path '$original_path' is not absolute; skipping"
+			continue
+		fi
+
+		# Create the file's original directory hierarchy in case it doesn't exist
+		local original_dir="$(dirname $original_path)"
+		if [[ ! -d "$original_dir" ]]; then
+			print "Re-creating '$original_dir'"
+			mkdir -p "$original_dir"
+		fi
+
+		# Restore the file to its original location, prompting before overwrite
+		print "Restoring '$recycled_file' to '$original_path'..."
+		mv -i "$recycled_file" "$original_path"
+	done
+}
