@@ -1,0 +1,73 @@
+# vim: set ft=bash:
+
+# Multi Copy
+# A copy command that copies one file to many directories.
+mcp() {
+
+    # This is necessary for this code to work both in Bash and Zsh
+    if [[ -n $ZSH_NAME ]]; then
+        emulate -L zsh
+        setopt KSH_ARRAYS
+    fi
+
+    local options=()
+    local args=()
+
+    # Parse options
+    while [[ $# -gt 0 ]]; do
+        if [[ "$1" == "--" ]]; then
+            shift
+            break
+        elif [[ "$1" == -* ]]; then
+            options+=("$1")
+            shift
+        else
+            break
+        fi
+    done
+
+    # Collect remaining arguments
+    while [[ $# -gt 0 ]]; do
+        args+=("$1")
+        shift
+    done
+
+    # Find the position of the first ":"
+    local colon_index=-1
+    for (( i = 0; i <= ${#args[@]}; ++i )); do 
+        if [[ "${args[$i]}" == ":" ]]; then
+            colon_index=$i
+            break
+        fi
+    done
+
+    if (( $colon_index >= 0 )); then
+        # Split args into sources and destinations
+        local sources=("${args[@]:0:$colon_index}")
+        local destinations=("${args[@]:$((colon_index+1))}")
+    else
+        # No :, so first argument is source, rest are destinations
+        if (( "${#args[@]}" < 2 )); then
+            echo "Error: Insufficient arguments" >&2
+            return 1
+        fi
+        local sources=("${args[0]}")
+        local destinations=("${args[@]:1}")
+    fi
+
+    # Check if we have at least one source and one destination
+    # if [[ "${#sources[@]}" -eq 0 ]] || [[ "${#destinations[@]}" -eq 0 ]]; then
+    if (( ${#sources[@]} == 0 || ${#destinations[@]} == 0 )); then
+        echo "Error: Missing source or destination" >&2
+        return 1
+    fi
+
+    # For each destination, copy all sources to it
+    for dest in "${destinations[@]}"; do
+        command cp "${options[@]}" -- "${sources[@]}" "$dest"
+    done
+}
+
+
+# Tested in Bash 5.2.37
+# Tested in Zsh 5.9
