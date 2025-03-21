@@ -1,7 +1,13 @@
-# Sp25.2
-# Wed Jan 29 2025
+# Sp25.3
+# Fri Mar 21 2025
 
 refresh() {
+    local i=0
+    until ssh -T git@gitlab.cs.usu.edu; do
+        print "Awating a connection to gitlab.cs.usu.edu #$((++i))...\n"
+        sleep 2
+    done
+
     for REPO in $BASE/$SEMESTYR/*/.git $BASE/emails/.git $BASE/navigation/.git; do
         (
             # Show a command and then run it
