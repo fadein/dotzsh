@@ -1,7 +1,7 @@
 # enable the completion system
 fpath=($HOME/.zsh/completion $fpath)
 autoload -U $HOME/.zsh/completion/*(:t)
-autoload -U compinit; compinit -u -d ~/.zsh/compdump
+autoload -U compinit && compinit -i && compinit -u -d ~/.zsh/compdump
 
 zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
@@ -30,6 +30,3 @@ zstyle ':completion:*:(ssh|scp|rsync):*' hosts off
 
 # ^I goes forward in the completion menu, ^O goes backward
 bindkey '^O' reverse-menu-complete
-
-# initialize the autocompletion (from phat_sumo)
-autoload -Uz compinit && compinit -i
