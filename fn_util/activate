@@ -1,0 +1,17 @@
+# Activate a Python virtual environment
+# Automagically locates and sources bin/activate in any venv, .venv under the current directory
+activate() {
+    local -a candidates=($(find -path \*.git -prune -o -path \*venv/bin/activate -print))
+    if (( $#candidates == 0 )); then
+        1>&2 print $'\x1b[1;31mNo candidates for bin/activate found\x1b[0m'
+        return 1
+    else
+        for activate in $candidates; do
+            print $'\x1b[1;32m' source $activate $'\x1b[0m'
+            source $activate
+            break
+        done
+    fi
+}
+
+# vim: set ft=zsh:
