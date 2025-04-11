@@ -28,6 +28,7 @@ alias gitc=git
 alias grep='grep -n --color=auto'
 alias grepi='grep -i -n --color=auto'
 alias grev='grep -vn --color=auto'
+alias ip="ip -color=auto"
 alias lolcat='lolcat -v .85'
 alias lynx='lynx -use_mouse'
 alias mcp='mcp -i'
