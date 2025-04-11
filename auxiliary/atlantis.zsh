@@ -1,7 +1,6 @@
 # vim: set filetype=zsh expandtab:
 source ssh-agent-startup.sh
 
-export BROWSER=zen
 python_crash_course=474722
 
 # chicken-belt egg: support for a chicken coop
