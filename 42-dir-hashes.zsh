@@ -3,7 +3,6 @@
 #
 # To use, prepend a ~ to their name. Ex:
 #   cd ~vlp
-#
 
 #
 # system destinations
@@ -30,50 +29,50 @@ hash -d x11=/etc/X11
 #
 # home destinations
 # +,/^$/-1sort
-hash -d cache=~home/.cache
-hash -d config=~home/.config
-hash -d down=~home/downloads
-hash -d dwm=~home/.dwm
+hash -d cache=$HOME/.cache
+hash -d config=$HOME/.config
+hash -d down=$HOME/downloads
+hash -d dwm=$HOME/.dwm
 hash -d home=$HOME
-hash -d local=~home/.local
-hash -d localbin=~home/.local/bin
-hash -d pyenv=~home/.pyenv
-hash -d tutor=~home/school/shell-tutor-dev
-hash -d vim=~home/.vim
-hash -d zsh=~home/.zsh
+hash -d local=$HOME/.local
+hash -d localbin=$HOME/.local/bin
+hash -d pyenv=$HOME/.pyenv
+hash -d tutor=$HOME/school/shell-tutor-dev
+hash -d vim=$HOME/.vim
+hash -d zsh=$HOME/.zsh
 
 #
 # development
 # +,/^$/-1sort
-hash -d bfl=~devel/BugFixLogs
-hash -d c=~devel/c
-hash -d devel=~home/devel
-hash -d homedir=~devel/homedir
-hash -d perl=~devel/perl
-hash -d python=~devel/python
-hash -d sbo=~devel/SBOoverride
-hash -d scheme=~devel/scheme
-hash -d shell=~devel/shell
+hash -d bfl=$HOME/devel/BugFixLogs
+hash -d c=$HOME/devel/c
+hash -d devel=$HOME/devel
+hash -d homedir=$HOME/devel/homedir
+hash -d perl=$HOME/devel/perl
+hash -d python=$HOME/devel/python
+hash -d sbo=$HOME/devel/SBOoverride
+hash -d scheme=$HOME/devel/scheme
+hash -d shell=$HOME/devel/shell
 
 #
 # school destinations
 # +,/^$/-1sort
-hash -d 1400=~home/1400
-hash -d 1440=~home/1440
-hash -d 3450=~home/3450
-hash -d abet=~school/ABET_Chair
-hash -d auto=~school/course_automation
-hash -d automation=~school/course_automation
-hash -d ca=~school/course_automation
-hash -d canvas=~school/CanvasAPI
-hash -d dm=~school/digital_measures
-hash -d emails=~school/emails
-hash -d gitlab=~school/GitLab
-hash -d lecnotes=~school/lecnotes-test
-hash -d lor=~school/letters_of_recommendation
-hash -d navigation=~school/navigation
-hash -d rec=~school/letters_of_recommendation
-hash -d scanner=~school/scanner
-hash -d school=~home/school
-hash -d videos=~school/videos
+hash -d 1400=$HOME/1400
+hash -d 1440=$HOME/1440
+hash -d 3450=$HOME/3450
+hash -d abet=$HOME/school/ABET_Chair
+hash -d auto=$HOME/school/course_automation
+hash -d automation=$HOME/school/course_automation
+hash -d ca=$HOME/school/course_automation
+hash -d canvas=$HOME/school/CanvasAPI
+hash -d dm=$HOME/school/digital_measures
+hash -d emails=$HOME/school/emails
+hash -d gitlab=$HOME/school/GitLab
+hash -d lecnotes=$HOME/school/lecnotes-test
+hash -d lor=$HOME/school/letters_of_recommendation
+hash -d navigation=$HOME/school/navigation
+hash -d rec=$HOME/school/letters_of_recommendation
+hash -d scanner=$HOME/school/scanner
+hash -d school=$HOME/school
+hash -d videos=$HOME/school/videos
 
