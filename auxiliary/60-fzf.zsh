@@ -62,7 +62,7 @@ __fzf_select() {
 }
 
 __fzfcmd() {
-  [ -n "${TMUX_PANE-}" ] && { [ "${FZF_TMUX:-0}" != 0 ] || [ -n "${FZF_TMUX_OPTS-}" ]; } &&
+  [[ -n "${TMUX_PANE-}" ]] && { [[ "${FZF_TMUX:-0}" != 0 ]] || [[ -n "${FZF_TMUX_OPTS-}" ]]; } &&
     echo "fzf-tmux ${FZF_TMUX_OPTS:--d${FZF_TMUX_HEIGHT:-40%}} -- " || echo "fzf"
 }
 
@@ -123,7 +123,7 @@ fzf-history-widget() {
       FZF_DEFAULT_OPTS_FILE='' $(__fzfcmd))"
   fi
   local ret=$?
-  if [ -n "$selected" ]; then
+  if [[ -n "$selected" ]]; then
     if [[ $(awk '{print $1; exit}' <<< "$selected") =~ ^[1-9][0-9]* ]]; then
       zle vi-fetch-history -n $MATCH
     else # selected is a custom query, not from history
@@ -254,9 +254,9 @@ __fzf_defaults() {
 __fzf_comprun() {
   if [[ "$(type _fzf_comprun 2>&1)" =~ function ]]; then
     _fzf_comprun "$@"
-  elif [ -n "${TMUX_PANE-}" ] && { [ "${FZF_TMUX:-0}" != 0 ] || [ -n "${FZF_TMUX_OPTS-}" ]; }; then
+  elif [[ -n "${TMUX_PANE-}" ]] && { [[ "${FZF_TMUX:-0}" != 0 ]] || [[ -n "${FZF_TMUX_OPTS-}" ]]; }; then
     shift
-    if [ -n "${FZF_TMUX_OPTS-}" ]; then
+    if [[ -n "${FZF_TMUX_OPTS-}" ]]; then
       fzf-tmux ${(Q)${(Z+n+)FZF_TMUX_OPTS}} -- "$@"
     else
       fzf-tmux -d ${FZF_TMUX_HEIGHT:-40%} -- "$@"
@@ -290,12 +290,12 @@ __fzf_generic_path_completion() {
   fi
   eval "base=$base" 2> /dev/null || return
   [[ $base = *"/"* ]] && dir="$base"
-  while [ 1 ]; do
+  while [[ 1 ]]; do
     if [[ -z "$dir" || -d ${dir} ]]; then
       leftover=${base/#"$dir"}
       leftover=${leftover/#\/}
-      [ -z "$dir" ] && dir='.'
-      [ "$dir" != "/" ] && dir="${dir/%\//}"
+      [[ -z "$dir" ]] && dir='.'
+      [[ "$dir" != "/" ]] && dir="${dir/%\//}"
       matches=$(
         export FZF_DEFAULT_OPTS
         FZF_DEFAULT_OPTS=$(__fzf_defaults "--reverse --scheme=path" "${FZF_COMPLETION_OPTS-}")
@@ -317,7 +317,7 @@ __fzf_generic_path_completion() {
         done
       )
       matches=${matches% }
-      if [ -n "$matches" ]; then
+      if [[ -n "$matches" ]]; then
         LBUFFER="$lbuf$matches$tail"
       fi
       zle reset-prompt
@@ -378,7 +378,7 @@ _fzf_complete() {
     FZF_DEFAULT_OPTS=$(__fzf_defaults "--reverse" "${FZF_COMPLETION_OPTS-} $str_arg") \
     FZF_DEFAULT_OPTS_FILE='' \
       __fzf_comprun "$cmd_word" "${args[@]}" -q "${(Q)prefix}" < "$fifo" | $post | tr '\n' ' ')
-  if [ -n "$matches" ]; then
+  if [[ -n "$matches" ]]; then
     LBUFFER="$lbuf$matches"
   fi
   command rm -f "$fifo"
@@ -481,7 +481,7 @@ fzf-completion() {
   # http://zsh.sourceforge.net/FAQ/zshfaq03.html
   # http://zsh.sourceforge.net/Doc/Release/Expansion.html#Parameter-Expansion-Flags
   tokens=(${(z)LBUFFER})
-  if [ ${#tokens} -lt 1 ]; then
+  if [[ ${#tokens} -lt 1 ]]; then
     zle ${fzf_default_completion:-expand-or-complete}
     return
   fi
@@ -500,7 +500,7 @@ fzf-completion() {
   tail=${LBUFFER:$(( ${#LBUFFER} - ${#trigger} ))}
 
   # Trigger sequence given
-  if [ ${#tokens} -gt 1 -a "$tail" = "$trigger" ]; then
+  if [[ ${#tokens} -gt 1 && "$tail" == "$trigger" ]]; then
     d_cmds=(${=FZF_COMPLETION_DIR_COMMANDS-cd pushd rmdir})
 
     {
@@ -524,16 +524,16 @@ fzf-completion() {
       zle -D __fzf_extract_command  2>/dev/null
     }
 
-    [ -z "$trigger"      ] && prefix=${tokens[-1]} || prefix=${tokens[-1]:0:-${#trigger}}
+    [[ -z "$trigger"      ]] && prefix=${tokens[-1]} || prefix=${tokens[-1]:0:-${#trigger}}
     if [[ $prefix = *'$('* ]] || [[ $prefix = *'<('* ]] || [[ $prefix = *'>('* ]] || [[ $prefix = *':='* ]] || [[ $prefix = *'`'* ]]; then
       return
     fi
-    [ -n "${tokens[-1]}" ] && lbuf=${lbuf:0:-${#tokens[-1]}}
+    [[ -n "${tokens[-1]}" ]] && lbuf=${lbuf:0:-${#tokens[-1]}}
 
     if eval "noglob type _fzf_complete_${cmd_word} >/dev/null"; then
       prefix="$prefix" eval _fzf_complete_${cmd_word} ${(q)lbuf}
       zle reset-prompt
-    elif [ ${d_cmds[(i)$cmd_word]} -le ${#d_cmds} ]; then
+    elif [[ ${d_cmds[(i)$cmd_word]} -le ${#d_cmds} ]]; then
       _fzf_dir_completion "$prefix" "$lbuf"
     else
       _fzf_path_completion "$prefix" "$lbuf"
