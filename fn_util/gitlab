@@ -4,7 +4,7 @@
 # Set $REPLY as a side effect
 # Find the URL, convert to HTTPS, open with $BROWSER
 
-repo () {
+gitlab() {
 	zmodload zsh/regex
     local _status
     git status >/dev/null 2>&1 
