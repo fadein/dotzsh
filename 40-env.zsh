@@ -10,8 +10,8 @@ stty -ixon
 #
 # Zsh configuration variables
 HISTFILE=~/.zsh/history
-HISTSIZE=1337
-SAVEHIST=1337
+HISTSIZE=13337
+SAVEHIST=13337
 
 
 #
