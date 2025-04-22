@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.12.4"
-   DATE="Fri Sep  6 2024"
+VERSION="0.12.5"
+   DATE="Tue Apr 22 2025"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -21,6 +21,7 @@ setup() {
 		$BROWSER \
 			https://docs.google.com/document/d/1_IaASzBuJGxxLkk58LpNGUdSdCyYXuS0p5gEADiwNVw/edit \
 			https://docs.google.com/spreadsheets/d/1SRNa8kKWCzNE_VRsf-m5KQm-ky9y3dMYtpsamF1mMOM/edit \
+			https://docs.google.com/spreadsheets/d/1tOLLB69yzPdYjYsb5q5urbPx8gDa2BMFyvGqi9yfZPU/edit \
 			https://drive.google.com/drive/folders/1gGZF3WEEe2mB_DIAZdbdA9SbWXKyWeo7 \
 			https://lcr.churchofjesuschrist.org/ \
 			https://calendar.google.com/calendar/u/0/r/week \
