@@ -1,6 +1,12 @@
 #
 # User-specific aliases
 # +,/^$/-1sort
+alias -- +r='chmod -r'
+alias -- +w='chmod -w'
+alias -- +x='chmod -x'
+alias -- -r='chmod -r'
+alias -- -w='chmod -w'
+alias -- -x='chmod -x'
 alias clipi='xclip -sel clip -i'
 alias clipin='xclip -sel clip -i'
 alias clipo='xclip -sel clip -o'
