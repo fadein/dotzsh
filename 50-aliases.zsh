@@ -1,9 +1,9 @@
 #
 # User-specific aliases
 # +,/^$/-1sort
-alias -- +r='chmod -r'
-alias -- +w='chmod -w'
-alias -- +x='chmod -x'
+alias -- +r='chmod +r'
+alias -- +w='chmod +w'
+alias -- +x='chmod +x'
 alias -- -r='chmod -r'
 alias -- -w='chmod -w'
 alias -- -x='chmod -x'
