@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Weekly Secretary Duties"
-VERSION="0.12.5"
-   DATE="Tue Apr 22 2025"
+VERSION="0.12.6"
+   DATE="Sat Apr 26 2025"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -46,7 +46,6 @@ env() {
 	case $( command date -d 'next sunday' +%d ) in
 		<22-28>) # Fourth Sunday = Bishopric Youth Committee
 			_TODO+=(
-				"Remind bishop to contact BYC conductor (YM=odd months, YW=even)"
 				"Make a BYC agenda"
 				"Shorten agenda URL and test it"
 				"Text bishopric youth committee members"
