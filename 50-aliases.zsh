@@ -7,6 +7,7 @@ alias -- +x='chmod +x'
 alias -- -r='chmod -r'
 alias -- -w='chmod -w'
 alias -- -x='chmod -x'
+alias backlighter='noglob backlighter'
 alias clipi='xclip -sel clip -i'
 alias clipin='xclip -sel clip -i'
 alias clipo='xclip -sel clip -o'
@@ -162,4 +163,3 @@ case $OSTYPE in
         alias ltr='ls --color=auto -Fltr'
         ;;
 esac
-
