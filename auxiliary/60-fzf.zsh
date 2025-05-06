@@ -6,12 +6,13 @@
 # /_/   /___/_/ key-bindings.zsh
 #
 # - $FZF_TMUX_OPTS
-# - $FZF_CTRL_T_COMMAND
-# - $FZF_CTRL_T_OPTS
+# - $FZF_CTRL_Z_COMMAND  (formerly FZF_CTRL_T_COMMAND, but I like
+# - $FZF_CTRL_Z_OPTS      to transpose chars with Ctrl-T)
 # - $FZF_CTRL_R_OPTS
 # - $FZF_ALT_C_COMMAND
 # - $FZF_ALT_C_OPTS
 
+FZF_ALT_C_COMMAND=  # disabled - I prefer to Capitalize words
 
 # Key bindings
 # ------------
@@ -51,8 +52,8 @@ __fzf_defaults() {
 __fzf_select() {
   setopt localoptions pipefail no_aliases 2> /dev/null
   local item
-  FZF_DEFAULT_COMMAND=${FZF_CTRL_T_COMMAND:-} \
-  FZF_DEFAULT_OPTS=$(__fzf_defaults "--reverse --walker=file,dir,follow,hidden --scheme=path" "${FZF_CTRL_T_OPTS-} -m") \
+  FZF_DEFAULT_COMMAND=${FZF_CTRL_Z_COMMAND:-} \
+  FZF_DEFAULT_OPTS=$(__fzf_defaults "--reverse --walker=file,dir,follow,hidden --scheme=path" "${FZF_CTRL_Z_OPTS-} -m") \
   FZF_DEFAULT_OPTS_FILE='' $(__fzfcmd) "$@" < /dev/tty | while read -r item; do
     echo -n -E "${(q)item} "
   done
@@ -72,7 +73,7 @@ fzf-file-widget() {
   zle reset-prompt
   return $ret
 }
-if [[ "${FZF_CTRL_T_COMMAND-x}" != "" ]]; then
+if [[ "${FZF_CTRL_Z_COMMAND-x}" != "" ]]; then
   zle     -N            fzf-file-widget
   bindkey -M emacs '^Z' fzf-file-widget
   bindkey -M vicmd '^Z' fzf-file-widget
