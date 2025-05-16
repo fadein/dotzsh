@@ -45,6 +45,7 @@ fi
 #
 # less(1) pager configuration, including colorized man pages
 # https://www.howtogeek.com/683134/how-to-display-man-pages-in-color-on-linux/
+command -v lesspipe.sh &>/dev/null && export LESSOPEN="|lesspipe.sh %s"
 export LESS='--RAW-CONTROL-CHARS --jump-target=3'
 export LESS_TERMCAP_md=$'\e[01;36m'
 export LESS_TERMCAP_me=$'\e[0m'
