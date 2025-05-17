@@ -53,6 +53,7 @@ alias perld='perl -de0'
 alias pgrep='pgrep -l'
 alias pseudo=sudo
 alias pwd='pwd -P'
+alias python=python3
 alias rl=readlink
 alias rm='rm -i'
 alias screen-r='screen -r'
@@ -121,10 +122,13 @@ alias ZZ=exit
 #
 # suffix aliases
 # +,/^$/-1sort
+alias -s beat=vim
 alias -s com=lynx
-alias -s conf=vim
 alias -s doc=lowriter
 alias -s docx=lowriter
+alias -s frag=vim
+alias -s ig=vim
+alias -s md=vim
 alias -s net=lynx
 alias -s odp=loimpress
 alias -s ods=localc
@@ -141,6 +145,7 @@ alias -s xlsx=localc
 #
 case $OSTYPE in
     darwin*)
+        # +,/;;$/-1sort
         alias l='ls -F --color=yes'
         alias la='ls -Fa --color=yes'
         alias ll='ls -Flh --color=yes'
@@ -151,6 +156,7 @@ case $OSTYPE in
         alias ltr='ls -Fltr --color=yes'
         ;;
     linux*|*)
+        # +,/;;$/-1sort
         alias l='ls --color=auto -F'
         alias la='ls --color=auto -Fa'
         alias ll='ls --color=auto -Flh'
