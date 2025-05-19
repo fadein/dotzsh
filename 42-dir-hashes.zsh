@@ -52,6 +52,7 @@ hash -d devel=$HOME/devel
 hash -d homedir=$HOME/devel/homedir
 hash -d perl=$HOME/devel/perl
 hash -d python=$HOME/devel/python
+hash -d rust=$HOME/devel/rust
 hash -d sbo=$HOME/devel/SBOoverride
 hash -d scheme=$HOME/devel/scheme
 hash -d shell=$HOME/devel/shell
