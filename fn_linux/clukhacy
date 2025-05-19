@@ -1,0 +1,5 @@
+# vim: set ft=zsh expandtab:
+
+clukhacy() {
+    setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll
+}

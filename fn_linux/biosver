@@ -1,0 +1,4 @@
+# vim: set ft=zsh expandtab:
+
+# Report BIOS version and CPU type
+biosver() { biosversion; }

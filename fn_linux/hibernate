@@ -1,0 +1,6 @@
+# vim: set ft=zsh expandtab:
+
+hibernate() {
+    sudo loginctl $0
+}
+ 

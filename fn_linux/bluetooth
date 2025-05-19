@@ -1,0 +1,5 @@
+# vim: set ft=zsh expandtab:
+
+bluetooth() {
+    sudo /etc/rc.d/rc.bluetooth restart
+}

@@ -10,41 +10,10 @@ PATH=$CHICKENS/use-this/bin:$PATH
 alias python='python3'
 alias battery='upower -i /org/freedesktop/UPower/devices/battery_BAT1'
 
-bluetooth() {
-    sudo /etc/rc.d/rc.bluetooth restart
-}
-
-colehack() {
-    setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll
-}
-
-clukhacy() {
-    setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll
-}
-
-biosversion() {
-    { sudo dmidecode | command grep -A3 'Vendor:\|Product:' && sudo lshw -C cpu | command grep -A3 'product:\|vendor:' } | sed -e 's/^[[:space:]]*//'
-}
-
-biosver() { biosversion; }
-
-ssoff() {
-    xset -dpms
-    xset s off
-}
 
 twindisp() {
     xrandr --output eDP-1 --mode 3840x2160 --output VIRTUAL1 --off --output HDMI1 --left-of eDP-1 --auto
 }
-
-checkip() {
-    curl -s http://ip-api.com/json/$1 | python3 -m json.tool
-}
-
-function {hibernate,suspend} {
-    sudo loginctl $0
-}
-
 
 disenable() {
     (

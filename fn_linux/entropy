@@ -1,6 +1,5 @@
 # vim: set ft=zsh expandtab:
 
-
 # report on the amount of entropy in the system
 entropy() {
 	local AVAIL=$(cat /proc/sys/kernel/random/entropy_avail)
