@@ -22,6 +22,12 @@ clukhacy() {
     setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll
 }
 
+biosversion() {
+    { sudo dmidecode | command grep -A3 'Vendor:\|Product:' && sudo lshw -C cpu | command grep -A3 'product:\|vendor:' } | sed -e 's/^[[:space:]]*//'
+}
+
+biosver() { biosversion; }
+
 ssoff() {
     xset -dpms
     xset s off
