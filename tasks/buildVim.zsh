@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE='Rebuild Vim from GitHub'
-VERSION="1.10"
-   DATE="Thu Mar 31 09:07:18 MDT 2022"
+VERSION="1.10.1"
+   DATE="Tue May 27 2025"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 TASKNAME=$0:t:r
@@ -133,10 +133,9 @@ env() {
 		print "Installing Vim binary to $DEST"
 		if [[ -z $NOSTRIP ]]; then
 			if ! nice $SUDO make STRIP=strip installvimbin; then return; fi
-			print "${DEST}/bin/vim is not stripped"
+			print "${DEST}/bin/vim is stripped"
 		else
-			print Not stripping output binary
-			if ! nice $SUDO make STRIP=true installvimbin; then return; fi
+			if ! nice $SUDO make STRIP=/bin/true installvimbin; then return; fi
 			print "${DEST}/bin/vim is not stripped"
 		fi
 
