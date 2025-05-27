@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.17
-# Date:    Sat Apr 19 2025
+# Version: 1.18
+# Date:    Tue May 27 2025
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -32,7 +32,7 @@ if ! functions raisePrivs >/dev/null; then
 			die  "Please put 'PROGNAME=\$0' near the top of this task"
 		fi
 		[[ $UID != '0' ]] && \
-			exec sudo --preserve-env HOME=/root _TASK_UID=$UID SHLVL=$SHLVL $PROGNAME
+			exec sudo --login _TASK_UID=$UID SHLVL=$SHLVL $PROGNAME
 	}
 fi
 
@@ -40,9 +40,9 @@ if ! functions dropPrivsAndSpawn >/dev/null; then
 	dropPrivsAndSpawn() {
 		if [[ $UID == '0' ]]; then
 			if [[ -n "$@" ]]; then
-				sudo TASK=$TASKNAME SHLVL=$SHLVL -u \#$_TASK_UID $@
+				sudo --login TASK=$TASKNAME SHLVL=$SHLVL -u \#$_TASK_UID $@
 			else
-				sudo TASK=$TASKNAME SHLVL=$SHLVL -u \#$_TASK_UID $ZSH_NAME
+				sudo --login TASK=$TASKNAME SHLVL=$SHLVL -u \#$_TASK_UID $ZSH_NAME
 			fi
 		else
 			if [[ -n "$@" ]]; then
