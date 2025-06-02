@@ -3,10 +3,11 @@
 #
 # To use, prepend a ~ to their name. Ex:
 #   cd ~vlp
+#   mv README.md ~tutor
 
 #
 # system destinations
-# +,/^$/-1sort
+# +,/^\(#.*\)\?$/-1sort
 hash -d cups=/etc/cups
 hash -d dict=/usr/share/dict
 hash -d distfiles=/usr/sbo/distfiles
@@ -30,8 +31,8 @@ hash -d x11=/etc/X11
 
 #
 # home destinations
-# +,/^$/-1sort
 hash -d cache=$HOME/.cache
+# +,/^\(#.*\)\?$/-1sort
 hash -d config=$HOME/.config
 hash -d down=$HOME/downloads
 hash -d dwm=$HOME/.dwm
@@ -45,7 +46,7 @@ hash -d zsh=$HOME/.zsh
 
 #
 # development
-# +,/^$/-1sort
+# +,/^\(#.*\)\?$/-1sort
 hash -d bfl=$HOME/devel/BugFixLogs
 hash -d c=$HOME/devel/c
 hash -d devel=$HOME/devel
@@ -60,7 +61,7 @@ hash -d shell=$HOME/devel/shell
 
 #
 # school destinations
-# +,/^$/-1sort
+# +,/^\(#.*\)\?$/-1sort
 hash -d 1400=$HOME/1400
 hash -d 1440=$HOME/1440
 hash -d 3450=$HOME/3450
@@ -80,3 +81,4 @@ hash -d scanner=$HOME/school/scanner
 hash -d school=$HOME/school
 hash -d videos=$HOME/school/videos
 
+# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 noexpandtab:

@@ -1,6 +1,6 @@
 #
 # User-specific aliases
-# +,/^$/-1sort
+# +,/^\(#.*\)\?$/-1sort
 alias -- +r='chmod +r'
 alias -- +w='chmod +w'
 alias -- +x='chmod +x'
@@ -65,7 +65,7 @@ alias which='which -p'
 
 #
 # because I can't spell...
-# +,/^$/-1sort
+# +,/^\(#.*\)\?$/-1sort
 alias cdx=cd
 alias cs=cd
 alias ecoh=echo
@@ -99,7 +99,7 @@ alias vmi=vim
 
 #
 # vi commands
-# +,/^$/-1sort
+# +,/^\(#.*\)\?$/-1sort
 alias /=ack
 alias :close='echo E444: Cannot close last window'
 alias :e=vim
@@ -121,7 +121,7 @@ alias ZZ=exit
 
 #
 # suffix aliases
-# +,/^$/-1sort
+# +,/^\(#.*\)\?$/-1sort
 alias -s beat=vim
 alias -s com=lynx
 alias -s doc=lowriter
