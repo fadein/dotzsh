@@ -1,9 +1,16 @@
+# For use with school functions defined under fn_school
+SEMESTYR=Fa25
+BASE=$HOME/school
+
+#
 # Prevent corefiles from being truncated
 ulimit -c unlimited
 
+#
 # stop background jobs that try to write to the terminal
 #stty tostop
 
+#
 # Don't use Ctrl-S for scrollock; enable incremental history searching
 stty -ixon
 

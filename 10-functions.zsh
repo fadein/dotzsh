@@ -3,11 +3,6 @@
 # autoload misc. Zsh functions
 autoload zmv zargs zcalc zrecompile
 
-# Functions using these variables have been moved under fn_school
-SEMESTYR=Sp25
-BASE=$HOME/school
-
-
 # Autoload functions
 for fndir in \
     ~/.zsh/fn_util    \
