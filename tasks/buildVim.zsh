@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE='Rebuild Vim from GitHub'
-VERSION="1.10.1"
-   DATE="Tue May 27 2025"
+VERSION="1.11"
+   DATE="Tue Jun  3 2025"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 TASKNAME=$0:t:r
@@ -49,6 +49,8 @@ env() {
         --disable-perlinterp
         --disable-pythoninterp
         --disable-terminal
+        --disable-sysmouse
+        --disable-gpm
         )
 
 	#Count number of CPUs in this system and add one
