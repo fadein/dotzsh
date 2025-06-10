@@ -18,6 +18,7 @@ find-student+() {
             --no-sort \
             --query="$*" \
             --select-1 \
+            --nth=2.. \
 
     else
         if [[ -z $1 ]]; then
