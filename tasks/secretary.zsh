@@ -61,7 +61,7 @@ env() {
 			;;
 		<1-7>|<15-21>)  # 1st & 3rd Sunday = Ward Council
 			_TODO+=(
-				"Who has spiritual thought in Ward Council?"
+				"Assign spiritual thought in Ward Council (use calling, not name)"
 				"Make a Ward Council agenda"
 				"Shorten agenda URL"
 				"Contact Ward Council attendees")
