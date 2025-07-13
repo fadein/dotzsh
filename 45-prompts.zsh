@@ -161,20 +161,15 @@ function _git_branch_details() {
     local IFS=$'\n'
 
     #branch status
-    local branch=
-    local upstream=
-    local diverged=
+    local branch
+    local upstream
 
-    # branch status patterns
-    local  rx_detached="^## HEAD \(no branch\)"
-    local    rx_branch="^## ([^.[:space:]]+)(\.\.\.(([^[:space:]]+)( \[(ahead|behind) [0-9]+\])))?"
-    local rx_brand_new="^## No commits yet on master"
-
-    # file status counters
-    local    staged=""
-    local     dirty=""
-    local untracked=""
-    local  unmerged=""
+    # file status counters; initialized to empty strings instead of
+    # integers to be invisible when printed if their value is 0
+    local staged
+    local dirty
+    local untracked
+    local unmerged
 
     local                rx_notUpdated="^ [MD]"
     local                rx_updatedIdx="^M[ MD]"
@@ -198,46 +193,53 @@ function _git_branch_details() {
     local rx_inIndex="${rx_updatedIdx}|${rx_addedToIdx}|${rx_deletedFromIdx}|${rx_renamedInIdx}|${rx_copiedInIdx}"
     local rx_inWork=${rx_notUpdated}
     local rx_unmerged="${rx_unmergedBothDeleted}|${rx_unmergedAddedByUs}|${rx_unmergedDeletedByThem}|${rx_unmergedAddedByThem}|${rx_unmergedDeletedByUs}|${rx_unmergedBothAdded}|${rx_unmergedBothModified}"
+    local rx_aheadbehind="\[ahead ([0-9]+), behind ([0-9]+)]|\[behind ([0-9]+)]|\[ahead ([0-9]+)]"
 
-    local LINE=
-    for LINE in $( git status --branch --porcelain 2>&1 )
+    local line
+    for line in $( git status --branch --porcelain 2>&1 )
     do
-        if [[ ${LINE} =~ ${rx_brand_new} ]]; then
-            branch="Initial"
+        if [[ $line == "## No commits yet on"* ]]; then
+            branch="*initial"
 
-        elif [[ ${LINE} =~ ${rx_detached} ]]; then
+        elif [[ $line == "## HEAD (no branch)"* ]]; then
             # get SHA1 of current commit when in detached HEAD state
             # indicate detached head by prepending with *
             branch="*"$(git rev-parse --short HEAD 2>/dev/null)
 
-        elif [[ ${LINE} =~ ${rx_branch} ]]; then
-            branch=$match[1] upstream=$match[4] diverged=$match[5]
-            if [[ ! -z $match[6] ]]; then
-                if [[ $match[6] = 'ahead' ]]; then
-                    diverged=+
+        elif [[ $line == "## "* ]]; then
+            branch=${${line:3}%...*}
+            if [[ $line == *...* ]]; then
+                upstream=" %F{red}${${line#*...}%%/*}"
+                if [[ $line =~ $rx_aheadbehind ]]; then
+                    if [[ -n $match[1] && -n $match[2] ]]; then
+                        upstream=$upstream+$match[1]-$match[2]%f
+                    elif [[ -n $match[3] ]]; then
+                        upstream=$upstream-$match[3]%f
+                    elif [[ -n $match[4] ]]; then
+                        upstream=$upstream+$match[4]%f
+                    fi
                 else
-                    diverged=-
+                    upstream=%f
                 fi
             fi
-            #print "\nmatch[1]='$match[1]' match[2]='$match[2]' match[3]='$match[3]' match[4]='$match[4]' match[5]='$match[5]' match[6]='$match[6]'\n"
 
-        elif [[ ${LINE} =~ ${rx_changedAndUnstaged} ]]; then
+        elif [[ $line =~ $rx_changedAndUnstaged ]]; then
             let staged++
             let dirty++
 
-        elif [[ ${LINE} =~ ${rx_inIndex} ]]; then
+        elif [[ $line =~ $rx_inIndex ]]; then
             let staged++
 
-        elif [[ ${LINE} =~ ${rx_inWork} ]]; then
+        elif [[ $line =~ $rx_inWork ]]; then
             let dirty++
 
-        elif [[ ${LINE} =~ ${rx_untracked} ]]; then
+        elif [[ $line =~ $rx_untracked ]]; then
             let untracked++
 
-        elif [[ ${LINE} =~ ${rx_unmerged} ]]; then
+        elif [[ $line =~ $rx_unmerged ]]; then
             let unmerged++
 
-        elif [[ ${LINE} =~ ${rx_fatal} ]]; then
+        elif [[ $line =~ $rx_fatal ]]; then
             return
         fi
     done
@@ -245,9 +247,9 @@ function _git_branch_details() {
     # show number of non-indexed changes in red
     # and number of indexed changes in green
     if [[ -n "${staged}${dirty}${unmerged}${untracked}" ]]; then
-        print "%(?..%s) (%(?..%S)%F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u%s %(?..%S)${branch}%s${upstream:+ }%(?..%S)${diverged+%F{red\}$diverged}${upstream}%f%(?..%s))"
+        print "%(?..%s) (%(?..%S)%F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u%s %(?..%S)${branch}${upstream}%(?..%s))"
     else
-        print "%(?..%s) (%(?..%S)%F{green}${branch}${upstream:+ }${diverged+%F{red\}$diverged}${upstream}%f%(?..%s))"
+        print "%(?..%s) (%(?..%S)%F{green}${branch}${upstream}%(?..%s))"
     fi
 }
 
