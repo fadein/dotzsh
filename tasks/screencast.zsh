@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Recording a screencast with Vokoscreen + Flowblade w/ custom MLT"
-VERSION="2.0"
-   DATE="Tue Aug 20 2024"
+VERSION="2.1"
+   DATE="Fri Jul 11 2025"
  AUTHOR="Erik Falor"
 
 PROGNAME=$0
@@ -11,19 +11,28 @@ TASKNAME=$0:t:r
 VIDEOS=$HOME/docs/videos
 PICS=$HOME/docs/pictures
 
+case $HOSTNAME in
+    atlantis)
+        output=eDP
+        resolution=2880x1920
+		dpi=220
+        ;;
+    columbia|endeavour)
+        output=eDP-1 
+        resolution=3840x2160
+		dpi=200
+        ;;
+esac
+
+
 setup() {
-	xset s off -dpms
 	killall picom
 
-	case $HOSTNAME in
-		endeavour)
-			# Set the DPI for Firefox in 1080p mode
-			print Xft.dpi: 132 | xrdb -quiet -override
+	# Set the DPI for Firefox in 1080p mode
+	print Xft.dpi: 132 | xrdb -quiet -override
 
-			# Set my screen to 1080p
-			xrandr --output eDP-1 --mode 1920x1080
-			;;
-	esac
+	# Set my screen to 1080p
+	xrandr --output $output --mode 1920x1080
 
 	# Assert my default settings
 	if [[ -f ~/.config/vokoscreenNG/vokoscreenNG.ini ]]; then
@@ -69,7 +78,9 @@ setup() {
 	fi
 
 	urxvt -geometry 88x19 -fn xft:hack:pixelsize=14:antialias=true -bg midnightblue -e sh -c "cd Videos; vokoscreenNG" &
-	print "\033]710;xft:hack:pixelsize=14:antialias=true\007"
+	if [[ $TERM == rxvt-unicode* ]]; then
+		print "\033]710;xft:hack:pixelsize=14:antialias=true\007"
+	fi
 	sleep .25
 
 	VOKOPID=$!
@@ -181,14 +192,11 @@ env() {
 
 cleanup() {
 	kill $VOKOPID
-	xset s on +dpms
-	print "\033]710;xft:hack:pixelsize=32:antialias=true\007"
-	case $HOSTNAME in
-		endeavour)
-			print Xft.dpi: 200 | xrdb -quiet -override
-			xrandr --output eDP-1 --mode 3840x2160
-			;;
-	esac
+	if [[ $TERM == rxvt-unicode* ]]; then
+		print "\033]710;xft:hack:pixelsize=32:antialias=true\007"
+	fi
+	print Xft.dpi: $dpi | xrdb -quiet -override
+	xrandr --output $output --mode $resolution
 
 	sleep .25
 	picom& disown
