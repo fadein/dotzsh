@@ -171,7 +171,7 @@ function _git_branch_details() {
     local untracked
     local unmerged
 
-    local                rx_notUpdated="^ [MD]"
+    local                     rx_dirty="^ [MD]"
     local                rx_updatedIdx="^M[ MD]"
     local                rx_addedToIdx="^A[ MD]"
     local            rx_deletedFromIdx="^D[ M]"
@@ -191,7 +191,6 @@ function _git_branch_details() {
     local        rx_changedAndUnstaged="^[MADRC]M"
     local                     rx_fatal="^fatal:"
     local rx_inIndex="${rx_updatedIdx}|${rx_addedToIdx}|${rx_deletedFromIdx}|${rx_renamedInIdx}|${rx_copiedInIdx}"
-    local rx_inWork=${rx_notUpdated}
     local rx_unmerged="${rx_unmergedBothDeleted}|${rx_unmergedAddedByUs}|${rx_unmergedDeletedByThem}|${rx_unmergedAddedByThem}|${rx_unmergedDeletedByUs}|${rx_unmergedBothAdded}|${rx_unmergedBothModified}"
     local rx_aheadbehind="\[ahead ([0-9]+), behind ([0-9]+)]|\[behind ([0-9]+)]|\[ahead ([0-9]+)]"
 
@@ -230,7 +229,7 @@ function _git_branch_details() {
         elif [[ $line =~ $rx_inIndex ]]; then
             let staged++
 
-        elif [[ $line =~ $rx_inWork ]]; then
+        elif [[ $line =~ $rx_dirty ]]; then
             let dirty++
 
         elif [[ $line =~ $rx_untracked ]]; then
