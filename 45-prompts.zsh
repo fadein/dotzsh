@@ -208,17 +208,17 @@ function _git_branch_details() {
         elif [[ $line == "## "* ]]; then
             branch=${${line:3}%...*}
             if [[ $line == *...* ]]; then
-                upstream=" %F{red}${${line#*...}%%/*}"
+                upstream=${${line#*...}%%/*}
                 if [[ $line =~ $rx_aheadbehind ]]; then
                     if [[ -n $match[1] && -n $match[2] ]]; then
-                        upstream=$upstream+$match[1]-$match[2]%f
+                        upstream=$upstream+$match[1]-$match[2]
                     elif [[ -n $match[3] ]]; then
-                        upstream=$upstream-$match[3]%f
+                        upstream=$upstream-$match[3]
                     elif [[ -n $match[4] ]]; then
-                        upstream=$upstream+$match[4]%f
+                        upstream=$upstream+$match[4]
                     fi
                 else
-                    upstream=%f
+                    upstream=
                 fi
             fi
 
@@ -246,9 +246,9 @@ function _git_branch_details() {
     # show number of non-indexed changes in red
     # and number of indexed changes in green
     if [[ -n "${staged}${dirty}${unmerged}${untracked}" ]]; then
-        print "%(?..%s) (%(?..%S)%F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u%s %(?..%S)${branch}${upstream}%(?..%s))"
+        print "%s (%(?..%S)%F{green}${staged}%F{red}${dirty}%F{yellow}${untracked}%F{red}%U${unmerged}%u%s %(?..%S)${branch}%s${upstream:+ %(?..%S)$upstream}%f%s)"
     else
-        print "%(?..%s) (%(?..%S)%F{green}${branch}${upstream}%(?..%s))"
+        print "%s (%(?..%S)%F{green}${branch}%s${upstream:+ %(?..%S)$upstream}%f%s)"
     fi
 }
 

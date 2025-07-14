@@ -56,7 +56,6 @@ mcp() {
     fi
 
     # Check if we have at least one source and one destination
-    # if [[ "${#sources[@]}" -eq 0 ]] || [[ "${#destinations[@]}" -eq 0 ]]; then
     if (( ${#sources[@]} == 0 || ${#destinations[@]} == 0 )); then
         echo "Error: Missing source or destination" >&2
         return 1
