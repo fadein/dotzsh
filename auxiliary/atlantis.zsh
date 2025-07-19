@@ -3,13 +3,8 @@ source ssh-agent-startup.sh
 
 python_crash_course=474722
 
-# chicken-belt egg: support for a chicken coop
-export CHICKENS=/home/fadein/build/chickens
-PATH=$CHICKENS/use-this/bin:$PATH
-
 alias python='python3'
 alias battery='upower -i /org/freedesktop/UPower/devices/battery_BAT1'
-
 
 twindisp() {
     xrandr --output eDP-1 --mode 3840x2160 --output VIRTUAL1 --off --output HDMI1 --left-of eDP-1 --auto
@@ -29,7 +24,7 @@ reenable() {
     )
 }
 
-ZSHDIR=/home/fadein/build/shell-build/zsh
+ZSHDIR=$HOME/build/shell-build/zsh
 alias zsh-5.2='SHELL=$ZSHDIR/zsh-5.2/Src/zsh $ZSHDIR/zsh-5.2/Src/zsh'
 alias zsh-5.3.1='SHELL=$ZSHDIR/zsh-5.3.1/Src/zsh $ZSHDIR/zsh-5.3.1/Src/zsh'
 alias zsh-5.4.2='SHELL=$ZSHDIR/zsh-5.4.2/Src/zsh $ZSHDIR/zsh-5.4.2/Src/zsh'
@@ -53,7 +48,7 @@ zshs() {
 }
 
 
-BASHDIR=/home/fadein/build/shell-build/bash
+BASHDIR=$HOME/build/shell-build/bash
 alias bash-3.2='SHELL=$BASHDIR/bash-3.2/bash $BASHDIR/bash-3.2/bash'
 alias bash-4.0='SHELL=$BASHDIR/bash-4.0/bash $BASHDIR/bash-4.0/bash'
 alias bash-4.2='SHELL=$BASHDIR/bash-4.2/bash $BASHDIR/bash-4.2/bash'
