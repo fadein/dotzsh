@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.8.4"
-    DATE="Sat 01 Jun 2024"
+ VERSION="1.8.5"
+    DATE="Wed Jul 23 2025"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -37,6 +37,7 @@ env() {
         '$ apt list --upgradable'
         '$ gitlab-ctl status'
         '$ apt upgrade -y'
+        '$ apt autoremove'
         '$ gitlab-ctl status'
         "Make sure the post-receive.pl hook still works by pushing a commit"
         "Retire the webpage broadcast message"
