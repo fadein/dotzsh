@@ -1,7 +1,7 @@
 #!/bin/env zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.8.5"
+ VERSION="1.8.6"
     DATE="Wed Jul 23 2025"
   AUTHOR="Erik Falor"
 PROGNAME=$0
@@ -9,9 +9,15 @@ TASKNAME=$0:t:r
 
 REBOOT_FILE=/var/run/reboot-required
 
+
 setup() {
+    if [[ -z "$PROGNAME" ]]; then
+        warn "PROGNAME variable is not set in this task!"
+        die  "Please put 'PROGNAME=\$0' near the top of this task"
+    fi
     [[ -z $STY && -z $TMUX ]] && die "Not using a terminal muxer?  That's just too risky for me."
-    raisePrivs || true
+    [[ $UID != '0' ]] && \
+        exec sudo --login STY=$STY TMUX=$TMUX _TASK_UID=$UID SHLVL=$SHLVL $PROGNAME || true
 }
 
 needs-restart() {
