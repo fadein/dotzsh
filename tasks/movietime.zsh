@@ -1,13 +1,15 @@
 #!/bin/env zsh
 
 PURPOSE="Movie Time!"
-VERSION="1.4.1"
-   DATE="Sat Feb 22 2025"
- AUTHOR="Erik"
+VERSION="1.5"
+   DATE="Fri Jul 25 2025"
+ AUTHOR="fadein"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
 
+XRDB=/usr/bin/xrdb
+FIGLET=$(command -v figlet) || FIGLET=print
 
 # On Atlantis, there are several possible DisplayPorts that the HDMI expansion card can appear as.
 # This function sets REPLY to the name of the one currently in use and returns True.
@@ -30,6 +32,10 @@ find-hdmi-sink-name() {
 
 
 setup() {
+    print $'\x1b[0m'
+	$FIGLET $TASKNAME
+    CLEANUP_TRAPS=(HUP)
+	old_dpi=$($XRDB -get Xft.dpi)
     backlighter !
     case $HOSTNAME in
         endeavour|columbia)
@@ -68,14 +74,13 @@ setup() {
             sleep .25
             ;;
     esac
-    CLEANUP_TRAPS=(HUP)
 }
 
 
 cleanup() {
+    print $'\x1b[0m'
     case $HOSTNAME in
         endeavour|columbia)
-            echo Xft.dpi: 200 | xrdb -quiet -override
             xrandr --output eDP-1 --mode 3840x2160 --output HDMI-1 --off --auto
             sleep .25
             picom &>/dev/null & disown
@@ -87,12 +92,26 @@ cleanup() {
             ;;
 
         atlantis*)
-            echo Xft.dpi: 220 | xrdb -quiet -override
             xrandr --output $DISPLAYPORT --off --output eDP --auto
             picom &>/dev/null & disown
             ;;
-
     esac
+
+    case $HOSTNAME in
+        endeavour|columbia|atlantis*)
+            if [[ -z $old_dpi ]]; then
+                print Xft.dpi | $XRDB -remove
+                $FIGLET Xft.dpi
+                print has been unset
+            else
+                print Xft.dpi: ${old_dpi} | $XRDB -override
+                old_dpi=$($XRDB -get Xft.dpi)
+                $FIGLET Xft.dpi
+                print restored to ${old_dpi} 
+            fi
+            ;;
+    esac
+
     backlighter @
 }
 

@@ -49,7 +49,6 @@ setup() {
 
 cleanup() {
 	if [[ -n $DISPLAYPORT ]]; then
-		echo Xft.dpi: 220 | xrdb -quiet -override
 		xrandr --output $DISPLAYPORT --off --auto
 
 		sleep .25

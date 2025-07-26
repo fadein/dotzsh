@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Recording a screencast with Vokoscreen + Flowblade w/ custom MLT"
-VERSION="2.1"
-   DATE="Fri Jul 11 2025"
+VERSION="2.2"
+   DATE="Fri Jul 25 2025"
  AUTHOR="Erik Falor"
 
 PROGNAME=$0
@@ -10,22 +10,25 @@ TASKNAME=$0:t:r
 
 VIDEOS=$HOME/docs/videos
 PICS=$HOME/docs/pictures
+XRDB=/usr/bin/xrdb
+FIGLET=$(command -v figlet) || FIGLET=print
 
 case $HOSTNAME in
-    atlantis)
-        output=eDP
-        resolution=2880x1920
-		dpi=220
-        ;;
-    columbia|endeavour)
-        output=eDP-1 
-        resolution=3840x2160
-		dpi=200
-        ;;
+	atlantis)
+		output=eDP
+		resolution=2880x1920
+		;;
+	columbia|endeavour)
+		output=eDP-1 
+		resolution=3840x2160
+		;;
 esac
+
+old_dpi=$($XRDB -get Xft.dpi)
 
 
 setup() {
+	CLEANUP_TRAPS=(HUP)
 	killall picom
 
 	# Set the DPI for Firefox in 1080p mode
@@ -195,7 +198,18 @@ cleanup() {
 	if [[ $TERM == rxvt-unicode* ]]; then
 		print "\033]710;xft:hack:pixelsize=32:antialias=true\007"
 	fi
-	print Xft.dpi: $dpi | xrdb -quiet -override
+
+	if [[ -z $old_dpi ]]; then
+		print Xft.dpi | $XRDB -remove
+		$FIGLET Xft.dpi
+		print has been unset
+	else
+		print Xft.dpi: ${old_dpi} | $XRDB -override
+		old_dpi=$($XRDB -get Xft.dpi)
+		$FIGLET Xft.dpi
+		print restored to ${old_dpi} 
+	fi
+
 	xrandr --output $output --mode $resolution
 
 	sleep .25

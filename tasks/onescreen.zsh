@@ -1,15 +1,21 @@
 #!/bin/env zsh
 
 PURPOSE="Movie Time, but only one screen!"
-VERSION="1.2.1"
-   DATE="Sun Mar 10 19:32:59 MDT 2024"
+VERSION="1.3"
+   DATE="Fri Jul 25 2025"
  AUTHOR="Erik"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
 
+XRDB=/usr/bin/xrdb
+FIGLET=$(command -v figlet) || FIGLET=print
 
 setup() {
+    print $'\x1b[0m'
+	$FIGLET $TASKNAME
+    CLEANUP_TRAPS=(HUP)
+	old_dpi=$($XRDB -get Xft.dpi)
     backlighter !
     case $HOSTNAME in
         endeavour|columbia)
@@ -30,14 +36,39 @@ setup() {
         apollo)
             xrandr --output HDMI-1 --auto --same-as eDP-1 --set audio on
             ;;
+
+        atlantis*)
+            # Set the DPI for Firefox/PyCharm
+            echo Xft.dpi: ${dpi:-120} | xrdb -quiet -override
+
+            if find-connected-displayport; then
+                DISPLAYPORT=$REPLY
+
+                # Make my screen match the resolution of the projector
+                xrandr --output eDP --mode 1920x1080 --auto --output $DISPLAYPORT --same-as eDP --auto
+
+                # restart PulseAudio so it knows that it can play sounds over HDMI
+                pactl exit
+                find-hdmi-sink-name && export hdmi_sink=$REPLY
+                killall picom
+            else
+                xrandr --output eDP --mode 1920x1080 --auto
+            fi
+
+            # turn off the main 2k display so the backlight doesn't cost battery
+            xrandr --output eDP --off
+            sleep .25
+            ;;
+
     esac
     CLEANUP_TRAPS=(HUP)
 }
 
 
 cleanup() {
-    prompt() {
+    print $'\x1b[0m'
 
+    prompt() {
         PRMPT=${@:-press the [ANY] key to begin}
         if [[ -z "$LINES" ]]; then
             LINES=$(tput lines)
@@ -45,12 +76,10 @@ cleanup() {
         tput cup $LINES
         [[ -n $SKIP ]] || read -sk1 "REPLY?[7m$PRMPT[0m"
         print
-
     }
 
     case $HOSTNAME in
         endeavour|columbia)
-            echo Xft.dpi: 200 | xrdb -quiet -override
             xrandr --output eDP-1 --mode 3840x2160 --auto
             sleep .25
 
@@ -64,7 +93,28 @@ cleanup() {
         apollo)
             xrandr --output HDMI-1 --off --auto
             ;;
+
+        atlantis*)
+            xrandr --output $DISPLAYPORT --off --output eDP --auto
+            picom &>/dev/null & disown
+            ;;
     esac
+
+    case $HOSTNAME in
+        endeavour|columbia|atlantis*)
+            if [[ -z $old_dpi ]]; then
+                print Xft.dpi | $XRDB -remove
+                $FIGLET Xft.dpi
+                print has been unset
+            else
+                print Xft.dpi: ${old_dpi} | $XRDB -override
+                old_dpi=$($XRDB -get Xft.dpi)
+                $FIGLET Xft.dpi
+                print restored to ${old_dpi} 
+            fi
+            ;;
+    esac
+
     backlighter @
 }
 
