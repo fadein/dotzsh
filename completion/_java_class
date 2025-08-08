@@ -18,9 +18,8 @@ for i in "${(s.:.)classpath}"; do
     c+=( ${${${(M)$(_call_program jar_classes jar -tf $i 2>/dev/null)##*.class}%%.class}:gs#/#.#} )
   elif [[ -d $i ]]; then
     c+=( $i/**/*.class(.:r:s/.class//:s#$i/##:gs#/#.#) )
-    c+=( $i/**/*.java(.) )
+    c+=( $i/**/*.java(.,@) )
   fi
 done
 
 _wanted classes expl 'java class' compadd "$@" -M 'r:|.=* r:|=*' -a - c
-
