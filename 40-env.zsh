@@ -28,7 +28,13 @@ case $OSTYPE in
         export LSCOLORS=exGxFxdaCxDaDaahadecec
         ;;
     *)
-        [[ -r ~/.dircolors ]] && eval "$(dircolors ~/.dircolors -b)"
+        if command -v dircolors >/dev/null; then
+            if [[ ! -r ~/.dircolors ]]; then
+                print Generating dircolors database...
+                dircolors --print-database > ~/.dircolors
+            fi
+            eval "$(dircolors ~/.dircolors -b)"
+        fi
         ;;
 esac
 
