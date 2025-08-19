@@ -3,7 +3,7 @@
 # Report BIOS version and CPU type
 biosversion() {
     {
-        sudo dmidecode | command grep -A3 'Vendor:\|Product:' &&
-            sudo lshw -C cpu | command grep -A3 'product:\|vendor:'
-    } | sed -e 's/^[[:space:]]*//'
+        sudo dmidecode
+        sudo lshw -C cpu
+    } | command grep --ignore-case --after-context=3 'product:\|vendor:' | sed -e 's/^[[:space:]]*//'
 }
