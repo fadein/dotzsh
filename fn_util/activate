@@ -1,7 +1,7 @@
 # Activate a Python virtual environment
 # Automagically locates and sources bin/activate in any venv, .venv under the current directory
 activate() {
-    local -a candidates=($(find -path \*.git -prune -o -path \*venv/bin/activate -print))
+    local -a candidates=($(find . -path \*.git -prune -o -path \*bin/activate -print))
     if (( $#candidates == 0 )); then
         1>&2 print $'\x1b[1;31mNo candidates for bin/activate found\x1b[0m'
         return 1
