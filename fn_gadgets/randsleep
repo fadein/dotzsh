@@ -2,7 +2,7 @@
 # The shebang line is for use as a stand-alone script
 # vim: set ft=bash:
 
-randsleep () {  # delete this line to make a stand-alone script
+function randsleep {  # delete this line to make a stand-alone script
 	if (( $# == 0 )); then
 		echo "Usage: randsleep [min=1] max" >&2
 		return 1
@@ -19,3 +19,7 @@ randsleep () {  # delete this line to make a stand-alone script
 	(( diff = max - min))
 	command sleep $(( $RANDOM % ( diff + 1) + min ))
 }  # delete this line to make a stand-alone script
+
+
+# Tested in Bash 5.2.32
+# Tested in Zsh 5.9

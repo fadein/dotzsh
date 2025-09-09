@@ -3,7 +3,7 @@
 # ding is a command-modifier, much like `time` or `sudo`
 # Ring the bell once when the supplied command succeeds, thrice when it has failed
 # The command's own exit code is returned to the shell
-ding () {
+function ding {
     # Zsh only - emulate POSIX sh behavior
     [[ -n $ZSH_NAME ]] && emulate -L sh
 
@@ -16,8 +16,7 @@ ding () {
     if [[ $retval == 0 ]]; then
         echo -e "\a"
     else
-        for ding in {0..2}
-        do
+        for ding in {0..2}; do
             echo -ne "\a"
             sleep 1
         done
@@ -26,5 +25,5 @@ ding () {
 }
 
 
-# Tested in Bash 5.2.26(1)-release
+# Tested in Bash 5.2.32
 # Tested in Zsh 5.9

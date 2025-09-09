@@ -3,7 +3,7 @@
 # Make and change into DIRNAME0, then DIRNAME1, etc.
 #
 # If DIRNAME contains slashes, parent directories are created as needed.
-mcdir() {
+function mcdir {
 	if [[ -z "$1" ]]; then
 		echo Usage: mcdir DIRNAME0 DIRNAME1...
 		echo Make and change into DIRNAME0, then DIRNAME1, etc.
@@ -20,5 +20,5 @@ mcdir() {
 }
 
 
-# Tested in Bash 5.2.26(1)-release
+# Tested in Bash 5.2.32
 # Tested in Zsh 5.9

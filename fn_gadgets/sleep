@@ -10,6 +10,9 @@
 #   There is NO WARRANTY, to the extent permitted by law.
 #
 #   Written by David MacKenzie.
+#
+# Users of Homebrew on macOS may have this tool installed in the name of
+# `gdate`.  To accommodate this case, change the local $date variable to gdate.
 
 
 # A powered up version of sleep(1) that parses human-readable timestamps with date(1).
@@ -29,11 +32,12 @@
 #   $ sleep 1
 #   $ sleep 30
 #   $ sleep .25
-sleep() {
+function sleep {
+    local date=date
     if (( $# >= 2 )) && [[ $1 == until || $1 == for ]]; then
         shift  # discard keyword "until" or "for"
-        local then=$(command date --date="$*" +%s)
-        local now=$(command date +%s)
+        local then=$(command $date --date="$*" +%s)
+        local now=$(command $date +%s)
         local duration=$(( then - now ))
         if (( duration > 0 )); then
             command sleep $duration
@@ -43,5 +47,5 @@ sleep() {
     fi
 }
 
-# Tested in Bash 5.1
+# Tested in Bash 5.2.32
 # Tested in Zsh 5.9

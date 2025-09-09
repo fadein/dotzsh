@@ -1,7 +1,7 @@
 # vim: set ft=zsh expandtab:
 
 # Swap the contents of two files
-swap() {
+function swap {
 	if [ -z "$1" -o -z "$2" ]; then
 		echo Usage: swap file1 file2
 		echo Swaps the contents of file1 with file2

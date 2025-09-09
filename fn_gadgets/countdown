@@ -4,7 +4,7 @@
 # Print a dramatic countdown timer before running a command
 #
 # When run with no command it simply counts down to zero
-countdown() {
+function countdown {
     zmodload zsh/zselect
 
 	if [[ $# -lt 1 ]]; then
