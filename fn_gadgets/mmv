@@ -2,7 +2,12 @@
 
 # Multi Move
 # A move command that moves one file to many directories.
-mmv() {
+function mmv {
+    if (( $# == 0 )); then
+        2>&1 echo "mmv: missing file operand"
+        2>&1 echo "Try 'mmv --help' for more information."
+        return 1
+    fi
 
     # This is necessary for this code to work both in Bash and Zsh
     if [[ -n $ZSH_NAME ]]; then
@@ -18,6 +23,15 @@ mmv() {
         if [[ "$1" == "--" ]]; then
             shift
             break
+        elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
+            2>&1 cat <<USAGE
+Usage: mmv [OPTION]... [--] SOURCE DEST...
+  or:  mmv [OPTION]... [--] SOURCE... : DEST...
+A shell wrapper around mv(1) that moves SOURCE to multiple DEST(s),
+or multiple SOURCEs to multiple DEST(s)
+
+USAGE
+            return
         elif [[ "$1" == -* ]]; then
             options+=("$1")
             shift
@@ -34,7 +48,7 @@ mmv() {
 
     # Find the position of the first ":"
     local colon_index=-1
-    for (( i = 0; i <= ${#args[@]}; ++i )); do 
+    for (( i = 0; i <= ${#args[@]}; ++i )); do
         if [[ "${args[$i]}" == ":" ]]; then
             colon_index=$i
             break
