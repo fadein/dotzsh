@@ -16,7 +16,7 @@ function ding {
     if [[ $retval == 0 ]]; then
         echo -e "\a"
     else
-        for ding in {0..2}; do
+        for ding in 1 2 3; do
             echo -ne "\a"
             sleep 1
         done
