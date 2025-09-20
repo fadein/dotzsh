@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.17"
-    DATE="Tue Feb 18 2025"
+ VERSION="1.18"
+    DATE="Fri Sep 19 2025"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -39,6 +39,9 @@ setup() {
 	esac
 }
 
+cleanup() {
+	print That took $( prettySeconds )
+}
 
 # Spawn a (nice) child shell
 # This will be a root shell by virtue of raisePrivs() having been run in setup()
