@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="enter 1080p mode"
-VERSION="1.4"
-   DATE="Fri Jul 25 2025"
+VERSION="1.5"
+   DATE="Wed Sep 24 2025"
  AUTHOR="fadein"
 
 PROGNAME=$0
@@ -35,6 +35,12 @@ setup() {
     pkill -SIGUSR1 conky
     CLEANUP_TRAPS=(HUP)
 }
+
+
+spawn() {
+    TASK=$TASKNAME $ZSH_NAME -7  # -7 == setopt IGNORE_EOF
+}
+
 
 cleanup() {
     print $'\x1b[0m'

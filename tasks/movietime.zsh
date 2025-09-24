@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Movie Time!"
-VERSION="1.5"
-   DATE="Fri Jul 25 2025"
+VERSION="1.6"
+   DATE="Wed Sep 24 2025"
  AUTHOR="fadein"
 
 PROGNAME=$0
@@ -74,6 +74,11 @@ setup() {
             sleep .25
             ;;
     esac
+}
+
+
+spawn() {
+    TASK=$TASKNAME $ZSH_NAME -7  # -7 == setopt IGNORE_EOF
 }
 
 
