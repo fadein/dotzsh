@@ -25,7 +25,7 @@ function countdown {
 	done
 	echo
 
-	[[ $# -ge 1 ]] && eval $@
+	[[ $# -ge 1 ]] && eval $@ || true
 }
 
 
