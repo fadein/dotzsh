@@ -8,7 +8,9 @@ function ding {
     [[ -n $ZSH_NAME ]] && emulate -L sh
 
     # Disable globbing for the duration of the subshell
-    ( set -f; eval $* )
+    # "$@" expands each positional parameter as a separate quoted word
+    # this preserves spaces within the original arguments
+    ( set -f; "$@" )
 
     # Keep the return value to pass on to our caller
     local retval=$?
@@ -25,5 +27,5 @@ function ding {
 }
 
 
-# Tested in Bash 5.2.32
+# Tested in Bash 5.3.3
 # Tested in Zsh 5.9
