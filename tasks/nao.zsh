@@ -1,61 +1,56 @@
 #!/bin/env zsh
 
 PURPOSE="Play on nethack.alt.org or hardfought.org"
-VERSION="3.2"
-   DATE="Mon Nov 18 2024"
+VERSION="4.0"
+   DATE="Fri Sep 26 2025"
  AUTHOR="erik"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
+FONT="departuremono nerd font"
 
-
-countdown() {
-    if [[ $# -lt 1 ]]; then
-        echo 'Usage: countdown SECONDS [CMD ARGS]'
-        return 1
-    fi
-
-    local N I
-    N=$1
-    I=1
-    shift
-    [[ $# -ge 1 ]] && echo "Running '$@' in "
-
-    until [[ $N -eq 0 ]]; do
-        if [[ $((I % 10)) -eq 0 ]]; then
-            echo "$N... "
-        else
-            echo -n "$N... "
-        fi
-
-        sleep 1
-        ((N--, I++))
-    done
-    echo Done
-
-    if [[ $# -ge 1 ]]; then
-        eval $@
-    fi
-}
-
-
-declare -a cols_lines  # [columns lines]
 
 # use tput(1) to find the dimensions of the terminal
 # save in the global array cols_lines
+declare -a cols_lines  # [columns lines]
 get-size() {
     cols_lines=($(tput cols lines))
 }
 
 
+terminal-font-size() {
+    local size=${1:-32}
+
+    if [[ -n $TERMINOLOGY ]]; then
+        echo -n "\e]50;:size=$size\e\a"
+
+        # set TERM=xterm for Terminology's sake
+        # when it enters Vim in 256 color mode, it looks like crap
+        TERM=xterm
+
+    elif [[ $TERM == rxvt-unicode* ]]; then
+        echo -n "\e]710;xft:$FONT:pixelsize=$size:antialias=true\a"
+
+	elif [[ $TERM == alacritty ]]; then
+		# calculate equivalent point size for font size given in pixels
+		local point_size=$(( $size * 72 / ${DPI:-120} ))
+		alacritty msg config font.size=$point_size
+    fi
+
+    print "Trying font size $size..."
+	sleep .15
+}
+
+
 nethack-right-size() {
-    VERSION="1.2"
+    local VERSION="2.0"
 
     declare -r max=76
     declare -r min=12
     declare -r step=2
     declare -r X=1
     declare -r Y=2
+    declare -r DPI=$(xrdb -get Xft.dpi)
 
     declare -a target_size=(131 36)  # ( columns lines )
     declare -a orig_size             # ( columns lines )
@@ -77,10 +72,7 @@ nethack-right-size() {
     # Starting at the largest font, reduce the size of font by
     # increments of $step until both of the target dimensions are met
     for ((i = max; i >= min; i -= step )); do
-        print "\033]710;xft:hack:pixelsize=${i}:antialias=true\007"
-        # print "[H[2JTrying font size $i..."
-        print "Trying font size $i..."
-        sleep .15
+        terminal-font-size $i
         get-size
         print "At font size $i dimensions are ${cols_lines[$X]}x${cols_lines[$Y]}"
 
@@ -117,6 +109,31 @@ nethack-right-size() {
 }
 
 
+countdown() {
+    zmodload zsh/zselect
+
+	if [[ $# -lt 1 ]]; then
+		echo 'Usage: countdown SECONDS [CMD ARGS]'
+		return 1
+	fi
+	local N=$1
+	shift
+	local MSG CEOL=$(tput el 2>&1)
+
+	[[ $? -eq 0 ]] && MSG=$CEOL
+	[[ $# -ge 1 ]] && MSG=${MSG}"Running '$@' in "
+
+	until [[ $N -le 0 ]]; do
+		printf $'\r%s%d...' "$MSG" $N
+		zselect -t 100  # sleep for 100 centiseconds = 1 second
+		((N--))
+	done
+	echo
+
+	[[ $# -ge 1 ]] && eval $@ || true
+}
+
+
 setup() {
     if [[ -d $HOME/.local/bin/ && ! -x $HOME/.local/bin/nh.tty ]]; then
         cat <<SHIM > $HOME/.local/bin/nh.tty
@@ -138,7 +155,9 @@ SHIM
     fi
 }
 
+
 spawn() {
+    setopt local_options xtrace
     case $TASKNAME in
         nao) ssh nethack@alt.org ;;
         hardfought) ssh nethack@hardfought.org ;;
@@ -146,9 +165,11 @@ spawn() {
     esac
 }
 
+
 cleanup() {
     setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll
 }
+
 
 source $0:h/__TASKS.zsh
 
