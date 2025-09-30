@@ -69,7 +69,7 @@ refresh() {
             print
         )
     done
-    ding true
+    ding date +"Completed at %T %D"
 }
 
 # vim: set ft=zsh expandtab:
