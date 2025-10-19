@@ -16,7 +16,7 @@ alias commit='git show'
 alias copy='cp -i'
 alias cp='cp -i'
 alias csi='csi -wq'
-alias ctags='ctags --fields=+iaS --extra=+fq'
+alias ctags='ctags --fields=+iaS --extras=+fq'
 alias date='date +"%a, %b %e %Y  %R %Z"'
 alias del='rm -i'
 alias deltree='rm -rf'
@@ -92,6 +92,10 @@ alias mplayre=mplayer
 alias mroe=more
 alias pgerp='pgrep -l'
 alias pyhton=python
+alias pythoon=python
+alias pythooon=python
+alias pyhtoon=python
+alias pyhtooon=python
 alias scd=cd
 alias sl=ls
 alias sls=ls

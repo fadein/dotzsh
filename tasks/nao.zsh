@@ -157,11 +157,12 @@ SHIM
 
 
 spawn() {
-    setopt local_options xtrace
+    # setopt local_options xtrace
     case $TASKNAME in
         nao) ssh nethack@alt.org ;;
         hardfought) ssh nethack@hardfought.org ;;
         nethack) MAILREADER=/usr/bin/mutt command nethack ;;
+        wizard) MAILREADER=/usr/bin/mutt command nethack -D;;
     esac
 }
 
