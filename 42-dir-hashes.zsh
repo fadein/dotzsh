@@ -33,13 +33,17 @@ hash -d x11=/etc/X11
 # home destinations
 hash -d cache=$HOME/.cache
 # +,/^\(#.*\)\?$/-1sort
+hash -d build=$HOME/build
 hash -d config=$HOME/.config
+hash -d devel=$HOME/devel
+hash -d docs=$HOME/docs
 hash -d down=$HOME/downloads
 hash -d dwm=$HOME/.dwm
 hash -d home=$HOME
 hash -d local=$HOME/.local
 hash -d localbin=$HOME/.local/bin
 hash -d pyenv=$HOME/.pyenv
+hash -d school=$HOME/school
 hash -d tutor=$HOME/school/shell-tutor-dev
 hash -d vim=$HOME/.vim
 hash -d zsh=$HOME/.zsh
