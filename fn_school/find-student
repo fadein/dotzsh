@@ -4,21 +4,25 @@
 # Uses FZF, if installed
 find-student() {
     setopt LOCAL_OPTIONS NULL_GLOB
-    local rosters=($BASE/$SEMESTYR/*/Roster/{roster,email}*.csv)
+    local rosters=(~/$COURSE_NUM/Roster/{roster,email}*.csv)
 
-    if whence fzf >/dev/null; then
+    local options=()
+    while [[ $# -gt 0 && $1 == -*  ]]; do
+        options=($options $1)
+        shift
+    done
+
+    if [[ -z ${nofzf+1} ]] && whence fzf >/dev/null; then
         {
             for f in $rosters; do
-                tail --quiet --lines +2 $f \
-                    | sed -e "s@.*@${${f##$BASE/}:h:h} &@"
+                tail --quiet --lines +2 $f
             done
-        } | fzf \
+        } | fzf $options \
             --ghost="Search a student" \
             --multi \
             --no-sort \
             --query="$*" \
             --select-1 \
-            --nth=2.. \
 
     else
         if [[ -z $1 ]]; then
@@ -27,6 +31,6 @@ find-student() {
             print 'Uses fzf(1) when present in $PATH, otherwise grep(1)'
             return 1
         fi
-        grep -i "$*" $rosters | sort
+        command grep -i $options "$*" $rosters | sort
     fi
 }
