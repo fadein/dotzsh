@@ -7,9 +7,14 @@ find-student+() {
     local rosters=($BASE/{Fa,Sp,Su}??/cs*/Roster/{roster,email}*.csv)
 
     local options=()
-    while [[ $# -gt 0 && $1 == -*  ]]; do
-        options=($options $1)
-        shift
+    while [[ $# -gt 0 && $1 == -* ]]; do
+        if [[ $1 == -- ]]; then
+            shift
+            break
+        else
+            options+=$1
+            shift
+        fi
     done
 
     if [[ -z ${nofzf+1} ]] && whence fzf >/dev/null; then

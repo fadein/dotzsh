@@ -1,21 +1,28 @@
 # vim: set ft=zsh expandtab:
 
 # This version of `find-student` searches all courses' rosters in the current semester
+# defined by $SEMESTYR
 # Uses FZF, if installed
-find-student() {
+find-student+() {
     setopt LOCAL_OPTIONS NULL_GLOB
-    local rosters=(~/$COURSE_NUM/Roster/{roster,email}*.csv)
+    local rosters=($BASE/$SEMESTYR/*/Roster/{roster,email}*.csv)
 
     local options=()
-    while [[ $# -gt 0 && $1 == -*  ]]; do
-        options=($options $1)
-        shift
+    while [[ $# -gt 0 && $1 == -* ]]; do
+        if [[ $1 == -- ]]; then
+            shift
+            break
+        else
+            options+=$1
+            shift
+        fi
     done
 
     if [[ -z ${nofzf+1} ]] && whence fzf >/dev/null; then
         {
             for f in $rosters; do
-                tail --quiet --lines +2 $f
+                tail --quiet --lines +2 $f \
+                    | sed -e "s@.*@${${f##$BASE/}:h:h} &@"
             done
         } | fzf $options \
             --ghost="Search a student" \
@@ -23,10 +30,11 @@ find-student() {
             --no-sort \
             --query="$*" \
             --select-1 \
+            --nth=2.. \
 
     else
         if [[ -z $1 ]]; then
-            print "Locate a student in a course"
+            print "Locate a student across all courses"
             print "Usage: $0 Student Name\n"
             print 'Uses fzf(1) when present in $PATH, otherwise grep(1)'
             return 1
