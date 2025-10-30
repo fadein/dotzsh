@@ -3,7 +3,7 @@
 # This version of `find-student` searches all courses' rosters in the current semester
 # defined by $SEMESTYR
 # Uses FZF, if installed
-find-student+() {
+find-student() {
     setopt LOCAL_OPTIONS NULL_GLOB
     local rosters=($BASE/$SEMESTYR/*/Roster/{roster,email}*.csv)
 
