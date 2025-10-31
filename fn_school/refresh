@@ -1,73 +1,83 @@
-# Fa25.0
-# Date: Fri Sep 26 2025
+# Fa25.1
+# Date: Thu Oct 30 2025
 
 refresh() {
+
+    # Show a command and then run it
+    # When the environment variable DRYRUN is non-empty, do not
+    # actually make any changes, but only show what would be done
+    echodo() {
+        print -P "\n%B%~ %% %b%F{green}$@%f"
+        if [[ -z $DRYRUN ]]; then
+            $@
+        else
+            true
+        fi
+    }
+
     local i=0
     until ssh -T git@gitlab.cs.usu.edu; do
         print "Awating a connection to gitlab.cs.usu.edu #$((++i))...\n"
         sleep 2
     done
 
+    local -a summary
+    local repo_name_dirty_state
     for REPO in $BASE/$SEMESTYR/*/.git $BASE/emails/.git $BASE/navigation/.git; do
-        (
-            # Show a command and then run it
-            # When the environment variable DRYRUN is non-empty, do not
-            # actually make any changes, but only show what would be done
-            echodo() {
-                print -P "\n%B%~ %% %b%F{green}$@%f"
-                if [[ -z $DRYRUN ]]; then
-                    $@
-                else
-                    true
+        pushd -q $REPO:h
+
+        # This Zsh construct returns 'false' when this repo has uncommitted changes,
+        # setting $? to a non-zero value.
+        # The following print command then prints the repo's name red in that case
+        [[ -z $(git status --porcelain) ]]
+        print -P -v repo_name_dirty_state "%(?.%F{green}.%F{red})$REPO%f%b"
+        summary+=( $repo_name_dirty_state )
+        print -P "%f${REPO//[[:print:]]/=}\n$repo_name_dirty_state\n${REPO//[[:print:]]/=}"
+
+        # put myself on the master branch so the pull will cleanly apply
+        # if/when I'm working on a topic branch
+        echodo git checkout master
+        if ! echodo git pull --recurse-submodules=on-demand origin master; then
+            echodo git pull origin master
+        fi
+
+        echodo git submodule update
+
+        if [[ -a Notes/.git ]]; then
+            (
+                echodo cd Notes
+                echodo git checkout master
+
+                if ! echodo git pull publish master; then
+                    print -P "\n%B%F{yellow}Pulling%f%b Notes/ from %B%F{green}publish%f%b failed; You must manually address this\n"
+                    return 1
                 fi
-            }
 
-            SHUSH=1 cd $REPO:h
-            # This Zsh construct returns 'false' when this repo has uncommitted changes,
-            # setting $? to a non-zero value.
-            # The following print command then prints the repo's name red in that case
-            [[ -z $(git status --porcelain) ]]
-            print -P "%f${REPO//[[:print:]]/=}\n%(?.%F{green}.%F{red})$REPO%f%b\n${REPO//[[:print:]]/=}"
+                if ! echodo git pull origin master; then
+                    print -P "\n%B%F{yellow}Pulling%f%b Notes/ from %B%F{cyan}origin%f%b failed; You must manually address this\n"
+                    return 1
+                fi
 
-            # put myself on the master branch so the pull will cleanly apply
-            # if/when I'm working on a topic branch
-            echodo git checkout master
-            if ! echodo git pull --recurse-submodules=on-demand origin master; then
-                echodo git pull origin master
-            fi
+                if ! echodo git push origin master; then
+                    print -P "\n%B%F{red}Pushing%f%b Notes/ to %B%F{cyan}origin%f%b failed; You must manually address this\n"
+                    return 1
+                fi
 
-            echodo git submodule update
+                if ! echodo git push publish master; then
+                    print -P "\n%B%F{red}Pushing%f%b Notes/ to %B%F{green}publish%f%b failed; You must manually address this\n"
+                    return 1
+                fi
+            )
+        fi
 
-            if [[ -a Notes/.git ]]; then
-                (
-                    echodo cd Notes
-                    echodo git checkout master
+        echodo git push origin master
+        print
+        popd -q
+    done
 
-                    if ! echodo git pull publish master; then
-                        print -P "\n%B%F{yellow}Pulling%f%b Notes/ from %B%F{green}publish%f%b failed; You must manually address this\n"
-                        return 1
-                    fi
-
-                    if ! echodo git pull origin master; then
-                        print -P "\n%B%F{yellow}Pulling%f%b Notes/ from %B%F{cyan}origin%f%b failed; You must manually address this\n"
-                        return 1
-                    fi
-
-                    if ! echodo git push origin master; then
-                        print -P "\n%B%F{red}Pushing%f%b Notes/ to %B%F{cyan}origin%f%b failed; You must manually address this\n"
-                        return 1
-                    fi
-
-                    if ! echodo git push publish master; then
-                        print -P "\n%B%F{red}Pushing%f%b Notes/ to %B%F{green}publish%f%b failed; You must manually address this\n"
-                        return 1
-                    fi
-                )
-            fi
-
-            echodo git push origin master
-            print
-        )
+    print "\nSummary\n======="
+    for (( i=1; i <= ${#summary[@]}; ++i )); do
+        print -P "$i: ${summary[i]}"
     done
 
     ding command date $'+\nCompleted at %T %D'
