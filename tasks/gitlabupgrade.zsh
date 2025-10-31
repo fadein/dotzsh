@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.8.6"
-    DATE="Wed Jul 23 2025"
+ VERSION="1.8.7"
+    DATE="Fri Oct 31 2025"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -18,15 +18,6 @@ setup() {
     [[ -z $STY && -z $TMUX ]] && die "Not using a terminal muxer?  That's just too risky for me."
     [[ $UID != '0' ]] && \
         exec sudo --login STY=$STY TMUX=$TMUX _TASK_UID=$UID SHLVL=$SHLVL $PROGNAME || true
-}
-
-needs-restart() {
-	if [[ -s $REBOOT_FILE ]]; then
-		print System must be restarted because of:
-		nl $REBOOT_FILE.pkgs
-	else
-		print System DOES NOT need to be restarted
-	fi
 }
 
 env() {
@@ -63,6 +54,16 @@ env() {
                 1>&2 print "Ownership/perms were '$STAT'\n instead of expected '$EXPECTED'\n for file $F\n"
             fi
         done
+    }
+
+    _HELP[needs-restart]="Report if a system restart is required, and why"
+    needs-restart() {
+        if [[ -s $REBOOT_FILE ]]; then
+            print System must be restarted because of:
+            nl $REBOOT_FILE.pkgs
+        else
+            print System DOES NOT need to be restarted
+        fi
     }
 
     BACKUPSDIR=/var/opt/gitlab/backups
