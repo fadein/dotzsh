@@ -1,0 +1,20 @@
+#compdef backlighter
+
+_arguments -C \
+  '1:mode:(+ - = day evening night \! \@ \?)' \
+  '2:level:->level' && return 0
+
+case $state in
+  level)
+    case $words[2] in
+      ('='|+|-)
+        _values -s ' ' 'level' {0..32}
+      ;;
+      (*)
+        _message 'no more arguments'
+      ;;
+    esac
+  ;;
+esac
+
+return 1
