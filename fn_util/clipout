@@ -1,0 +1,9 @@
+# vim: set ft=zsh expandtab:
+
+clipout() {
+    if (( $# > 0 )) && [[ ! -d $1 ]]; then
+        xclip -sel clip -o > $1
+    else
+        xclip -sel clip -o
+    fi
+}
