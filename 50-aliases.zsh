@@ -61,6 +61,7 @@ alias screern='screen -r'
 alias topu="htop -u $USER"
 alias vimdiff='vim -d'
 alias which='which -p'
+command -v pygount >/dev/null && alias pygount="pygount --format=summary" 
 
 #
 # because I can't spell...
