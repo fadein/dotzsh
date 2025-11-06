@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Play on nethack.alt.org or hardfought.org"
-VERSION="4.0"
-   DATE="Fri Sep 26 2025"
+VERSION="4.1"
+   DATE="Thu Nov  6 2025"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -145,7 +145,7 @@ SHIM
     fi
 
     if nethack-right-size; then
-        setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
+        [[ -z ${noxkbmap+1} ]] && setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
         clear
         ln -sf $TTY /tmp/nethack.tty
         print "After logging in run 'nh.tty' to fix the colors"
@@ -168,7 +168,7 @@ spawn() {
 
 
 cleanup() {
-    setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll
+    [[ -z ${noxkbmap+1} ]] && setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll
 }
 
 
