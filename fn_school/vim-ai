@@ -1,0 +1,8 @@
+# vim: set ft=zsh expandtab:
+
+# Scan Python and Markdown files for non-ASCII chars
+# Open hits in the quickfix window
+vim-ai() {
+    setopt localoptions nullglob
+    vim -c 'vimgrep /[^\u0000-\u007f]/ src/*.py doc/*.md | copen'
+}
