@@ -22,6 +22,22 @@ for fndir in \
 done
 unset fndir
 
+specimen() {
+	cat <<-FONT
+	[0mabcdefghijklmnopqrstuvwxyz
+	ABCDEFGHIJKLMNOPQRSTUVWXYZ
+	oO08 iIlL1 {} [] g9qCGQ ~-+=>
+
+	[1mabcdefghijklmnopqrstuvwxyz
+	ABCDEFGHIJKLMNOPQRSTUVWXYZ
+	oO08 iIlL1 {} [] g9qCGQ ~-+=>
+	[0m
+	[3mabcdefghijklmnopqrstuvwxyz
+	ABCDEFGHIJKLMNOPQRSTUVWXYZ
+	oO08 iIlL1 {} [] g9qCGQ ~-+=>[0m
+	FONT
+}
+
 
 # this little gem lets me say .. .. .. to go back three directories
 ..() {
