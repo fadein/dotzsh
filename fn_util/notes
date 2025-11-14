@@ -1,9 +1,9 @@
 # vim: set ft=zsh expandtab:
 
 # Display directory notes
-# When passed a filename as an argument, link that file to the name .notes
+# When passed a filename as an argument, link that file to the name .notes, then display the same
 notes() {
-    if [[ $# != 0 ]]; then
+    if [[ $# != 0 && -f $1 ]]; then
         ln -fs $1 .notes
     fi
 
