@@ -1,0 +1,9 @@
+# vim: set ft=zsh expandtab:
+
+# Scan Python and Markdown files for non-ASCII chars
+# Open hits in the quickfix window → convenience
+scanai() { 
+	setopt local_options no_null_glob
+	local -a files=( "${@:-*}" )  # expand to arguments, or substitute * glob operator
+	vim -c "vimgrep /[^\u0000-\u007f]/ $files" -c copen
+}
