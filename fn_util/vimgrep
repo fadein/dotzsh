@@ -1,0 +1,16 @@
+# vim: set filetype=zsh expandtab:
+vimgrep() {
+    if (( $# < 2 )); then
+        1>&2 print "Error: a search pattern and at least one file are required"
+        1>&2 print "Usage: vimgrep PATTERN FILE..."
+        return 1
+    fi
+
+    local pattern=$1
+    shift
+
+    # Use $* so multiple input filenames (as expanded from a glob) are taken as
+    # part of the vimgrep command instead of extra filename args to Vim itself.
+    # Then, open the quickfix window and return the cursor to the main window
+    vim -c "vimgrep /$pattern/ $*" -c copen -c "wincmd p"
+}
