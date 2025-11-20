@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.18"
-    DATE="Fri Sep 19 2025"
+ VERSION="1.19"
+    DATE="Thu Nov 20 2025"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -279,6 +279,7 @@ env() {
 					"$ assert-initrd-has-colehack"
 					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
 					"$ cp /boot/initrd.gz /boot/initrd-$KERNEL_VER.img"
+					"$ $EDITOR /etc/grub.d/42_amdgpu_dcdebug"
 					"$ grub-mkconfig -o /boot/grub/grub.cfg"
 					)
 					;;
@@ -289,7 +290,7 @@ env() {
 					"$ assert-initrd-has-colehack"
 					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
 					"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
-					"$ vim elilo.conf"
+					"$ $EDITOR elilo.conf"
 					)
 					;;
 			esac
