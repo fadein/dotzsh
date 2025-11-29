@@ -40,17 +40,9 @@ fi
 if ! functions dropPrivsAndSpawn >/dev/null; then
 	dropPrivsAndSpawn() {
 		if [[ $UID == '0' ]]; then
-			if [[ -n "$@" ]]; then
-				sudo --login _KEEP_PWD=$_KEEP_PWD SHLVL=$SHLVL TASK=$TASKNAME -u \#$_TASK_UID $@
-			else
-				sudo --login _KEEP_PWD=$_KEEP_PWD SHLVL=$SHLVL TASK=$TASKNAME -u \#$_TASK_UID $ZSH_NAME
-			fi
+			sudo --login _KEEP_PWD=$_KEEP_PWD SHLVL=$SHLVL TASK=$TASKNAME -u \#$_TASK_UID ${@:-$ZSH_NAME}
 		else
-			if [[ -n "$@" ]]; then
-				TASK=$TASKNAME $@
-			else
-				TASK=$TASKNAME $ZSH_NAME
-			fi
+			TASK=$TASKNAME ${@:-$ZSH_NAME}
 		fi
 	}
 fi
@@ -59,9 +51,8 @@ fi
 # Print a message to stderr and exit with a failure code
 if ! functions die >/dev/null; then
 	die() {
-		exec 1>&2
 		for line in "$@"; do
-			echo -e ERROR: $line
+			1>&2 print ERROR: $line
 		done
 		exit 1
 	}
@@ -69,9 +60,8 @@ fi
 
 if ! functions warn >/dev/null; then
 	warn() {
-
 		for line in "$@"; do
-			echo -e ERROR: $line 1>&2
+			1>&2 print ERROR: $line
 		done
 		return 1
 	}
@@ -84,11 +74,7 @@ fi
 if ! functions echodo >/dev/null; then
 	echodo() {
 		print $@
-		if [[ -z $DRYRUN ]]; then
-			$@
-		else
-			true
-		fi
+		[[ -z $DRYRUN ]] && "$@" || true
 	}
 fi
 
@@ -142,10 +128,10 @@ if ! functions persistentTodo >/dev/null; then
 	}
 fi
 
+
 #
 # Commands to execute when this script is run by the user
 if [[ 0 == "$#" && -z "$TASK" ]]; then
-
 	if functions setup >/dev/null; then setup || exit $?; fi
 
 	if functions cleanup >/dev/null && [[ -n $CLEANUP_TRAPS ]]; then
@@ -165,8 +151,8 @@ if [[ 0 == "$#" && -z "$TASK" ]]; then
 	# (I can tell I'm being sourced only because $TASK is defined)
 elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 
-    # check whether we need to chdir into the grandparent's PWD
-    [[ -d $_KEEP_PWD ]] && cd $_KEEP_PWD
+	# check whether we need to chdir into the grandparent's PWD
+	[[ -d $_KEEP_PWD ]] && cd $_KEEP_PWD
 
 	if functions env >/dev/null; then env; fi
 
@@ -302,8 +288,8 @@ else
 	instructions on startup:
 
 	[[ -n "\$TASK" && -x $0:a:h/\$TASK.zsh ]] \\
-		&& source $0:a:h/\$TASK.zsh \$TASK \\
-		|| true  # don't let zsh think that your .zshrc failed!
+	    && source $0:a:h/\$TASK.zsh \$TASK \\
+	    || true  # don't let zsh think that your .zshrc failed!
 
 	Be sure to add this snippet to the end of your .zshrc; when it is not present
 	the env() function will nod be executed.  While you are within this task, the
