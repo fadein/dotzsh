@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Mount/unmount /mnt/rasp"
-VERSION="1.2"
-   DATE="Fri Aug 16 2024"
+VERSION="1.3"
+   DATE="Fri Nov 28 2025"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 PROGNAME=$0
 TASKNAME=$0:t:r

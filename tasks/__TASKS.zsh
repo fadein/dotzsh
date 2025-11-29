@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.18
-# Date:    Tue May 27 2025
+# Version: 1.19
+# Date:    Fri Nov 28 2025
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -31,8 +31,9 @@ if ! functions raisePrivs >/dev/null; then
 			warn "PROGNAME variable is not set in this task!"
 			die  "Please put 'PROGNAME=\$0' near the top of this task"
 		fi
+
 		[[ $UID != '0' ]] && \
-			exec sudo --login _TASK_UID=$UID SHLVL=$SHLVL $PROGNAME
+			exec sudo --login _KEEP_PWD=$PWD _TASK_UID=$UID SHLVL=$SHLVL $PROGNAME
 	}
 fi
 
@@ -40,9 +41,9 @@ if ! functions dropPrivsAndSpawn >/dev/null; then
 	dropPrivsAndSpawn() {
 		if [[ $UID == '0' ]]; then
 			if [[ -n "$@" ]]; then
-				sudo --login TASK=$TASKNAME SHLVL=$SHLVL -u \#$_TASK_UID $@
+				sudo --login _KEEP_PWD=$_KEEP_PWD SHLVL=$SHLVL TASK=$TASKNAME -u \#$_TASK_UID $@
 			else
-				sudo --login TASK=$TASKNAME SHLVL=$SHLVL -u \#$_TASK_UID $ZSH_NAME
+				sudo --login _KEEP_PWD=$_KEEP_PWD SHLVL=$SHLVL TASK=$TASKNAME -u \#$_TASK_UID $ZSH_NAME
 			fi
 		else
 			if [[ -n "$@" ]]; then
@@ -68,7 +69,7 @@ fi
 
 if ! functions warn >/dev/null; then
 	warn() {
-		
+
 		for line in "$@"; do
 			echo -e ERROR: $line 1>&2
 		done
@@ -163,6 +164,9 @@ if [[ 0 == "$#" && -z "$TASK" ]]; then
 	# Commands to run when this script is sourced above
 	# (I can tell I'm being sourced only because $TASK is defined)
 elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
+
+    # check whether we need to chdir into the grandparent's PWD
+    [[ -d $_KEEP_PWD ]] && cd $_KEEP_PWD
 
 	if functions env >/dev/null; then env; fi
 
