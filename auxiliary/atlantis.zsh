@@ -1,5 +1,4 @@
 # vim: set filetype=zsh expandtab:
-source ssh-agent-startup.sh
 
 python_crash_course=474722
 
