@@ -1,0 +1,14 @@
+# vim: set ft=zsh expandtab:
+
+# run du -sh, sorting by human-readable sizes
+diskused() {
+    setopt local_options null_glob
+    local -a args
+    if (( $# > 0 )); then
+        args=( "$@" )
+    else
+        args=(* *.)
+    fi
+
+    du --human-readable --summarize $args | sort --human-numeric-sort
+}
