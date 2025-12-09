@@ -1,7 +1,7 @@
 #!/bin/env zsh
 
-PURPOSE="Mount/unmount /mnt/rasp"
-VERSION="1.3"
+PURPOSE="Mount/unmount /mnt/floppy"
+VERSION="1.0"
    DATE="Tue Dec  9 2025"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 PROGNAME=$0
@@ -9,7 +9,7 @@ TASKNAME=$0:t:r
 
 MOUNT=/bin/mount
 UMOUNT=/bin/umount
-MOUNT_POINT=/mnt/rasp
+MOUNT_POINT=/mnt/floppy
 
 
 setup() {
@@ -17,7 +17,15 @@ setup() {
         die "$MOUNT_POINT is already mounted"
     fi
     raisePrivs
-    $MOUNT $MOUNT_POINT
+    # detect the first serial device 
+    if [[ -z $DEVICE ]]; then
+        local devices=(/dev/sd??)
+        if [[ -z $devices ]]; then
+            die "No pluggable serial device was detected"
+        fi
+        DEVICE=$devices[1]
+    fi
+    $MOUNT $DEVICE $MOUNT_POINT
     CLEANUP_TRAPS=(HUP)
 }
 
@@ -26,7 +34,7 @@ spawn() {
 }
 
 cleanup() {
-    logger mntrasp cleanup $MOUNT_POINT
+    logger mntfloppy cleanup $MOUNT_POINT
     if $MOUNT | grep -q $MOUNT_POINT; then
         $UMOUNT --force $MOUNT_POINT
     fi
