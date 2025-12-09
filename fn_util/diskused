@@ -7,7 +7,7 @@ diskused() {
     if (( $# > 0 )); then
         args=( "$@" )
     else
-        args=(* *.)
+        args=(* .*)
     fi
 
     du --human-readable --summarize $args | sort --human-numeric-sort
