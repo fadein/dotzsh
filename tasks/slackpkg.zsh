@@ -1,8 +1,8 @@
 #!/bin/zsh
 
  PURPOSE="Slackware update task"
- VERSION="1.17"
-    DATE="Tue Feb 18 2025"
+ VERSION="1.18"
+    DATE="Dec 24, 2025"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -199,6 +199,10 @@ env() {
 	_HELP+=(usage "Instructions for using this task"
 	        kernelUpdateInstrs "EFI+ELILO kernel configuration"
 			rpiKernelUpdateInstrs "SARPI instructions for ARM"
+			needs-restart "List packages demanding a system restart"
+			recordTimeOfLastUpdate "Save latest ChangeLog timestamp"
+
+
 	)
 
 	# ring the bell after the update is received
