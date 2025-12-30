@@ -1,5 +1,5 @@
 # For use with school functions defined under fn_school
-SEMESTYR=Fa25
+SEMESTYR=Sp26
 BASE=$HOME/school
 
 #
