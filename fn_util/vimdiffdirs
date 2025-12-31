@@ -1,0 +1,25 @@
+# Usage: dirdiff2vim DIR1 DIR2
+# Runs diff --brief, then opens vimdiff for each differing file.
+dirdiff2vim () {
+	emulate -L zsh
+	setopt pipefail
+
+	if (( $# != 2 )); then
+		print -u2 -- "usage: dirdiff2vim DIR1 DIR2"
+		return 1
+	fi
+
+	local d1="$1" d2="$2" 
+
+	if [[ ! -d "$d1" || ! -d "$d2" ]]; then
+		print -u2 -- "dirdiff2vim: both args must be directories"
+		return 2
+
+	elif [[ "$d1" -ef "$d2" ]]; then
+		print -u2 -- "dirdiff2vim: directories must be distinct (-ef says they are the same): '$d1' '$d2'"
+		return 3
+
+	fi
+
+	diff --color=never --brief -- "$d1" "$d2" | diffbrief2vimdiff
+}
