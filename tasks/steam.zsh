@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Run Steam through Conty"
-VERSION="1.0"
-   DATE="Wed Dec 17 2025"
+VERSION="1.1"
+   DATE="Wed Dec 31 2025"
  AUTHOR="fadein"
 
 PROGNAME=$0
@@ -20,8 +20,8 @@ setup() {
 		exit 1
 	fi
 
-	export CONTY
 	killall picom
+	export CONTY
 }
 
 env() {
