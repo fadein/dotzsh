@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Movie Time!"
-VERSION="1.6"
-   DATE="Wed Sep 24 2025"
+VERSION="1.7"
+   DATE="Sat Jan  3 2026"
  AUTHOR="fadein"
 
 PROGNAME=$0
@@ -69,6 +69,8 @@ setup() {
                 find-hdmi-sink-name && export hdmi_sink=$REPLY
                 killall picom
             else
+                print -P "%B%F{yellow}No external display port was detected%f%b"
+                print -P "%B%F{yellow}Switching to 1080p mode%f%b"
                 xrandr --output eDP --mode 1920x1080 --auto
             fi
             sleep .25
@@ -77,8 +79,9 @@ setup() {
 }
 
 
+# Prevent Ctrl-D from closing this session w/setopt IGNORE_EOF (-7)
 spawn() {
-    TASK=$TASKNAME $ZSH_NAME -7  # -7 == setopt IGNORE_EOF
+    TASK=$TASKNAME $ZSH_NAME -7
 }
 
 
@@ -97,7 +100,11 @@ cleanup() {
             ;;
 
         atlantis*)
-            xrandr --output $DISPLAYPORT --off --output eDP --auto
+            if [[ -n $DISPLAYPORT ]]; then
+                xrandr --output $DISPLAYPORT --off --output eDP --auto
+            else
+                xrandr --output eDP --auto
+            fi
             picom &>/dev/null & disown
             ;;
     esac
@@ -112,7 +119,7 @@ cleanup() {
                 print Xft.dpi: ${old_dpi} | $XRDB -override
                 old_dpi=$($XRDB -get Xft.dpi)
                 $FIGLET Xft.dpi
-                print restored to ${old_dpi} 
+                print restored to ${old_dpi}
             fi
             ;;
     esac
