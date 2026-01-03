@@ -7,32 +7,32 @@
 #
 # For each matching line, print the vimdiff command then execute it.
 
-diffbrief2vimdiff () {
-	emulate -L zsh
-	setopt pipefail
+emulate -L zsh
+setopt pipefail
 
-	_one () {
-		local line="$1" a b cmd
+_one () {
+    local line="$1" a b cmd
 
-		if [[ "$line" =~ '^Files[[:space:]]+(.+)[[:space:]]+and[[:space:]]+(.+)[[:space:]]+differ$' ]]; then
-			a="${match[1]}" 
-			b="${match[2]}" 
-			cmd=(vimdiff "$a" "$b") 
-			print -r -- "${(q)cmd[@]}"
-			"${cmd[@]}" < /dev/tty > /dev/tty 2> /dev/tty
-		else
-			print -u2 -- "diff2vimdiff: skip (no match): $line"
-			return 2
-		fi
-	}
-
-	if (( $# )); then
-		_one "$*"
-	else
-        local line
-		while IFS= read -r line; do
-			[[ -n "$line" ]] || continue
-			_one "$line"
-		done
-	fi
+    if [[ "$line" =~ '^Files[[:space:]]+(.+)[[:space:]]+and[[:space:]]+(.+)[[:space:]]+differ$' ]]; then
+        a="${match[1]}" 
+        b="${match[2]}" 
+        cmd=(vimdiff "$a" "$b") 
+        print -r -- "${(q)cmd[@]}"
+        "${cmd[@]}" < /dev/tty > /dev/tty 2> /dev/tty
+    else
+        print -u2 -- "diffbrief2vimdiff: skip (no match): $line"
+        return 2
+    fi
 }
+
+if (( $# )); then
+    _one "$*"
+else
+    local line
+    while IFS= read -r line; do
+        [[ -n "$line" ]] || continue
+        _one "$line"
+    done
+fi
+
+# vim: set filetype=zsh expandtab:
