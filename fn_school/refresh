@@ -1,4 +1,4 @@
-# Sp26.0
+# Sp26.1
 # Date: Mon Jan  5 2026
 
 refresh() {
@@ -20,7 +20,7 @@ refresh() {
     print "Checking Internet connectivity..."
     until ssh -T git@gitlab.cs.usu.edu; do
         print "Awating a connection to gitlab.cs.usu.edu #$((++i))...\n"
-        cselect -t 100  # sleep for 100 centiseconds = 1 second
+        zselect -t 100  # sleep for 100 centiseconds = 1 second
     done
 
     local -a summary
