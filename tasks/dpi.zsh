@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Temporarily reset Xft DPI"
-VERSION="1.1"
-   DATE="Mon Jun 16 2025"
+VERSION="1.1.1"
+   DATE="Sun Jan 11 2026"
  AUTHOR="fadein"
 
 PROGNAME=$0
@@ -17,6 +17,7 @@ setup() {
 	old_dpi=$($XRDB -get Xft.dpi)
 	print Xft.dpi: ${dpi:-90} | $XRDB -override
 	$FIGLET Xft.dpi
+	print was $old_dpi
 	print is now ${dpi:-90} 
 }
 
