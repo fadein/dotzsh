@@ -1,0 +1,21 @@
+#compdef repl
+# Completion for my Python REPL function
+# - Completes ONLY *.py files, no directories
+# - Uses _files (so it respects your $fignore, glob settings, etc.)
+#
+# Replace the 1st argument string with this one to also complete directory names:
+#    '1:python script:_files -f -g "*.py(#q-.)" -/' \
+#
+# Notes:
+#  -g "*.py(-.)": show only regular files matching *.py (not dirs).
+#  -W .: look in . by default; - / keeps normal path completion working.#
+
+
+_repl() {
+  local -a expl
+  _arguments -s -S -C \
+    '1:python script:_path_files -g "*.py(#q-.)"' \
+    '*:extra arguments:->none'
+}
+
+_repl "$@"
