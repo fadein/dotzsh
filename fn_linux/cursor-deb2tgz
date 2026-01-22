@@ -1,0 +1,25 @@
+cursor-deb2tgz() {
+    # find cursor*.deb in cwd
+    local debs=(cursor*_amd64.deb(NOn))
+
+    if (( $#debs == 0 )); then
+        1>&2 print "No cursor*.deb files were found"
+        return 2
+    fi
+
+    # re-arrange filename components to match Slackware package format
+    local deb=$debs[1]
+    local ver=${deb#cursor_}
+    ver=${ver%_amd64.deb}
+
+    echodo() {
+        print $@
+        [[ -z "$DRYRUN" ]] && "$@" || true
+    }
+
+    echodo mv $deb cursor_${ver}_x86_64-1_erik.deb
+    echodo deb2tgz cursor_${ver}_x86_64-1_erik.deb
+}
+
+
+# vim: set filetype=zsh expandtab:
