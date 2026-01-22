@@ -17,8 +17,8 @@ cursor-deb2tgz() {
         [[ -z "$DRYRUN" ]] && "$@" || true
     }
 
-    echodo mv $deb cursor_${ver}_x86_64-1_erik.deb
-    echodo deb2tgz cursor_${ver}_x86_64-1_erik.deb
+    echodo mv $deb cursor-${ver}-x86_64-1_erik.deb
+    echodo deb2tgz cursor-${ver}-x86_64-1_erik.deb
 }
 
 
