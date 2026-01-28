@@ -2,24 +2,28 @@
 
 # Swap the contents of two files
 function swap {
-	if [ -z "$1" -o -z "$2" ]; then
-		echo Usage: swap file1 file2
-		echo Swaps the contents of file1 with file2
-		return
+	if [[ -z $1 || -z $2 ]]; then
+		print Usage: swap file1 file2
+		print Swaps the contents of file1 with file2
+		return 1
 	fi
 
-	if [ ! -r $1 -a ! -w $1 ]; then
-		echo No permission to move $1
-		return
-	fi
-	if [ ! -r $2 -a ! -w $2 ]; then
-		echo No permission to move $2
-		return
+    if [[ ! -a $1 ]]; then
+        print $1 does not exist
+        return 2
+    elif [[ ! -a $2 ]]; then
+        print $2 does not exist
+        return 2
+	elif [[ ! -r $1 && ! -w $1 ]]; then
+		print No permission to move $1
+		return 3
+	elif [[ ! -r $2 && ! -w $2 ]]; then
+		print No permission to move $2
+		return 3
 	fi
 
-	RANDFILENAME=${RANDOM}${$}
-
-	mv -f $1 $RANDFILENAME
+	local randname=$RANDOM$$.tmp
+	mv -f $1 $randname
 	mv -f $2 $1
-	mv -f $RANDFILENAME $2
+	mv -f $randname $2
 }
