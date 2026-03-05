@@ -33,7 +33,6 @@ local system=(
 	vl /var/log
 	vlp /var/log/packages
 	x11 /etc/X11
-	drep /etc/drep
 	)
 
 
@@ -51,6 +50,10 @@ local home=(
 	localbin $HOME/.local/bin
 	pyenv $HOME/.pyenv
 	school $HOME/school
+	todo $HOME/TODO
+	todo $HOME/docs/TODO
+	todo $HOME/school/$SEMESTYR/TODO
+	todo $HOME/school/TODO
 	tutor $HOME/school/shell-tutor-dev
 	vim $HOME/.vim
 	zsh $HOME/.zsh
@@ -62,6 +65,7 @@ local devel=(
 	bfl $HOME/devel/BugFixLogs
 	c $HOME/devel/c
 	devel $HOME/devel
+	gimme $HOME/devel/scheme/gimme
 	homedir $HOME/devel/homedir
 	perl $HOME/devel/perl
 	python $HOME/devel/python
@@ -70,10 +74,13 @@ local devel=(
 	sbo $HOME/devel/SBOoverride
 	scheme $HOME/devel/scheme
 	shell $HOME/devel/shell
+	take $HOME/devel/scheme/take
+	tcd $HOME/devel/scheme/terminal-colors
 	)
 
 
 local school=(
+	# +,/)/-1sort
 	1400 $HOME/1400
 	1410 $HOME/1410
 	1440 $HOME/1440
