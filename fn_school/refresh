@@ -26,10 +26,10 @@ refresh() {
     local -a summary
     local repo_name_dirty_state
     for REPO in \
-        $BASE/$SEMESTYR/*/.git \
-        $BASE/emails/.git \
-        $BASE/navigation/.git \
-        $BASE/course_automation/.git \
+        $HOME/school/$SEMESTYR/*/.git \
+        $HOME/school/emails/.git \
+        $HOME/school/navigation/.git \
+        $HOME/school/course_automation/.git \
         ; do
 
         # skip directories that aren't repositories

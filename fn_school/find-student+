@@ -4,7 +4,7 @@
 # Uses FZF, if installed
 find-student+() {
     setopt LOCAL_OPTIONS NULL_GLOB
-    local rosters=($BASE/{Fa,Sp,Su}??/cs*/Roster/{roster,email}*.csv)
+    local rosters=($HOME/school/{Fa,Sp,Su}??/cs*/Roster/{roster,email}*.csv)
 
     local options=()
     while [[ $# -gt 0 && $1 == -* ]]; do
@@ -21,7 +21,7 @@ find-student+() {
         {
             for f in $rosters; do
                 tail --quiet --lines +2 $f \
-                    | sed -e "s@.*@${${f##$BASE/}:h:h} &@"
+                    | sed -e "s@.*@${${f##$HOME/school/}:h:h} &@"
             done
         } | fzf $options \
             --ghost="Search a student" \

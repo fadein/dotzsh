@@ -1,6 +1,5 @@
 # For use with school functions defined under fn_school
 SEMESTYR=Sp26
-BASE=$HOME/school
 
 #
 # Prevent corefiles from being truncated

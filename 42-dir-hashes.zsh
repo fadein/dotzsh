@@ -5,84 +5,102 @@
 #   cd ~vlp
 #   mv README.md ~tutor
 
-#
-# system destinations
-# +,/^\(#.*\)\?$/-1sort
-hash -d cups=/etc/cups
-hash -d dict=/usr/share/dict
-hash -d distfiles=/usr/sbo/distfiles
-hash -d lib64=/usr/lib64
-hash -d nm=/etc/NetworkManager/system-connections
-hash -d rc.d=/etc/rcd
-hash -d sbodist=/usr/sbo/distfiles
-hash -d sborepo=/usr/sbo/repo
-hash -d slackpkg=/etc/slackpkg
-hash -d ssh=/etc/ssh
-hash -d stow=/usr/local/bin/stow
-hash -d ub=/usr/bin
-hash -d ul=/usr/lib
-hash -d ulb=/usr/local/bin
-hash -d um=/usr/man
-hash -d usl=/usr/src/linux
-hash -d vcp=/var/cache/packages
-hash -d vl=/var/log
-hash -d vlp=/var/log/packages
-hash -d x11=/etc/X11
+# Anon function for namespace hygiene
+function {
 
-#
-# home destinations
-hash -d cache=$HOME/.cache
-# +,/^\(#.*\)\?$/-1sort
-hash -d build=$HOME/build
-hash -d config=$HOME/.config
-hash -d devel=$HOME/devel
-hash -d docs=$HOME/docs
-hash -d down=$HOME/downloads
-hash -d dwm=$HOME/.dwm
-hash -d home=$HOME
-hash -d local=$HOME/.local
-hash -d localbin=$HOME/.local/bin
-hash -d pyenv=$HOME/.pyenv
-hash -d school=$HOME/school
-hash -d tutor=$HOME/school/shell-tutor-dev
-hash -d vim=$HOME/.vim
-hash -d zsh=$HOME/.zsh
+# These were originally defined as assoc arrays, but Zsh's for loop can take
+# items from an ordinary array N at a time.  Syntactically, this doesn't change
+# the array declarations, but makes the loop at the bottom cleaner.
+local system=(
+	# +,/)/-1sort
+	cups /etc/cups
+	dict /usr/share/dict
+	distfiles /usr/sbo/distfiles
+	lib64 /usr/lib64
+	nm /etc/NetworkManager/system-connections
+	rc.d /etc/rc.d
+	sbodist /usr/sbo/distfiles
+	sborepo /usr/sbo/repo
+	slackpkg /etc/slackpkg
+	ssh /etc/ssh
+	stow /usr/local/stow
+	ub /usr/bin
+	ul /usr/lib
+	ulb /usr/local/bin
+	um /usr/man
+	usl /usr/src/linux
+	vcp /var/cache/packages
+	vl /var/log
+	vlp /var/log/packages
+	x11 /etc/X11
+	drep /etc/drep
+	)
 
-#
-# development
-# +,/^\(#.*\)\?$/-1sort
-hash -d bfl=$HOME/devel/BugFixLogs
-hash -d c=$HOME/devel/c
-hash -d devel=$HOME/devel
-hash -d homedir=$HOME/devel/homedir
-hash -d perl=$HOME/devel/perl
-hash -d python=$HOME/devel/python
-hash -d rust=$HOME/devel/rust
-hash -d rustlings=$HOME/devel/rust/rustlings
-hash -d sbo=$HOME/devel/SBOoverride
-hash -d scheme=$HOME/devel/scheme
-hash -d shell=$HOME/devel/shell
 
-#
-# school destinations
-# +,/^\(#.*\)\?$/-1sort
-hash -d 1400=$HOME/1400
-hash -d 1440=$HOME/1440
-hash -d 3450=$HOME/3450
-hash -d abet=$HOME/school/ABET_Chair
-hash -d auto=$HOME/school/course_automation
-hash -d automation=$HOME/school/course_automation
-hash -d ca=$HOME/school/course_automation
-hash -d canvas=$HOME/school/CanvasAPI
-hash -d dm=$HOME/school/digital_measures
-hash -d emails=$HOME/school/emails
-hash -d gitlab=$HOME/school/GitLab
-hash -d lecnotes=$HOME/school/lecnotes-test
-hash -d lor=$HOME/school/letters_of_recommendation
-hash -d navigation=$HOME/school/navigation
-hash -d rec=$HOME/school/letters_of_recommendation
-hash -d scanner=$HOME/school/scanner
-hash -d school=$HOME/school
-hash -d videos=$HOME/school/videos
+local home=(
+	# +,/)/-1sort
+	build $HOME/build
+	cache $HOME/.cache
+	config $HOME/.config
+	devel $HOME/devel
+	docs $HOME/docs
+	down $HOME/downloads
+	dwm $HOME/.dwm
+	home $HOME
+	local $HOME/.local
+	localbin $HOME/.local/bin
+	pyenv $HOME/.pyenv
+	school $HOME/school
+	tutor $HOME/school/shell-tutor-dev
+	vim $HOME/.vim
+	zsh $HOME/.zsh
+	)
 
+
+local devel=(
+	# +,/)/-1sort
+	bfl $HOME/devel/BugFixLogs
+	c $HOME/devel/c
+	devel $HOME/devel
+	homedir $HOME/devel/homedir
+	perl $HOME/devel/perl
+	python $HOME/devel/python
+	rust $HOME/devel/rust
+	rustlings $HOME/devel/rust/rustlings
+	sbo $HOME/devel/SBOoverride
+	scheme $HOME/devel/scheme
+	shell $HOME/devel/shell
+	)
+
+
+local school=(
+	1400 $HOME/1400
+	1410 $HOME/1410
+	1440 $HOME/1440
+	3450 $HOME/3450
+	abet $HOME/school/ABET_Chair
+	auto $HOME/school/course_automation
+	automation $HOME/school/course_automation
+	ca $HOME/school/course_automation
+	canvas $HOME/school/CanvasAPI
+	dm $HOME/school/digital_measures
+	emails $HOME/school/emails
+	gitlab $HOME/school/GitLab
+	lecnotes $HOME/school/lecnotes-test
+	lor $HOME/school/letters_of_recommendation
+	navigation $HOME/school/navigation
+	rec $HOME/school/letters_of_recommendation
+	scanner $HOME/school/scanner
+	school $HOME/school
+	videos $HOME/school/videos
+	)
+
+for key value in $system $home $devel $school; do
+	if [[ -d $value ]]; then
+		hash -d $key=$value
+	# else print -P "%B%F{red}$value is not a directory%f%b"
+	fi
+done
+
+}
 # vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 noexpandtab:
