@@ -1,5 +1,5 @@
-# Sp26.1
-# Date: Mon Jan  5 2026
+# Sp26.2
+# Date: Fri Mar  6 2026
 
 refresh() {
 
@@ -17,7 +17,7 @@ refresh() {
 
     zmodload zsh/zselect
     local i=0
-    print "Checking Internet connectivity..."
+    print "Checking network connectivity..."
     until ssh -T git@gitlab.cs.usu.edu; do
         print "Awating a connection to gitlab.cs.usu.edu #$((++i))...\n"
         zselect -t 100  # sleep for 100 centiseconds = 1 second
