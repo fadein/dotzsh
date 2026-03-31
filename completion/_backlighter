@@ -1,7 +1,7 @@
 #compdef backlighter
 
 _arguments -C \
-  '1:mode:(+ - = day evening night \! \@ \?)' \
+  '1:mode:(+ - = full bright day evening night \! \@ \?)' \
   '2:level:->level' && return 0
 
 case $state in
