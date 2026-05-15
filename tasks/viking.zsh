@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 PURPOSE="Log into Viking2 with TMUX"
-VERSION=0.4
-   DATE="Sat Jun 24 20:12:06 MDT 2023"
+VERSION=0.5
+   DATE="Fri May 15 2026"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
@@ -14,7 +14,6 @@ CMD="exec /home/fadein/.local/bin/comms.tmux"
 HOME_WIFI="get your own internet"
 INTRANET_HOST=viking2.falor
 INTERNET_HOST=viking-dyn
-HOST=$INTRANET_HOST
 
 #spawn our task shell
 spawn() {
@@ -29,23 +28,30 @@ spawn() {
 
     case $HOSTNAME in
             mariner*)
-                    HOST=$INTERNET_HOST
-                    ;;
+                HOST=$INTERNET_HOST
+                ;;
 
             *)
-                    # If I'm not on my home wifi network, connect
-                    for WIFI_IFS in /sys/class/net/w*; do
-                        WIFI_IFS=$(basename $WIFI_IFS)
-                        WIFI="$(iwconfig $WIFI_IFS | \grep ESSID | cut -d'"' -f2)"
-                        if [[ $WIFI != $HOME_WIFI ]]; then
-                            HOST=$INTERNET_HOST
-                            break
-                        fi
-                    done
-                    ;;
+                # When at home, connect via $INTRANET_HOST
+                # Otherwise, connect via $INTERNET_HOST
+                HOST=$INTRANET_HOST
+                for WIFI_IFS in /sys/class/net/w*; do
+                    WIFI_IFS=$(basename $WIFI_IFS)
+                    WIFI="$(iwconfig $WIFI_IFS | \grep ESSID | cut -d'"' -f2)"
+                    if [[ $WIFI != $HOME_WIFI ]]; then
+                        HOST=$INTERNET_HOST
+                        break
+                    fi
+                done
+                ;;
     esac
 
-    TASK=$TASKNAME $SSH -t $HOST "LANG=$LANG $CMD"
+    zmodload zsh/zselect
+    local i=0
+    until TASK=$TASKNAME $SSH -t $HOST "LANG=$LANG $CMD"; do
+        print "Awating a connection to $HOST #$((++i))...\n"
+        zselect -t 100  # sleep for 100 centiseconds = 1 second
+    done
 }
 
 source $0:h/__TASKS.zsh
