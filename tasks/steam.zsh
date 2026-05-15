@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Run Steam through Conty"
-VERSION="1.1"
-   DATE="Wed Dec 31 2025"
+VERSION="1.2"
+   DATE="Tue Apr 21 2026"
  AUTHOR="fadein"
 
 PROGNAME=$0
@@ -25,6 +25,9 @@ setup() {
 }
 
 env() {
+	# remove sensitive variable NAMES from environment, just in case
+	eval unset $(command env | cut -d= -f1 | command grep -E 'OVERRIDE|API|TOKEN|TWINE_USERNAME|TWINE_PASSWORD')
+	
 	$CONTY steam & disown
 	figlet -t "Exit this shell to terminate steam"
 }
