@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 PURPOSE="Log into Viking2 with TMUX"
-VERSION=0.5
-   DATE="Fri May 15 2026"
+VERSION=0.6
+   DATE="Mon May 18 2026"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
@@ -26,24 +26,28 @@ spawn() {
     # set NULL_GLOB for the duration of this function only
     setopt LOCAL_OPTIONS NULL_GLOB
 
-    case $HOSTNAME in
-            mariner*)
-                HOST=$INTERNET_HOST
-                ;;
+    case $(uname) in
+        Linux)
+            case $HOSTNAME in
+                    mariner*)
+                        HOST=$INTERNET_HOST ;;
 
-            *)
-                # When at home, connect via $INTRANET_HOST
-                # Otherwise, connect via $INTERNET_HOST
-                HOST=$INTRANET_HOST
-                for WIFI_IFS in /sys/class/net/w*; do
-                    WIFI_IFS=$(basename $WIFI_IFS)
-                    WIFI="$(iwconfig $WIFI_IFS | \grep ESSID | cut -d'"' -f2)"
-                    if [[ $WIFI != $HOME_WIFI ]]; then
-                        HOST=$INTERNET_HOST
-                        break
-                    fi
-                done
-                ;;
+                    *)
+                        # When at home, connect via $INTRANET_HOST
+                        # Otherwise, connect via $INTERNET_HOST
+                        HOST=$INTRANET_HOST
+                        for WIFI_IFS in /sys/class/net/w*; do
+                            WIFI_IFS=$(basename $WIFI_IFS)
+                            WIFI="$(iwconfig $WIFI_IFS | \grep ESSID | cut -d'"' -f2)"
+                            if [[ $WIFI != $HOME_WIFI ]]; then
+                                HOST=$INTERNET_HOST
+                                break
+                            fi
+                        done ;;
+            esac ;;
+
+        *)
+            HOST=$INTERNET_HOST ;;
     esac
 
     zmodload zsh/zselect
