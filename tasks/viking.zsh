@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 PURPOSE="Log into Viking2 with TMUX"
-VERSION=0.6
-   DATE="Mon May 18 2026"
+VERSION=0.7
+   DATE="Wed May 20 2026"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 
 PROGNAME=$0:t
@@ -14,6 +14,7 @@ CMD="exec /home/fadein/.local/bin/comms.tmux"
 HOME_WIFI="get your own internet"
 INTRANET_HOST=viking2.falor
 INTERNET_HOST=viking-dyn
+DELAY=${DELAY:-1}  # how long to wait between reconnect attempts
 
 #spawn our task shell
 spawn() {
@@ -53,8 +54,8 @@ spawn() {
     zmodload zsh/zselect
     local i=0
     until TASK=$TASKNAME $SSH -t $HOST "LANG=$LANG $CMD"; do
-        print "Awating a connection to $HOST #$((++i))...\n"
-        zselect -t 100  # sleep for 100 centiseconds = 1 second
+        print "Re-trying connection to $HOST #$((++i)) in ${DELAY}s...\n"
+        zselect -t $((DELAY * 100))  # sleep for S * 100 centiseconds = 1 second
     done
 }
 
