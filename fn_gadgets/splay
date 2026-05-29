@@ -1,0 +1,74 @@
+# vim: set ft=bash noexpandtab:
+
+splay() {
+	local VERSION="0.1"
+	declare -A options
+	options[outdelim]=$'\n'
+	options[indelim]=":"
+	options[number]=
+	OPTIND=1
+	local OPT
+
+	while getopts '0VvHhnd:' OPT; do
+		case $OPT in
+			0) options[outdelim]="$'\0'" ;;
+			n) options[number]=1 ;;
+			d) options[indelim]=$OPTARG ;;
+
+			v|V)
+				echo "splay v$VERSION"
+				return ;;
+
+			h|H)
+				echo "splay v$VERSION Usage"
+				cat <<-'HELP'
+
+				splay [OPTIONS] [STRING...]
+
+				Split strings by a delimiter and output each part on a separate line.
+
+				If no STRING arguments are given, read from STDIN.
+
+				Options:
+				  -0    use NUL as output line terminator instead of newline
+				  -v    show version and exit
+				  -d string
+				        delimiter to split on (default ":")
+				  -n    number output lines
+				  -h    display this help text
+
+				Examples:
+				  splay "$PATH"              Split PATH by : (default)
+				  splay -d , "a,b,c"         Split by comma
+				  echo "a:b:c" | splay       Read from stdin
+				  splay -n "$PATH"           Number the components of PATH
+
+				HELP
+				return 3
+				;;
+
+			*) return 1 ;;
+		esac
+	done
+
+	shift $(( OPTIND - 1 ))
+
+	if (( $# == 0 )); then
+		if [[ -n "${options[number]}" ]]; then
+			tr "${options[indelim]}" "${options[outdelim]}" | nl
+		else
+			tr "${options[indelim]}" "${options[outdelim]}"
+		fi
+	else
+
+		if [[ -n "${options[number]}" ]]; then
+			tr "${options[indelim]}" "${options[outdelim]}" <<<"$@" | nl
+		else
+			tr "${options[indelim]}" "${options[outdelim]}" <<<"$@"
+		fi
+
+	fi
+}
+
+# Tested in Bash 5.3.9
+# Tested in Zsh 5.9
