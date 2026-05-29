@@ -129,7 +129,7 @@ _increase_char() {
 
   char=$BUFFER[CURSOR]
 
-  if [[ $WIDGET = increase-char ]]; then
+  if [[ $WIDGET == increase-char ]]; then
     char=${(#):-$((#char+${NUMERIC:-1}))}
   else
     char=${(#):-$((#char-${NUMERIC:-1}))}
