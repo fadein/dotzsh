@@ -1,5 +1,8 @@
+# Anon function for namespace hygiene
+function {
+
 # For use with school functions defined under fn_school
-SEMESTYR=Sp26
+export SEMESTYR=Sp26
 
 #
 # Prevent corefiles from being truncated
@@ -15,9 +18,9 @@ stty -ixon
 
 #
 # Zsh configuration variables
-HISTFILE=~/.zsh/history
-HISTSIZE=13337
-SAVEHIST=13337
+export HISTFILE=~/.zsh/history
+export HISTSIZE=13337
+export SAVEHIST=13337
 
 
 #
@@ -93,15 +96,16 @@ done
 
 
 #
-# Chose a search engine based on what day of the year it is if that gets
-# boring, change the %j below to %s for seconds since epoch
-sengines=(https://ixquick.com/
-	https://duckduckgo.com/lite/
-	https://yippy.com/
-	https://hulbee.com/
-	https://search.disconnect.me/
-	https://metager.de/en)
-zmodload zsh/datetime
-#add one because zsh arrays are 1-indexed
-export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
-unset sengines
+# Chose a search engine based on what day of the year it is.
+# If that gets boring, change the %j below to %s for seconds since epoch
+    local -a sengines=(https://ixquick.com/
+        https://duckduckgo.com/lite/
+        https://yippy.com/
+        https://hulbee.com/
+        https://search.disconnect.me/
+        https://metager.de/en)
+    zmodload zsh/datetime
+    #add one because zsh arrays are 1-indexed
+    export WWW_HOME=$sengines[$(( $(strftime %j $EPOCHSECONDS) % ${#sengines} + 1))]
+
+}
