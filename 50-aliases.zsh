@@ -85,6 +85,7 @@ alias jorbs=jobs
 alias les=less
 alias lss=less
 alias maek=make
+alias maike=make
 alias mak=make
 alias mor=more
 alias mplayre=mplayer
