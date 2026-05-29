@@ -2,7 +2,7 @@
 function {
 
 # For use with school functions defined under fn_school
-export SEMESTYR=Sp26
+export SEMESTYR=Su26
 
 #
 # Prevent corefiles from being truncated
