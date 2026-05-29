@@ -3,7 +3,6 @@
 #
 # Setting then unsetting `psvar` causes the time stamp to appear only
 # after accepting the command line
-WHEN="%F{white}%D{%T} "
 function _reset-prompt-and-accept-line {
     psvar=(1)
     zle reset-prompt
@@ -146,7 +145,7 @@ function plain() {
 function colorful() {
     local NL=$'\n'
     PROMPT="$NL$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %M)%(?..%s) %~ %# $_UTEXT"
-    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B%(1V.%F{white}%D{%T} .)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 
@@ -155,7 +154,7 @@ function colorful() {
 function screen() {
     local NL=$'\n'
     PROMPT="$NL$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(usercolor %n)@$(hostcolor %m)%(?..%s) %~ %# $_UTEXT"
-    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B%(1V.%F{white}%D{%T} .)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 
@@ -266,7 +265,7 @@ function git() {
     PROMPT="$NL$ZSH_VERSION %(?..%F{white}%K{red}%?%k%f %S)$(hostcolor %4~)\$(_git_branch_details)%(?..%s) $(usercolor '%#') ${_UTEXT}"
     #If this shell is spawned within GNU Screen, prepend "$WINDOW." to
     #the jobcount.  The jobcount is colored red if non-zero.
-    RPROMPT="${_UEND}%B%(1V.$WHEN.)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
+    RPROMPT="${_UEND}%B%(1V.%F{white}%D{%T} .)%F{yellow}${TASK:+$TASK${class+*} }${TTYRECLOG:+$TTYRECLOG:t }%f%b%F{cyan}${WINDOW:+$WINDOW }%f%F{yellow}!%!%f %F{cyan}%y%f%1(j. %F{red}%%%j%f.)"
 }
 
 
