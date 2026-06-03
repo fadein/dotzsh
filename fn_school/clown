@@ -7,7 +7,8 @@ clown() {
         return 1
     fi
 
-    local URL
+    local default_host=github.com
+
     # convert https:// git repo URLs into SSH URLs
     if [[ $1 -regex-match ^(git@[^:]+:[^/]+/[^/]+) ]]; then
         # SSH-style URL
@@ -22,14 +23,14 @@ clown() {
         else
             URL=git@$URL
         fi
-    elif [[ $1 -regex-match gitlab.cs.usu.edu:[^/]+/[^/]+ ]]; then
+    elif [[ $1 -regex-match $default_host:[^/]+/[^/]+ ]]; then
         # URL is a path like gitlab.cs.usu.edu:username/cs1440-last-first-assn#
         # Prepend git@
         URL=git@$1
     elif [[ $1 -regex-match [^/]+/[^/]+ ]]; then
         # URL is a path like username/cs1440-last-first-assn#
         # Prepend the GitLab SSH URL
-        URL=git@gitlab.cs.usu.edu:$1
+        URL=git@$default_host:$1
     else
         print 1>&2 Invalid URL
         return 1
@@ -42,7 +43,7 @@ clown() {
     if [[ -n $2 ]]; then
         DEST=$2
         print "Cloning $URL into $DEST..."
-    elif [[ $URL -regex-match git@gitlab.cs.usu.edu:[^/]+/cs[0-9]{4}-(.*)-(assn|proj)([0-9](\.[0-9])?)(.git)?$ ]]; then
+    elif [[ $URL -regex-match git@$default_host:[^/]+/cs[0-9]{4}-(.*)-(assn|proj)([0-9](\.[0-9])?)(.git)?$ ]]; then
         DEST="${match[1]}-${match[2]:0:1}${match[3]}"
         print "Cloning $URL into $DEST..."
     else
