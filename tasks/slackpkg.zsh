@@ -282,7 +282,7 @@ env() {
 					"$ assert-initrd-has-colehack"
 					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
 					"$ cp /boot/initrd.gz /boot/initrd-$KERNEL_VER.img"
-					"$ $EDITOR /etc/grub.d/42_amdgpu_dcdebug"
+					"$ $EDITOR /etc/grub.d/??_amdgpu_dcdebug"
 					"$ grub-mkconfig -o /boot/grub/grub.cfg"
 					)
 					;;
