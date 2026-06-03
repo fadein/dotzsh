@@ -1,4 +1,4 @@
-#!/bin/env zsh
+#!/usr/bin/env zsh
 
  PURPOSE="Remove Pyenv from the environment"
  VERSION="1.0"

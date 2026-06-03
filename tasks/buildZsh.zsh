@@ -1,4 +1,4 @@
-#!/bin/env zsh
+#!/usr/bin/env zsh
 
  PURPOSE="Build Zsh like a boss"
  VERSION="1.2"
