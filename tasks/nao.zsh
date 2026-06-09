@@ -1,7 +1,7 @@
-#!/bin/env zsh
+#!/usr/bin/env zsh
 
 PURPOSE="Play on nethack.alt.org or hardfought.org"
-VERSION="5.0"
+VERSION="5.1"
    DATE="Tue Jun  9 2026"
  AUTHOR="erik"
 
@@ -26,7 +26,7 @@ typeset -r _MATCH=match _TERM_TOO_SMALL=too-small _TERM_BIGGER=bigger _UNKNOWN=u
 # Store the previous terminal dimensions in the array PREV_SIZES,
 # Then store the current terminal dimensions into TERM_SIZE
 get-term-size() {
-    TERM_SIZE=($(tput cols lines))
+    TERM_SIZE=($(tput -S <<<$'cols\nlines'))
     PREV_SIZES=($TERM_SIZE $PREV_SIZES)
 }
 
@@ -224,7 +224,6 @@ SHIM
 
 
 spawn() {
-    # setopt local_options xtrace
     case $TASKNAME in
         nao) ssh nethack@alt.org ;;
         hardfought) ssh nethack@hardfought.org ;;
