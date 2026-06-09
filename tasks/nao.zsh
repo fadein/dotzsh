@@ -1,111 +1,178 @@
 #!/bin/env zsh
 
 PURPOSE="Play on nethack.alt.org or hardfought.org"
-VERSION="4.1"
-   DATE="Thu Nov  6 2025"
+VERSION="5.0"
+   DATE="Tue Jun  9 2026"
  AUTHOR="erik"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
+
 FONT="departuremono nerd font"
+DPI=${DPI:-$(xrdb -get Xft.dpi)}
+
+# terminal dimensions stored in arrays (columns lines)
+typeset -a TARGET_SIZE=(131 36)
+typeset -a TERM_SIZE=()
+typeset -a PREV_SIZES=() # ( columns0 lines0  columns1 lines1 ... )
+
+# indices into terminal dimension arrays
+typeset -ir C=1 L=2
+
+# return codes of term-size-cmp()
+typeset -r _MATCH=match _TERM_TOO_SMALL=too-small _TERM_BIGGER=bigger _UNKNOWN=unknown
 
 
-# use tput(1) to find the dimensions of the terminal
-# save in the global array cols_lines
-declare -a cols_lines  # [columns lines]
-get-size() {
-    cols_lines=($(tput cols lines))
+# Store the previous terminal dimensions in the array PREV_SIZES,
+# Then store the current terminal dimensions into TERM_SIZE
+get-term-size() {
+    TERM_SIZE=($(tput cols lines))
+    PREV_SIZES=($TERM_SIZE $PREV_SIZES)
 }
 
 
-terminal-font-size() {
+# Return true when there are enough terminal sizes to compare, and the first pair differs from the 2nd pair
+term-size-changed() {
+    (( $#PREV_SIZES >= 4 )) && (( ($PREV_SIZES[$C] != $PREV_SIZES[$C + 2]) || ($PREV_SIZES[$L] != $PREV_SIZES[$L + 2]) ))
+}
+
+
+# Compare the current terminal size with the target size
+# set $REPLY to one of $_UNKNOWN $_MATCH, $_TERM_TOO_SMALL, or $_TERM_BIGGER
+term-size-cmp() {
+    get-term-size
+    if (( $#TERM_SIZE == 0 )); then
+        REPLY=$_UNKNOWN
+    elif (( $TERM_SIZE[$C] == $TARGET_SIZE[$C] && $TERM_SIZE[$L] == $TARGET_SIZE[$L] )); then
+        REPLY=$_MATCH
+    elif (( $TERM_SIZE[$C] < $TARGET_SIZE[$C] || $TERM_SIZE[$L] < $TARGET_SIZE[$L] )); then
+        REPLY=$_TERM_TOO_SMALL
+    else
+        REPLY=$_TERM_BIGGER
+    fi
+}
+
+
+# Emit terminal escape sequences that set the terminal's font size in pixels
+set-font-size() {
     local size=${1:-32}
 
     if [[ -n $TERMINOLOGY ]]; then
-        echo -n "\e]50;:size=$size\e\a"
+        print -n "\e]50;:size=$size\e\a"
 
         # set TERM=xterm for Terminology's sake
         # when it enters Vim in 256 color mode, it looks like crap
         TERM=xterm
 
     elif [[ $TERM == rxvt-unicode* ]]; then
-        echo -n "\e]710;xft:$FONT:pixelsize=$size:antialias=true\a"
+        print -n "\e]710;xft:$FONT:pixelsize=$size:antialias=true\a"
 
 	elif [[ $TERM == alacritty ]]; then
 		# calculate equivalent point size for font size given in pixels
-		local point_size=$(( $size * 72 / ${DPI:-120} ))
+		local point_size=$(( $size * 72 / $DPI ))
 		alacritty msg config font.size=$point_size
     fi
 
-    print "Trying font size $size..."
-	sleep .15
+    print "Setting font size $size..."
+	command sleep .05
 }
 
 
+# Perform a binary search for a font size that matches as closely as possible
+# the target dimensions without being too small.
+#
+# This task is complicated by the fact that only the terminal dimensions are
+# known, not the prevailing font size.  Thus, the high and low boundaries must
+# first be established.
 nethack-right-size() {
-    local VERSION="2.0"
+    # high and low guesses for starting the search
+    local max=72 min=18
 
-    declare -r max=76
-    declare -r min=12
-    declare -r step=2
-    declare -r X=1
-    declare -r Y=2
-    declare -r DPI=$(xrdb -get Xft.dpi)
+    clear
+    term-size-cmp
+    case $REPLY in
+        $_MATCH)
+            return 0;;
+        $_UNKNOWN)
+            print -P "%B%F{red}Unable to determine terminal dimensions%f%b"
+            return 1
+            ;;
+    esac
 
-    declare -a target_size=(131 36)  # ( columns lines )
-    declare -a orig_size             # ( columns lines )
-    local orig_font_size=
-    local good=
-
-    # get the current size of the screen so I can reset back to the original size
-    # if we fail to find a good match
-    get-size
-    if (( ${cols_lines[$X]} == ${target_size[$X]} && ${cols_lines[$Y]} == ${target_size[$Y]} )); then
-        print "${cols_lines[$X]} == ${target_size[$X]} && ${cols_lines[$Y]} == ${target_size[$Y]}"
-        print "This font size is just right..."
-
-        return
-    fi
-
-    orig_size=(${cols_lines[@]})
-
-    # Starting at the largest font, reduce the size of font by
-    # increments of $step until both of the target dimensions are met
-    for ((i = max; i >= min; i -= step )); do
-        terminal-font-size $i
-        get-size
-        print "At font size $i dimensions are ${cols_lines[$X]}x${cols_lines[$Y]}"
-
-        if (( ${cols_lines[$X]} == ${orig_size[$X]} && ${cols_lines[$Y]} == ${orig_size[$Y]} )); then
-            orig_font_size=$i
-            print "The original font size was $i"
+    # find high boundary
+    local hi=$max
+    local -i i=0
+    while (( ++i )); do
+        set-font-size $hi
+        term-size-cmp
+        # idempotency check for subsequent iterations
+        if (( i > 2 )) && ! term-size-changed; then
+            print -P "%B%F{red}Terminal size is not changing%f%b"
+            return 1
         fi
-
-        if (( ${cols_lines[$X]} >= ${target_size[$X]} && ${cols_lines[$Y]} >= ${target_size[$Y]} )); then
-            print "${cols_lines[$X]} >= ${target_size[$X]} && ${cols_lines[$Y]} >= ${target_size[$Y]}"
-            print "Font size $i is just right..."
-            good=1
-            break
-        fi
+        case $REPLY in
+            $_MATCH)
+                return 0 ;;
+            $_UNKNOWN)
+                print -P "%B%F{red}Unable to determine terminal dimensions%f%b"
+                return 1 ;;
+            $_TERM_TOO_SMALL)
+                break ;;
+            *)
+                (( hi *= 2 )) ;;
+        esac
     done
 
-    if [[ -z $good && -n $orig_font_size ]]; then
-        print "Appropriate font size not found; restoring to original size"
-        print "\033]710;xft:hack:pixelsize=${orig_font_size}:antialias=true\007"
-        return 1
+    # find low boundary
+    local lo=$min
+    while true; do
+        set-font-size $lo
+        term-size-cmp
+        # idempotency check
+        if ! term-size-changed; then
+            print -P "%B%F{red}Terminal size is not changing%f%b"
+            return 1
+        fi
+        case $REPLY in
+            $_MATCH)
+                return 0 ;;
+            $_UNKNOWN)
+                return 1 ;;
+            $_TERM_BIGGER)
+                break ;;
+            *)
+                (( lo /= 2 )) ;;
+        esac
+    done
 
-    elif [[ -z $good && -z $orig_font_size ]]; then
-        print "Failed to find a good font size and I don't know what size to reset to. Sorry!"
-        return 2
+    local mid=-1 prev=0 good=0
+    while true; do
+        (( mid = (hi + lo) / 2 ))
+        (( mid == prev )) && break  # we've been here before
+        set-font-size $mid
+        term-size-cmp
+        case $REPLY in
+            $_MATCH)
+                return 0 ;;
+            $_UNKNOWN)
+                return 1 ;;
+            $_TERM_BIGGER)
+                (( lo = prev = mid ))
+                # keep the largest good value seen so far
+                (( mid > good )) && (( good = mid ))
+                ;;
+            $_TERM_TOO_SMALL)
+                (( hi = prev = mid ))
+                ;;
+        esac
+    done
 
-    elif [[ -n $good ]]; then
-        return 0
+    # if we didn't find a font size that results in an exact match,
+    # use the last seen font size that gave a terminal larger than
+    # the target
+    [[ -n $good && $good != $prev ]] && set-font-size $good
 
-    else
-        print "How did we arrive at line $LINENO?"
-        return 3
-
-    fi
+    return 0
 }
 
 
@@ -113,7 +180,7 @@ countdown() {
     zmodload zsh/zselect
 
 	if [[ $# -lt 1 ]]; then
-		echo 'Usage: countdown SECONDS [CMD ARGS]'
+		print 'Usage: countdown SECONDS [CMD ARGS]'
 		return 1
 	fi
 	local N=$1
@@ -128,7 +195,7 @@ countdown() {
 		zselect -t 100  # sleep for 100 centiseconds = 1 second
 		((N--))
 	done
-	echo
+	print
 
 	[[ $# -ge 1 ]] && eval $@ || true
 }
