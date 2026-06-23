@@ -1,0 +1,62 @@
+# vim: set ft=zsh noexpandtab:
+
+# Install each image file argument as an executable
+# under ~/.local/bin
+execpic() {
+	local DEST=$HOME/.local/bin
+	if (( $# == 0 )); then
+		1>&2 cat <<-USAGE
+		Install each image file argument as an executable
+		under $DEST
+
+		Usage: $0 image...
+		USAGE
+		return 1
+	fi
+
+	if [[ ! -d $DEST ]]; then
+		1>&2 print -P "%B%F{red}Error: $DEST does not exist or is not a directory%f%b"
+		return 1
+	fi
+
+	local filename
+	for filename in "$@"; do
+		if [[ ! -f $filename ]]; then
+			1>&2 print -P "%B%F{red}Error: '$filename' is not a regular file%f%b"
+			continue
+		fi
+
+		local mimetype=$(file --mime-type --brief $filename)
+		case $mimetype in
+			image/*)
+				local basename=$(basename $filename)
+				if [[ -x $DEST/$basename ]]; then
+					1>&2 print -P "%B%F{yellow}Warning: refusing to clobber extant '$basename' under%f%b"
+					continue
+				fi
+
+				cat - $basename > $DEST/$basename <<-'SHIM'
+				#!/bin/sh
+				
+				sed -n $0 -e '/^DATA/,$ {
+				    /DATA/n
+				    p
+				}' | ${IMAGEVIEWER:-feh} -
+				exit
+				DATA
+				SHIM
+				
+				if ! chmod +x $DEST/$basename; then
+					1>&2 print -P "%B%F{yellow}Warning: '$basename' was not marked executable%f%b"
+				else
+					print -P "%B%F{green}'$basename' installed under $DEST'%f%b"
+				fi
+
+				;;
+			*)
+				1>&2 print -P "%B%F{red}Error: '$filename' is not an image%f%b"
+				continue
+				;;
+		esac
+	done
+}
