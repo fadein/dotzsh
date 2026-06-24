@@ -35,7 +35,7 @@ execpic() {
 					continue
 				fi
 
-				cat - $basename > $DEST/$basename <<-'SHIM'
+				cat - $filename > $DEST/$basename <<-'SHIM'
 				#!/bin/sh
 				
 				sed -n $0 -e '/^DATA/,$ {
