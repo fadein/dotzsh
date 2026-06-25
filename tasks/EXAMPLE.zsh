@@ -1,4 +1,4 @@
-#!/bin/env zsh
+#!/usr/bin/env zsh
 
 PURPOSE="EXAMPLE Zsh task"
 VERSION="***"
