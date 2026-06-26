@@ -1,13 +1,14 @@
 #!/usr/bin/env zsh
 
-PURPOSE="Play on nethack.alt.org or hardfought.org"
-VERSION="5.1"
-   DATE="Tue Jun  9 2026"
+PURPOSE="Play NetHack locally or online"
+VERSION="5.1.1"
+   DATE="Fri Jun 26 2026"
  AUTHOR="erik"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
 
+WIZKIT=$HOME/games/wizkit.txt
 FONT="departuremono nerd font"
 DPI=${DPI:-$(xrdb -get Xft.dpi)}
 
@@ -228,7 +229,14 @@ spawn() {
         nao) ssh nethack@alt.org ;;
         hardfought) ssh nethack@hardfought.org ;;
         nethack) MAILREADER=/usr/bin/mutt command nethack ;;
-        wizard) MAILREADER=/usr/bin/mutt command nethack -D;;
+        wizard)
+            if [[ -a $WIZKIT ]]; then
+                WIZKIT=$WIZKIT MAILREADER=/usr/bin/mutt command nethack -D
+            else
+                print "wizkit.txt not found at '$WIZKIT'"
+                pause
+                MAILREADER=/usr/bin/mutt command nethack -D
+            fi ;;
     esac
 }
 
