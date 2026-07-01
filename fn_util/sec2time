@@ -1,11 +1,13 @@
 # vim: set ft=zsh expandtab:
 
-
 sec2time() {
-    while [ $# -gt 0 ]; do
-        TZ=GMT perl -e "print scalar localtime $1, \" GMT\n\""
-        TZ=MST perl -e "print scalar localtime $1, \" MST\n\""
-        echo
+    zmodload zsh/datetime
+    while (( $# > 0 )); do
+        if [[ $1 =~ '([0-9]+)' ]]; then
+            strftime "$match[1] => %c %Z" $match[1]
+            TZ=GMT strftime "$match[1] => %c %Z" $match[1]
+            print
+        fi
         shift
     done
 }
