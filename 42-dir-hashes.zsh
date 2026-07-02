@@ -81,10 +81,7 @@ local devel=(
 
 local school=(
 	# +,/)/-1sort
-	1400 $HOME/1400
 	1410 $HOME/1410
-	1440 $HOME/1440
-	3450 $HOME/3450
 	abet $HOME/school/ABET_Chair
 	auto $HOME/school/course_automation
 	automation $HOME/school/course_automation
@@ -109,5 +106,6 @@ for key value in $system $home $devel $school; do
 	fi
 done
 
-}
+} # Anon function for namespace hygiene
+
 # vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 noexpandtab:
