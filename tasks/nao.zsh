@@ -9,6 +9,7 @@ PROGNAME=$0
 TASKNAME=$0:t:r
 
 WIZKIT=$HOME/games/wizkit.txt
+PLAYGROUND=$HOME/build/NetHack/playground/nethack
 FONT="departuremono nerd font"
 DPI=${DPI:-$(xrdb -get Xft.dpi)}
 
@@ -230,12 +231,16 @@ spawn() {
         hardfought) ssh nethack@hardfought.org ;;
         nethack) MAILREADER=/usr/bin/mutt command nethack ;;
         wizard)
-            if [[ -a $WIZKIT ]]; then
-                WIZKIT=$WIZKIT MAILREADER=/usr/bin/mutt command nethack -D
-            else
-                print "wizkit.txt not found at '$WIZKIT'"
+            if [[ ! -x $PLAYGROUND ]]; then
+                print -P "%B%F{red}Error: Locally-built NetHack binary not found at '$PLAYGROUND'%f%b"
                 pause
-                MAILREADER=/usr/bin/mutt command nethack -D
+                return 1
+            elif [[ -a $WIZKIT ]]; then
+                WIZKIT=$WIZKIT MAILREADER=/usr/bin/mutt $PLAYGROUND -D
+            else
+                print -P "%B%F{yellow}Warning: wizkit.txt not found at '$WIZKIT'%f%b"
+                pause
+                MAILREADER=/usr/bin/mutt $PLAYGROUND -D
             fi ;;
     esac
 }
