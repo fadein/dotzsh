@@ -43,6 +43,7 @@ local home=(
 	config $HOME/.config
 	devel $HOME/devel
 	docs $HOME/docs
+	docs $HOME/documents
 	down $HOME/downloads
 	dwm $HOME/.dwm
 	home $HOME
