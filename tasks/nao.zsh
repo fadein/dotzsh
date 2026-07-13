@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
 PURPOSE="Play NetHack locally or online"
-VERSION="5.1.1"
-   DATE="Fri Jun 26 2026"
+VERSION="5.2.2"
+   DATE="Mon Jul  6 2026"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -87,6 +87,7 @@ set-font-size() {
 # known, not the prevailing font size.  Thus, the high and low boundaries must
 # first be established.
 nethack-right-size() {
+
     # high and low guesses for starting the search
     local max=72 min=18
 
@@ -213,12 +214,15 @@ SHIM
     chmod +x $HOME/.local/bin/nh.tty
     fi
 
-    if nethack-right-size; then
-        [[ -z ${noxkbmap+1} ]] && setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
+    if [[ -n ${no_resize+1} ]] || nethack-right-size; then
+        [[ -z ${no_xkbmap+1} ]] && setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
         clear
-        ln -sf $TTY /tmp/nethack.tty
-        print "After logging in run 'nh.tty' to fix the colors"
-        countdown 2
+        if [[ $TASKNAME != wizard ]]; then 
+            ln -sf $TTY /tmp/nethack.tty
+            print "After logging in run 'nh.tty' to fix the colors"
+            countdown 2
+        fi
+        return 0
     else
         return 1
     fi
@@ -247,7 +251,7 @@ spawn() {
 
 
 cleanup() {
-    [[ -z ${noxkbmap+1} ]] && setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll
+    [[ -z ${no_xkbmap+1} ]] && setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll || true
 }
 
 
