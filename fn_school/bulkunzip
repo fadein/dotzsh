@@ -1,74 +1,9 @@
-#!/usr/bin/env zsh
 # Ensign College Canvas bulk unzip & clone
 #
 # Unpack a Canvas submission zip and either extract nested zips or clone GitHub
 # repos referenced from HTML stubs, one output directory per student.
-
-VERSION=1.0
-DATE="Tue Jul  7 2026"
-AUTHOR=erik.falor@ensign.edu
-
-
-# Clone a git repo through SSH, regardless of the form of the URL
-clown () {
-    zmodload zsh/regex
-    if [[ -z $1 ]]; then
-        print 1>&2 "Usage: $0 <HTTPS git url> [DEST_NAME]"
-        print 1>&2 "       $0 git clone <HTTPS git url> [DEST_NAME]"
-        print 1>&2 "       $0 git@github.com:<username/project> [DEST_NAME]"
-        print 1>&2 "       $0 <username/project> [DEST_NAME]"
-        return 1
-    fi
-
-	# discard "git" and "clone" from the start in case I stupidly paste too much
-	while [[ $1 == git || $1 == clone ]]; do
-		shift
-	done
-
-    local URL
-    # convert https:// git repo URLs into SSH URLs
-    if [[ $1 -regex-match ^(git@[^:]+:[^/]+/[^/]+) ]]; then
-        # SSH-style URL
-        URL=$MATCH
-    elif [[ $1 -regex-match ^http ]]; then
-        # https-style URL
-        URL=${1/http*:\/\//}
-        URL=${URL#*@}
-        URL=${URL/\//:}
-        if [[ $URL -regex-match ^([^:]+:[^/]+/[^/#]+) ]]; then
-            URL=git@$MATCH
-        else
-            URL=git@$URL
-        fi
-    elif [[ $1 -regex-match git@github.com:[^/]+/[^/#]+ ]]; then
-        # URL is already an SSH GitHub URL
-        URL=$1
-    elif [[ $1 -regex-match [^/]+/[^/#]+ ]]; then
-        # URL is a path like username/cs1440-last-first-assn#
-        # Prepend the GitHub SSH URL
-        URL=git@github.com:$1
-    else
-        print 1>&2 Invalid URL
-        return 1
-    fi
-
-    # If $2 is unset and the URL looks like an assignment
-    # (i.e. matches .*/cs[0-9]{4}-last-first-assn[0-9](.git)?)
-    # set $DEST to "last-first-a[0-9]"
-    local DEST
-    if [[ -n $2 ]]; then
-        DEST=$2
-        print "Cloning $URL into $DEST..."
-    elif [[ $URL -regex-match git@github.com:Ensign-College/[[:alnum:]-]*(.git)?$ ]]; then
-        DEST="${match[1]}-${match[2]:0:1}${match[3]}"
-        print "Cloning $URL into $DEST..."
-    else
-        print "Cloning $URL..."
-    fi
-
-    git clone "$URL" "$DEST"
-}
-
+#
+# Depends on clown()
 
 bulkunzip() {
 	emulate -L zsh
@@ -80,13 +15,11 @@ bulkunzip() {
 	fi
 
 	local archive=$1
-	local out_root=${2:-students}
+	local out_root=${2:-${archive%.zip}}
 	local tmpdir item base student outdir mime candidate
-	local red_bold=$'\e[1;31m'
-	local reset=$'\e[0m'
 
 	if [[ ! -f $archive ]]; then
-		print -u2 -- "${red_bold}Error:${reset} input archive not found: $archive"
+		print -Pu2 -- "%B%F{red}Error:%f%b input archive not found: $archive"
 		return 1
 	fi
 
@@ -94,24 +27,40 @@ bulkunzip() {
 	trap 'rm -rf -- "$tmpdir"' EXIT INT TERM
 
 	if ! command unzip -q -- "$archive" -d "$tmpdir"; then
-		print -u2 -- "${red_bold}Error:${reset} could not unzip $archive"
+		print -Pu2 -- "%B%F{red}Error:%f%b could not unzip $archive"
 		return 1
 	fi
 
+	if [[ -e $out_root ]]; then
+		if [[ ! -d $out_root ]]; then
+			print -Pu2 -- "%B%F{red}Error:%f%b $out_root exists but is not a directory"
+			return 1
+		fi
+		print -Pu2 -- "%B%F{yellow}Warning:%f%b $out_root already exists and may have contents."
+		print -n -u2 -- "Wipe and overwrite? [y/N] "
+		if ! read -q; then
+			print -u2
+			print -u2 -- "Aborted."
+			return 1
+		fi
+		print -u2
+		rm -rf -- "$out_root"
+	fi
 	if ! mkdir -p -- "$out_root"; then
-		print -u2 -- "${red_bold}Error:${reset} could mkdir $out_root"
+		print -Pu2 -- "%B%F{red}Error:%f%b could mkdir $out_root"
 		return 1
 	fi
+	print -Pu2 -- "Extracting into %B%F{cyan}$out_root/%f%b"
 
 	for item in "$tmpdir"/*(.N); do
 		base=${item:t}
 		student=${base%%_*}
 		outdir="$out_root/$student"
 
-		print -P "\n%f${student//[[:print:]]/=}\n$student\n${student//[[:print:]]/=}"
+		print -Pu2 "\n%B%F{cyan}${student//[[:print:]]/=}\n$student\n${student//[[:print:]]/=}%f%b"
 
 		if ! mime=$(file -b --mime-type -- "$item"); then
-			print -u2 -- "${red_bold}Error:${reset} could not inspect $base"
+			print -Pu2 -- "%B%F{red}Error:%f%b could not inspect $base"
 			continue
 		fi
 
@@ -119,12 +68,12 @@ bulkunzip() {
 			application/zip|application/x-zip|application/x-zip-compressed)
 				rm -rf -- "$outdir"
 				if ! mkdir -p -- "$outdir"; then
-					print -u2 -- "${red_bold}Error:${reset} could not create $outdir"
+					print -Pu2 -- "%B%F{red}Error:%f%b could not create $outdir"
 					continue
 				fi
 
 				if ! unzip -o -q -- "$item" -d "$outdir"; then
-					print -u2 -- "${red_bold}Error:${reset} could not unzip $base for student $student"
+					print -Pu2 -- "%B%F{red}Error:%f%b could not unzip $base for student $student"
 					rm -rf -- "$outdir"
 				fi
 				;;
@@ -132,7 +81,11 @@ bulkunzip() {
 			text/html|application/xhtml+xml|text/plain)
 				candidate=$(command grep -Eo 'https://github\.com/[^[:space:]<]+|git@github\.com:[^[:space:]<]+' -- "$item" | head -n 1)
 				if [[ -z $candidate ]]; then
-					print -u2 -- "${red_bold}Error:${reset} no valid GitHub URL found in $base"
+					print -Pu2 -- "%B%F{yellow}Warning:%f%b no valid GitHub URL found in $base"
+					print -Pu2 -- "Preserving file in %B%F{cyan}$out_root%f%b"
+					if ! cp -- "$item" "$out_root/$base"; then
+						print -Pu2 -- "%B%F{red}Error:%f%b could not preserve $base in $out_root"
+					fi
 					continue
 				fi
 
@@ -142,21 +95,18 @@ bulkunzip() {
 
 				rm -rf -- "$outdir"
 				if ! clown "$candidate" "$outdir"; then
-					print -u2 -- "${red_bold}Error:${reset} failed to clone repository for $base"
+					print -Pu2 -- "%B%F{red}Error:%f%b failed to clone repository for $base"
 					rm -rf -- "$outdir"
 				fi
 				;;
 
 			*)
-				print -u2 -- "${red_bold}Error:${reset} unsupported file type for $base: $mime"
+				print -Pu2 -- "%B%F{red}Error:%f%b unsupported file type for $base: $mime"
 				;;
 		esac
 		print
 	done
+	print -Pu2 -- "Submissions extracted to %B%F{cyan}$out_root/%f%b"
 }
-
-# if [[ ${0:t} == bulkunzip ]]; then
-# 	bulkunzip "$@"
-# fi
 
 # vim: set ft=zsh noexpandtab:

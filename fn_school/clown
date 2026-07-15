@@ -1,16 +1,26 @@
 # vim: set ft=zsh expandtab:
 
+# Clone a git repo through SSH, regardless of the form of the URL
 clown() {
     zmodload zsh/regex
+
+    local default_host=github.com
     if [[ -z $1 ]]; then
         print 1>&2 "Usage: $0 <HTTPS git url> [DEST_NAME]"
+        print 1>&2 "       $0 git clone <HTTPS git url> [DEST_NAME]"
+        print 1>&2 "       $0 git@hostname:<username/project> [DEST_NAME]"
+        print 1>&2 "       $0 <username/project> [DEST_NAME] (clones from $default_host by default)"
         return 1
     fi
 
-    local default_host=github.com
+	# discard "git" and "clone" from the start in case I stupidly paste too much
+	while [[ $1 == git || $1 == clone ]]; do
+		shift
+	done
 
-    # convert https:// git repo URLs into SSH URLs
-    if [[ $1 -regex-match ^(git@[^:]+:[^/]+/[^/]+) ]]; then
+    local URL
+    # convert Git repository sources into SSH URLs
+    if [[ $1 -regex-match ^(git@[^:]+:[^/]+/[^/#]+) ]]; then
         # SSH-style URL
         URL=$MATCH
     elif [[ $1 -regex-match ^http ]]; then
@@ -18,19 +28,18 @@ clown() {
         URL=${1/http*:\/\//}
         URL=${URL#*@}
         URL=${URL/\//:}
-        if [[ $URL -regex-match ^([^:]+:[^/]+/[^/]+) ]]; then
+        if [[ $URL -regex-match ^([^:]+:[^/]+/[^/#]+) ]]; then
             URL=git@$MATCH
         else
             URL=git@$URL
         fi
-    elif [[ $1 -regex-match $default_host:[^/]+/[^/]+ ]]; then
-        # URL is a path like gitlab.cs.usu.edu:username/cs1440-last-first-assn#
-        # Prepend git@
-        URL=git@$1
+    elif [[ $1 -regex-match ^((git@)?$default_host:[^/]+/[^/#]+) ]]; then
+        # URL looks like gitlab.cs.usu.edu:username/cs1440-last-first-assn#
+        [[ $MATCH == git@* ]] || URL=git@$MATCH  # Prepend git@ if it is missing
     elif [[ $1 -regex-match [^/]+/[^/]+ ]]; then
         # URL is a path like username/cs1440-last-first-assn#
         # Prepend the GitLab SSH URL
-        URL=git@$default_host:$1
+        URL=git@$default_host:$MATCH
     else
         print 1>&2 Invalid URL
         return 1
@@ -43,12 +52,12 @@ clown() {
     if [[ -n $2 ]]; then
         DEST=$2
         print "Cloning $URL into $DEST..."
-    elif [[ $URL -regex-match git@$default_host:[^/]+/cs[0-9]{4}-(.*)-(assn|proj)([0-9](\.[0-9])?)(.git)?$ ]]; then
+    elif [[ $URL -regex-match git@$default_host:Ensign-College/[[:alnum:]-]*(.git)?$ ]]; then
         DEST="${match[1]}-${match[2]:0:1}${match[3]}"
         print "Cloning $URL into $DEST..."
     else
         print "Cloning $URL..."
     fi
 
-    git clone $URL $DEST
+    git clone "$URL" "$DEST"
 }
