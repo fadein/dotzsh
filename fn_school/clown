@@ -4,30 +4,33 @@
 clown() {
     zmodload zsh/regex
 
-    local default_host=github.com
-    if [[ -z $1 ]]; then
-        print 1>&2 "Usage: $0 <HTTPS git url> [DEST_NAME]"
-        print 1>&2 "       $0 git clone <HTTPS git url> [DEST_NAME]"
-        print 1>&2 "       $0 git@hostname:<username/project> [DEST_NAME]"
-        print 1>&2 "       $0 <username/project> [DEST_NAME] (clones from $default_host by default)"
-        return 1
-    fi
-
 	# discard "git" and "clone" from the start in case I stupidly paste too much
-	while [[ $1 == git || $1 == clone ]]; do
+    while [[ -n $1 && $1 == (git|clone) ]]; do
+        print -Pu2 "%F{yellow}discarding $1%f"
 		shift
 	done
 
+    local default_host=github.com
+    if [[ -z $1 ]]; then
+        print -u2 "Usage: $0 <HTTPS git url> [DEST_NAME]"
+        print -u2 "       $0 git clone <HTTPS git url> [DEST_NAME]"
+        print -u2 "       $0 git@hostname:<username/project> [DEST_NAME]"
+        print -u2 "       $0 <username/project> [DEST_NAME] (clones from $default_host by default)"
+        return 1
+    fi
+
+    setopt local_options extended_glob
     local URL
+
     # convert Git repository sources into SSH URLs
     if [[ $1 -regex-match ^(git@[^:]+:[^/]+/[^/#]+) ]]; then
         # SSH-style URL
         URL=$MATCH
-    elif [[ $1 -regex-match ^http ]]; then
+    elif [[ $1 == http* ]]; then
         # https-style URL
-        URL=${1/http*:\/\//}
-        URL=${URL#*@}
-        URL=${URL/\//:}
+        URL=${1/http*:\/\//}   # trim leading https?://
+        URL=${URL#*@}          # remove user@ (if present)
+        URL=${URL/\//:}        # change 1st / into :
         if [[ $URL -regex-match ^([^:]+:[^/]+/[^/#]+) ]]; then
             URL=git@$MATCH
         else
@@ -41,7 +44,7 @@ clown() {
         # Prepend the GitLab SSH URL
         URL=git@$default_host:$MATCH
     else
-        print 1>&2 Invalid URL
+        print -Pu2 "%B%F{red}Invalid URL%f%b"
         return 1
     fi
 
@@ -52,8 +55,8 @@ clown() {
     if [[ -n $2 ]]; then
         DEST=$2
         print "Cloning $URL into $DEST..."
-    elif [[ $URL -regex-match git@$default_host:Ensign-College/[[:alnum:]-]*(.git)?$ ]]; then
-        DEST="${match[1]}-${match[2]:0:1}${match[3]}"
+    elif [[ $URL -regex-match git@$default_host:[^/]+/cs[0-9]{4}-(.*)-(assn|proj)([0-9](\.[0-9])?)(.git)?$ ]]; then
+        DEST=${match[1]}-${match[2]:0:1}${match[3]}
         print "Cloning $URL into $DEST..."
     else
         print "Cloning $URL..."
