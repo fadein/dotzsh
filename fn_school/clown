@@ -1,5 +1,7 @@
 # vim: set ft=zsh expandtab:
 
+# TODO: this didn't successfully clone 
+# https://github.com/krdatalab/cs335-module2-lab/tree/main/structures
 # Clone a git repo through SSH, regardless of the form of the URL
 clown() {
     zmodload zsh/regex
