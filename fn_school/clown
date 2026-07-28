@@ -1,7 +1,5 @@
 # vim: set ft=zsh expandtab:
 
-# TODO: this didn't successfully clone 
-# https://github.com/krdatalab/cs335-module2-lab/tree/main/structures
 # Clone a git repo through SSH, regardless of the form of the URL
 clown() {
     zmodload zsh/regex
@@ -56,13 +54,15 @@ clown() {
     local DEST
     if [[ -n $2 ]]; then
         DEST=$2
-        print "Cloning $URL into $DEST..."
     elif [[ $URL -regex-match git@$default_host:[^/]+/cs[0-9]{4}-(.*)-(assn|proj)([0-9](\.[0-9])?)(.git)?$ ]]; then
         DEST=${match[1]}-${match[2]:0:1}${match[3]}
-        print "Cloning $URL into $DEST..."
-    else
-        print "Cloning $URL..."
     fi
 
-    git clone "$URL" "$DEST"
+    if [[ -n $DEST ]]; then
+        print "Cloning $URL into $DEST..."
+        git clone "$URL" "$DEST"
+    else
+        print "Cloning $URL..."
+        git clone "$URL"
+    fi
 }
