@@ -1,20 +1,29 @@
 #!/usr/bin/env zsh
 # vim: set noexpandtab:
 
-PURPOSE='Rebuild Vim from GitHub'
-VERSION="1.11"
-   DATE="Tue Jun  3 2025"
+PURPOSE='Rebuild Vim from official repository'
+VERSION="2.0"
+   DATE="Wed Jul 29 2026"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
-
 TASKNAME=$0:t:r
+
+# How long to wait before pulling the repo again
+export UPDATE_HOURS=4
 
 # Directory of Vim code repository
 export BUILDDIR=~/build/vim.git
 
+# Upstream Vim code repository
+export UPSTREAM=https://github.com/vim/vim
+
 setup() {
 	if ! [[ -d $BUILDDIR/.git ]]; then
-		git clone https://github.com/vim/vim $BUILDDIR
-		return $!
+		git clone $UPSTREAM $BUILDDIR || die "Failed to clone upstream Vim repo from upstream"
+	elif [[ $(stat --format=%Y $BUILDDIR/.git) -le $(( $(command date +%s) - $UPDATE_HOURS * 3600 )) ]]; then
+		cd $BUILDDIR
+		git pull || die "Failed to pull latest updates from upstream"
+	else
+		print "Vim repo was updated within $UPDATE_HOURS hours"
 	fi
 }
 
@@ -34,7 +43,7 @@ env() {
 			EMERGENCY_DEST=/bin
 			CORES=$(sysctl -n hw.ncpu)
 			;;
-		linux)
+		linux*)
 			DEST=${DEST:-/usr}
 			EMERGENCY_DEST=/bin
 			CORES=$(/usr/bin/nproc)
@@ -67,7 +76,6 @@ env() {
 	#Count number of CPUs in this system and add one
 	MAKE_JOBS=-j$(( $(nproc) + 1 ))
 	_TODO=(
-		'$ git pull'
 		'$ makeVim'
 		'$ sudo make install'
 		'$ emergencyVi'
@@ -103,7 +111,7 @@ env() {
 		if [[ -z $NOSTRIP ]]; then
 			print Stripping output binary
 			if ! nice strip vim; then
-				warn FAILED to strip vim
+				warn Failed to strip vim
 				return
 			fi
 		else
@@ -133,22 +141,34 @@ env() {
 
 		if ! nice make distclean; then rm -f auto/config.cache; fi
 
-		if ! nice ./configure --prefix=$DEST $OPTS_REGULAR; then return; fi
-
-		if nice make auto/osdef.h && ! [[ -f auto/osdef.h ]]; then
-			warn "Failed to generate auto/osdef.h" "Bailing out"
+		if ! nice ./configure --prefix=$DEST $OPTS_REGULAR; then
+			warn "./configure failed, bailing out"
 			return
 		fi
 
-		if ! nice make $MAKE_JOBS; then return; fi
+		if nice make auto/osdef.h && ! [[ -f auto/osdef.h ]]; then
+			warn "Failed to generate auto/osdef.h, bailing out"
+			return
+		fi
+
+		if ! nice make $MAKE_JOBS; then
+			warn "make $MAKE_JOBS failed, bailing out" 
+			return
+		fi
 
 		print
 		print "Installing Vim binary to $DEST"
 		if [[ -z $NOSTRIP ]]; then
-			if ! nice $SUDO make STRIP=strip installvimbin; then return; fi
+			if ! nice $SUDO make STRIP=strip installvimbin; then
+				warn "Failed to install stripped Vim binary to $DEST, bailing out"
+				return
+			fi
 			print "${DEST}/bin/vim is stripped"
 		else
-			if ! nice $SUDO make STRIP=/bin/true installvimbin; then return; fi
+			if ! nice $SUDO make STRIP=/bin/true installvimbin; then
+				warn "Failed to install unstripped Vim binary to $DEST, bailing out"
+				return
+			fi
 			print "${DEST}/bin/vim is not stripped"
 		fi
 
@@ -157,8 +177,8 @@ env() {
 	}
 
 	>&1 <<-'MESSAGE'
-	[1;36m   __        _ __   ___   ___                __ 
-	  / /  __ __(_) /__/ / | / (_)_ _   ___ ___ / / 
+	[1;36m   __        _ __   ___   ___                __
+	  / /  __ __(_) /__/ / | / (_)_ _   ___ ___ / /
 	 / _ \/ // / / / _  /| |/ / /  ' \_/_ /(_-</ _ \
 	/_.__/\_,_/_/_/\_,_/ |___/_/_/_/_(_)__/___/_//_/
 	[1;37m

@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
 PURPOSE="Play NetHack locally or online"
-VERSION="5.2.2"
-   DATE="Mon Jul  6 2026"
+VERSION="5.2.3"
+   DATE="Wed Jul 29 2026"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -236,13 +236,13 @@ spawn() {
         nethack) MAILREADER=/usr/bin/mutt command nethack ;;
         wizard)
             if [[ ! -x $PLAYGROUND ]]; then
-                print -P "%B%F{red}Error: Locally-built NetHack binary not found at '$PLAYGROUND'%f%b"
+                err "Locally-built NetHack binary not found at '$PLAYGROUND'"
                 pause
                 return 1
             elif [[ -a $WIZKIT ]]; then
                 WIZKIT=$WIZKIT MAILREADER=/usr/bin/mutt $PLAYGROUND -D
             else
-                print -P "%B%F{yellow}Warning: wizkit.txt not found at '$WIZKIT'%f%b"
+                warn "wizkit.txt not found at '$WIZKIT'"
                 pause
                 MAILREADER=/usr/bin/mutt $PLAYGROUND -D
             fi ;;

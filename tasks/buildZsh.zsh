@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
  PURPOSE="Build Zsh like a boss"
- VERSION="1.2"
+ VERSION="1.2.1"
     DATE="Thu Mar  5 09:53:23 MST 2015"
   AUTHOR="efalor@spillman.com"
 PROGNAME=$0
@@ -115,12 +115,14 @@ env() {
 	_HELP+=('pluginsZsh' 'Copy appropriate plugins from build area to bundle')
 	pluginsZsh() {
 		if [[ ! -d $BUNDLE ]]; then
-			return $( warn "Bundle area '$BUNDLE' is not present or is not a dir" )
+			err "Bundle area '$BUNDLE' is not present or is not a dir" 
+			return 1
 		fi
 
 		# Cleanup & install Completion plugins
 		if [[ ! -d Completion ]]; then 
-			return $( warn "Completion/ plugins dir not found!" )
+			err "Completion/ plugins dir not found!" 
+			return 1
 		else
 			print Replacing Completion plugins...
 			( cd $BUNDLE; rm -rf Completion; mkdir Completion )
@@ -130,7 +132,8 @@ env() {
 
 		# Cleanup & install Functions
 		if [[ ! -d Functions ]]; then
-			return $( warn "Functions/ dir not found!" )
+			err "Functions/ dir not found!" 
+			return 1
 		else
 			print Replacing Functions...
 			( cd $BUNDLE; rm -rf Functions ; mkdir Functions )
@@ -143,8 +146,8 @@ env() {
 		# the version number is found in Src/version.h
 		if [[ -z "$NEWVER" ]]; then
 			if ! getNewVer; then
-				warn "I can't install Zsh w/o knowing the version"
-				retunr
+				err "I can't install Zsh w/o knowing the version"
+				return 1
 			fi
 		fi
 		case $(uname) in
@@ -197,7 +200,7 @@ env() {
 	###
 	MESSAGE
 
-	_KEEP_FUNCTIONS=(warn)
+	_KEEP_FUNCTIONS=(err warn)
 
 	BUNDLE=/opt/debug/efalor/zsh_bundle/.zsh
 	NEWVER=

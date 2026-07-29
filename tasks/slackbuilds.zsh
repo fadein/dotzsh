@@ -138,14 +138,14 @@ env() {
 
         echo $SBNAME  #DELETE ME
         if [[ -d $SBODIR/$SBNAME ]]; then
-            echo "Warning: directory $SBNAME already exists!"
+            warn "Directory $SBNAME already exists!"
         else
             echo "Creating directory '$SBNAME'"
             mkdir -p $SBODIR/$SBNAME
         fi
 
         if ! cd $SBODIR/$SBNAME; then
-            die "Couldn't cd into '$SBNAME'"
+            die "Couldn't chdir into '$SBNAME'"
         fi
 
         # Copy template files from $SBODIR/../templates.git

@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
  PURPOSE="GitLab server update task"
- VERSION="1.8.7"
-    DATE="Fri Oct 31 2025"
+ VERSION="1.8.8"
+    DATE="Wed Jul 29 2026"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -21,13 +21,13 @@ setup() {
 }
 
 env() {
-    _KEEP_FUNCTIONS=(prettySeconds echodo)
+    _KEEP_FUNCTIONS=(prettySeconds echodo err)
 
     local HOURS=4
     if [[ $(stat --format=%Y /var/log/apt/history.log) -le $(( $(=date +%s) - $HOURS * 3600 )) ]]; then
         apt update
     else
-        printf "'apt update' has been run within the past $HOURS hours, skipping...\n\n"
+        print "'apt update' has been run within the past $HOURS hours, skipping...\n\n"
     fi
 
     _TODO=(
@@ -71,17 +71,17 @@ env() {
     _HELP[backup-gitlab]="Back up GitLab's PostgreSQL database to $BACKUPSDIR"
     backup-gitlab() {
         ding gitlab-backup create
-        printf "\nBackup created in $BACKUPSDIR\nNow run 'xfer BACKUP_NAME_STEM to send it to $BACKUPSDEST\n"
+        print "\nBackup created in $BACKUPSDIR\nNow run 'xfer BACKUP_NAME_STEM to send it to $BACKUPSDEST\n"
     }
 
 	_HELP[xfer]="Transfer the backup to viking-dyn"
 	xfer() {
 		if [[ -z $1 ]]; then
-			1>&2 print "Usage: xfer BACKUPFILENAME"
-			1>&2 print "  Just the stem of the filename, no dirs and without _gitlab_backup.tar"
+			print -u2 "Usage: xfer BACKUPFILENAME"
+			print -u2 "  Just the stem of the filename, no dirs and without _gitlab_backup.tar"
 			return 1
 		elif [[ ! -f $BACKUPSDIR/${1}_gitlab_backup.tar ]]; then
-			1>&2 print "Error: the file '${1}_gitlab_backup.tar' does not exist in $BACKUPSDIR"
+			err "the file '${1}_gitlab_backup.tar' does not exist in $BACKUPSDIR"
 			return 2
 		fi
 

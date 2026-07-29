@@ -47,25 +47,32 @@ if ! functions dropPrivsAndSpawn >/dev/null; then
 	}
 fi
 
+
 #
-# Print a message to stderr and exit with a failure code
+# Print colorized and annotated error/warning messages to STDERR
+if ! functions err >/dev/null; then
+	err() {
+		print -Pu2 "%B%F{red}ERROR: $@%f%b"
+	}
+fi
+
+
+if ! functions warn >/dev/null; then
+	warn() {
+		print -Pu2 "%B%F{yellow}WARNING: $@%f%b"
+	}
+fi
+
+
+#
+# Emit an error message to STDERR and exit with failure
 if ! functions die >/dev/null; then
 	die() {
-		for line in "$@"; do
-			1>&2 print ERROR: $line
-		done
+		err "$@"
 		exit 1
 	}
 fi
 
-if ! functions warn >/dev/null; then
-	warn() {
-		for line in "$@"; do
-			1>&2 print ERROR: $line
-		done
-		return 1
-	}
-fi
 
 #
 # Show a command and then run it
@@ -252,8 +259,8 @@ elif [[ 1 == "$#" && "$TASK" == "$1" ]]; then
 	fi
 
 	#clean up the environment
-	for F in setup spawn cleanup env die prettySeconds persistentTodo \
-		pause warn raisePrivs dropPrivsAndSpawn echodo; do
+	for F in setup spawn cleanup env prettySeconds persistentTodo \
+		pause warn err die raisePrivs dropPrivsAndSpawn echodo; do
 		[[ -z "$_KEEP_FUNCTIONS[(r)$F]" ]] && unfunction $F 2>/dev/null
 	done
 	unset _KEEP_FUNCTIONS
