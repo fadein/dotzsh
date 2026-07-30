@@ -1,5 +1,5 @@
-# Sp26.2
-# Date: Fri Mar  6 2026
+# Su26.0
+# Date: Thu Jul 30 2026
 
 refresh() {
 
@@ -17,9 +17,10 @@ refresh() {
 
     zmodload zsh/zselect
     local i=0
+    local host=viking-dyn
     print "Checking network connectivity..."
-    until ssh -T git@gitlab.cs.usu.edu; do
-        print "Awating a connection to gitlab.cs.usu.edu #$((++i))...\n"
+    until ssh host true; do
+        print "Awating a connection to $host #$((++i))...\n"
         zselect -t 100  # sleep for 100 centiseconds = 1 second
     done
 
