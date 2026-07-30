@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
 PURPOSE="caffeinate"
-VERSION="1.0"
-   DATE="Thu Jun 25 2026"
+VERSION="2.0"
+   DATE="Thu Jul 30 2026"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -30,9 +30,12 @@ setup() {
 }
 
 spawn() {
-	TASK=$TASKNAME $CAF $CAF_OPTS $ZSH_NAME
+	if [[ -n $timeout ]]; then
+		TASK=$TASKNAME $CAF $CAF_OPTS $ZSH_NAME -i -c "countdown $(( $timeout * 3600 )) exit"
+	else
+		TASK=$TASKNAME $CAF $CAF_OPTS $ZSH_NAME
+	fi
 }
-
 
 cleanup() {
 	cat <<-':'
