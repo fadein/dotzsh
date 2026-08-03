@@ -2,8 +2,8 @@
 # vim: set noexpandtab:
 
 PURPOSE='Rebuild Vim from official repository'
-VERSION="2.0"
-   DATE="Wed Jul 29 2026"
+VERSION="2.1"
+   DATE="Mon Aug  3 2026"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 TASKNAME=$0:t:r
 
@@ -17,13 +17,20 @@ export BUILDDIR=~/build/vim.git
 export UPSTREAM=https://github.com/vim/vim
 
 setup() {
+	case $OSTYPE in
+		linux*)
+			local opts=--format=%Y ;;
+		darwin*)
+			local opts=-f%m ;;
+	esac
+
 	if ! [[ -d $BUILDDIR/.git ]]; then
 		git clone $UPSTREAM $BUILDDIR || die "Failed to clone upstream Vim repo from upstream"
-	elif [[ $(stat --format=%Y $BUILDDIR/.git) -le $(( $(command date +%s) - $UPDATE_HOURS * 3600 )) ]]; then
+	elif [[ $(stat $opts $BUILDDIR/.git) -le $(( $(command date +%s) - $UPDATE_HOURS * 3600 )) ]]; then
 		cd $BUILDDIR
 		git pull || die "Failed to pull latest updates from upstream"
 	else
-		print "Vim repo was updated within $UPDATE_HOURS hours"
+		print -P "%F{yellow}%BVim repo has been updated within $UPDATE_HOURS hours%b%f"
 	fi
 }
 
