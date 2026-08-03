@@ -2,12 +2,17 @@
 
 sec2time() {
     zmodload zsh/datetime
-    while (( $# > 0 )); do
-        if [[ $1 =~ '([0-9]+)' ]]; then
-            strftime "$match[1] => %c %Z" $match[1]
-            TZ=GMT strftime "$match[1] => %c %Z" $match[1]
-            print
-        fi
-        shift
-    done
+    if (( $# == 0 )); then
+        strftime %c
+        TZ=GMT strftime %c
+    else 
+        while (( $# > 0 )); do
+            if [[ $1 =~ '([0-9]+)' ]]; then
+                strftime "$match[1] => %c" $match[1]
+                TZ=GMT strftime "$match[1] => %c" $match[1]
+                print
+            fi
+            shift
+        done
+    fi
 }
