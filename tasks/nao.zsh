@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
 PURPOSE="Play NetHack locally or online"
-VERSION="5.2.3"
-   DATE="Wed Jul 29 2026"
+VERSION="5.2.4"
+   DATE="Aug 03, 2026 03:56 PM"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -67,7 +67,7 @@ set-font-size() {
         TERM=xterm
 
     elif [[ $TERM == rxvt-unicode* ]]; then
-        print -n "\e]710;xft:$FONT:pixelsize=$size:antialias=true\a"
+        print -n "\e]710;xft:${FONT}:pixelsize=${size}:antialias=true\a"
 
 	elif [[ $TERM == alacritty ]]; then
 		# calculate equivalent point size for font size given in pixels
