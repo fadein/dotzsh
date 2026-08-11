@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
 PURPOSE="Play NetHack locally or online"
-VERSION="5.2.4"
-   DATE="Aug 03, 2026 03:56 PM"
+VERSION="5.3.0"
+   DATE="Tue Aug 11 2026"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -11,6 +11,8 @@ TASKNAME=$0:t:r
 WIZKIT=$HOME/games/wizkit.txt
 PLAYGROUND=$HOME/build/NetHack/playground/nethack
 FONT="departuremono nerd font"
+COLOR_SCHEME="NetHack"
+DELAY="2"
 DPI=${DPI:-$(xrdb -get Xft.dpi)}
 
 # terminal dimensions stored in arrays (columns lines)
@@ -28,43 +30,43 @@ typeset -r _MATCH=match _TERM_TOO_SMALL=too-small _TERM_BIGGER=bigger _UNKNOWN=u
 # Store the previous terminal dimensions in the array PREV_SIZES,
 # Then store the current terminal dimensions into TERM_SIZE
 get-term-size() {
-    TERM_SIZE=($(tput -S <<<$'cols\nlines'))
-    PREV_SIZES=($TERM_SIZE $PREV_SIZES)
+	TERM_SIZE=($(tput -S <<<$'cols\nlines'))
+	PREV_SIZES=($TERM_SIZE $PREV_SIZES)
 }
 
 
 # Return true when there are enough terminal sizes to compare, and the first pair differs from the 2nd pair
 term-size-changed() {
-    (( $#PREV_SIZES >= 4 )) && (( ($PREV_SIZES[$C] != $PREV_SIZES[$C + 2]) || ($PREV_SIZES[$L] != $PREV_SIZES[$L + 2]) ))
+	(( $#PREV_SIZES >= 4 )) && (( ($PREV_SIZES[$C] != $PREV_SIZES[$C + 2]) || ($PREV_SIZES[$L] != $PREV_SIZES[$L + 2]) ))
 }
 
 
 # Compare the current terminal size with the target size
 # set $REPLY to one of $_UNKNOWN $_MATCH, $_TERM_TOO_SMALL, or $_TERM_BIGGER
 term-size-cmp() {
-    get-term-size
-    if (( $#TERM_SIZE == 0 )); then
-        REPLY=$_UNKNOWN
-    elif (( $TERM_SIZE[$C] == $TARGET_SIZE[$C] && $TERM_SIZE[$L] == $TARGET_SIZE[$L] )); then
-        REPLY=$_MATCH
-    elif (( $TERM_SIZE[$C] < $TARGET_SIZE[$C] || $TERM_SIZE[$L] < $TARGET_SIZE[$L] )); then
-        REPLY=$_TERM_TOO_SMALL
-    else
-        REPLY=$_TERM_BIGGER
-    fi
+	get-term-size
+	if (( $#TERM_SIZE == 0 )); then
+		REPLY=$_UNKNOWN
+	elif (( $TERM_SIZE[$C] == $TARGET_SIZE[$C] && $TERM_SIZE[$L] == $TARGET_SIZE[$L] )); then
+		REPLY=$_MATCH
+	elif (( $TERM_SIZE[$C] < $TARGET_SIZE[$C] || $TERM_SIZE[$L] < $TARGET_SIZE[$L] )); then
+		REPLY=$_TERM_TOO_SMALL
+	else
+		REPLY=$_TERM_BIGGER
+	fi
 }
 
 
 # Emit terminal escape sequences that set the terminal's font size in pixels
 set-font-size() {
-    local size=${1:-32}
+	local size=${1:-32}
 
-    if [[ -n $TERMINOLOGY ]]; then
-        print -n "\e]50;:size=$size\e\a"
+	if [[ -n $TERMINOLOGY ]]; then
+		print -n "\e]50;:size=$size\e\a"
 
-        # set TERM=xterm for Terminology's sake
-        # when it enters Vim in 256 color mode, it looks like crap
-        TERM=xterm
+		# set TERM=xterm for Terminology's sake
+		# when it enters Vim in 256 color mode, it looks like crap
+		TERM=xterm
 
     elif [[ $TERM == rxvt-unicode* ]]; then
         print -n "\e]710;xft:${FONT}:pixelsize=${size}:antialias=true\a"
@@ -73,9 +75,9 @@ set-font-size() {
 		# calculate equivalent point size for font size given in pixels
 		local point_size=$(( $size * 72 / $DPI ))
 		alacritty msg config font.size=$point_size
-    fi
+	fi
 
-    print "Setting font size $size..."
+	print "Setting font size $size..."
 	command sleep .05
 }
 
@@ -87,100 +89,101 @@ set-font-size() {
 # known, not the prevailing font size.  Thus, the high and low boundaries must
 # first be established.
 nethack-right-size() {
+	# high and low guesses for starting the search
+	local max=72 min=18
 
-    # high and low guesses for starting the search
-    local max=72 min=18
+	clear
+	term-size-cmp
+	case $REPLY in
+		$_MATCH)
+			return 0;;
+		$_UNKNOWN)
+			print -P "%B%F{red}Unable to determine terminal dimensions%f%b"
+			return 1
+			;;
+	esac
 
-    clear
-    term-size-cmp
-    case $REPLY in
-        $_MATCH)
-            return 0;;
-        $_UNKNOWN)
-            print -P "%B%F{red}Unable to determine terminal dimensions%f%b"
-            return 1
-            ;;
-    esac
+	# find high boundary
+	local hi=$max
+	local -i i=0
+	while (( ++i )); do
+		set-font-size $hi
+		term-size-cmp
+		# idempotency check for subsequent iterations
+		if (( i > 2 )) && ! term-size-changed; then
+			print -P "%B%F{red}Terminal size is not changing%f%b"
+			return 1
+		fi
+		case $REPLY in
+			$_MATCH)
+				return 0 ;;
+			$_UNKNOWN)
+				print -P "%B%F{red}Unable to determine terminal dimensions%f%b"
+				return 1 ;;
+			$_TERM_TOO_SMALL)
+				break ;;
+			*)
+				(( hi *= 2 ))
+				;;
+		esac
+	done
 
-    # find high boundary
-    local hi=$max
-    local -i i=0
-    while (( ++i )); do
-        set-font-size $hi
-        term-size-cmp
-        # idempotency check for subsequent iterations
-        if (( i > 2 )) && ! term-size-changed; then
-            print -P "%B%F{red}Terminal size is not changing%f%b"
-            return 1
-        fi
-        case $REPLY in
-            $_MATCH)
-                return 0 ;;
-            $_UNKNOWN)
-                print -P "%B%F{red}Unable to determine terminal dimensions%f%b"
-                return 1 ;;
-            $_TERM_TOO_SMALL)
-                break ;;
-            *)
-                (( hi *= 2 )) ;;
-        esac
-    done
+	# find low boundary
+	local lo=$min
+	while true; do
+		set-font-size $lo
+		term-size-cmp
+		# idempotency check
+		if ! term-size-changed; then
+			print -P "%B%F{red}Terminal size is not changing%f%b"
+			return 1
+		fi
+		case $REPLY in
+			$_MATCH)
+				return 0 ;;
+			$_UNKNOWN)
+				return 1 ;;
+			$_TERM_BIGGER)
+				break ;;
+			*)
+				(( lo /= 2 ))
+				;;
+		esac
+	done
 
-    # find low boundary
-    local lo=$min
-    while true; do
-        set-font-size $lo
-        term-size-cmp
-        # idempotency check
-        if ! term-size-changed; then
-            print -P "%B%F{red}Terminal size is not changing%f%b"
-            return 1
-        fi
-        case $REPLY in
-            $_MATCH)
-                return 0 ;;
-            $_UNKNOWN)
-                return 1 ;;
-            $_TERM_BIGGER)
-                break ;;
-            *)
-                (( lo /= 2 )) ;;
-        esac
-    done
+	local mid=-1 prev=0 good=0
+	while true; do
+		(( mid = (hi + lo) / 2 ))
+		(( mid == prev )) && break  # we've been here before
+		set-font-size $mid
+		term-size-cmp
+		case $REPLY in
+			$_MATCH)
+				return 0 ;;
+			$_UNKNOWN)
+				return 1 ;;
+			$_TERM_BIGGER)
+				(( lo = prev = mid ))
+				# keep the largest good value seen so far
+				(( mid > good )) && (( good = mid ))
+				;;
+			$_TERM_TOO_SMALL)
+				(( hi = prev = mid ))
+				;;
+		esac
+	done
 
-    local mid=-1 prev=0 good=0
-    while true; do
-        (( mid = (hi + lo) / 2 ))
-        (( mid == prev )) && break  # we've been here before
-        set-font-size $mid
-        term-size-cmp
-        case $REPLY in
-            $_MATCH)
-                return 0 ;;
-            $_UNKNOWN)
-                return 1 ;;
-            $_TERM_BIGGER)
-                (( lo = prev = mid ))
-                # keep the largest good value seen so far
-                (( mid > good )) && (( good = mid ))
-                ;;
-            $_TERM_TOO_SMALL)
-                (( hi = prev = mid ))
-                ;;
-        esac
-    done
+	# if we didn't find a font size that results in an exact match,
+	# use the last seen font size that gave a terminal larger than
+	# the target
+	[[ -n $good && $good != $prev ]] && set-font-size $good
 
-    # if we didn't find a font size that results in an exact match,
-    # use the last seen font size that gave a terminal larger than
-    # the target
-    [[ -n $good && $good != $prev ]] && set-font-size $good
-
-    return 0
+	return 0
 }
 
 
 countdown() {
-    zmodload zsh/zselect
+	zmodload zsh/zselect
 
 	if [[ $# -lt 1 ]]; then
 		print 'Usage: countdown SECONDS [CMD ARGS]'
@@ -205,56 +208,63 @@ countdown() {
 
 
 setup() {
-    if [[ -d $HOME/.local/bin/ && ! -x $HOME/.local/bin/nh.tty ]]; then
-        cat <<SHIM > $HOME/.local/bin/nh.tty
-#!/bin/zsh
+	if [[ -d $HOME/.local/bin/ && ! -x $HOME/.local/bin/nh.tty ]]; then
+		cat <<-SHIM > $HOME/.local/bin/nh.tty
+	#!/bin/zsh
+	
+	[[ -L /tmp/nethack.tty ]] && tcd --scheme=NetHack > /tmp/nethack.tty
+	SHIM
+	chmod +x $HOME/.local/bin/nh.tty
+	fi
 
-[[ -L /tmp/nethack.tty ]] && tcd --scheme=NetHack > /tmp/nethack.tty
-SHIM
-    chmod +x $HOME/.local/bin/nh.tty
-    fi
-
-    if [[ -n ${no_resize+1} ]] || nethack-right-size; then
-        [[ -z ${no_xkbmap+1} ]] && setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
-        clear
-        if [[ $TASKNAME != wizard ]]; then 
-            ln -sf $TTY /tmp/nethack.tty
-            print "After logging in run 'nh.tty' to fix the colors"
-            countdown 2
-        fi
-        return 0
-    else
-        return 1
-    fi
+	if [[ -n ${no_resize+1} ]] || nethack-right-size; then
+		[[ -z ${no_xkbmap+1} ]] && setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
+		clear
+		if [[ $TASKNAME != wizard ]]; then 
+			ln -sf $TTY /tmp/nethack.tty
+			local scheme=$(tcd --scheme)
+			if [[ $scheme:l != "this is the color scheme '$COLOR_SCHEME:l'" ]]; then
+				print "Setting TTY color scheme to $COLOR_SCHEME"
+				tcd --scheme=$COLOR_SCHEME
+			else
+				print "The TTY's color scheme is already $COLOR_SCHEME"
+			fi
+			print "Run 'nh.tty' to fix the colors if they are changed after login"
+		fi
+		return 0
+	else
+		return 1
+	fi
 }
 
 
 spawn() {
-    case $TASKNAME in
-        nao) ssh nethack@alt.org ;;
-        hardfought) ssh nethack@hardfought.org ;;
-        nethack) MAILREADER=/usr/bin/mutt command nethack ;;
-        wizard)
-            if [[ ! -x $PLAYGROUND ]]; then
-                err "Locally-built NetHack binary not found at '$PLAYGROUND'"
-                pause
-                return 1
-            elif [[ -a $WIZKIT ]]; then
-                WIZKIT=$WIZKIT MAILREADER=/usr/bin/mutt $PLAYGROUND -D
-            else
-                warn "wizkit.txt not found at '$WIZKIT'"
-                pause
-                MAILREADER=/usr/bin/mutt $PLAYGROUND -D
-            fi ;;
-    esac
+	case $TASKNAME in
+		nao) countdown $DELAY ssh nethack@alt.org ;;
+		hardfought) countdown $DELAY ssh nethack@hardfought.org ;;
+		nethack) MAILREADER=/usr/bin/mutt command nethack ;;
+		wizard)
+			if [[ ! -x $PLAYGROUND ]]; then
+				err "Locally-built NetHack binary not found at '$PLAYGROUND'"
+				pause
+				return 1
+			elif [[ -a $WIZKIT ]]; then
+				WIZKIT=$WIZKIT MAILREADER=/usr/bin/mutt $PLAYGROUND -D
+			else
+				warn "wizkit.txt not found at '$WIZKIT'"
+				pause
+				MAILREADER=/usr/bin/mutt $PLAYGROUND -D
+			fi
+			break ;;
+	esac
 }
 
 
 cleanup() {
-    [[ -z ${no_xkbmap+1} ]] && setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll || true
+	[[ -z ${no_xkbmap+1} ]] && setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll || true
 }
 
 
 source $0:h/__TASKS.zsh
 
-# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 expandtab:
+# vim:set foldenable foldmethod=indent filetype=zsh tabstop=4 noexpandtab:
