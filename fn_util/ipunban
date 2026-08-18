@@ -1,0 +1,28 @@
+# vim: set ft=zsh expandtab:
+
+# quickly unban an IP address via `iptables`
+ipunban() {
+    local fw_state=/var/state/iptables.state 
+    local success=0
+
+    if (( $# == 0 )); then
+        print -Pu2 "%B%F{cyan}Usage: ipunban ipaddress ...%f%b"
+        return 1
+    fi
+
+    sudo -v
+    until (( $# < 1 )); do
+        if iptables -D INPUT -s $1 -j DROP; then
+            print -Pu2 "%B%F{cyan}Unblocked $1%f%b"
+            (( success ++ ))
+        else
+            print -Pu2 "%B%F{yellow}Warning: failed to unblock $1%f%b"
+        fi
+        shift
+    done
+
+    if (( success != 0 )); then
+        print -Pu2 "%B%F{cyan}Saving firefall state to $fw_state%f%b"
+        iptables-save -f $fw_state 
+    fi
+}
