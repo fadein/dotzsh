@@ -2,8 +2,8 @@
 # vim: set noexpandtab:
 
 PURPOSE='Rebuild Vim from official repository'
-VERSION="2.1"
-   DATE="Mon Aug  3 2026"
+VERSION="2.2"
+   DATE="Wed Aug 19 2026"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 TASKNAME=$0:t:r
 
@@ -19,14 +19,14 @@ export UPSTREAM=https://github.com/vim/vim
 setup() {
 	case $OSTYPE in
 		linux*)
-			local opts=--format=%Y ;;
+			local stat_opts=--format=%Y ;;
 		darwin*)
-			local opts=-f%m ;;
+			local stat_opts=-f%m ;;
 	esac
 
 	if ! [[ -d $BUILDDIR/.git ]]; then
 		git clone $UPSTREAM $BUILDDIR || die "Failed to clone upstream Vim repo from upstream"
-	elif [[ $(stat $opts $BUILDDIR/.git) -le $(( $(command date +%s) - $UPDATE_HOURS * 3600 )) ]]; then
+	elif [[ $(stat $stat_opts $BUILDDIR/.git) -le $(( $(command date +%s) - $UPDATE_HOURS * 3600 )) ]]; then
 		cd $BUILDDIR
 		git pull || die "Failed to pull latest updates from upstream"
 	else
@@ -81,7 +81,7 @@ env() {
 	)
 
 	#Count number of CPUs in this system and add one
-	MAKE_JOBS=-j$(( $(nproc) + 1 ))
+	MAKE_JOBS=-j$(( CORES + 1 ))
 	_TODO=(
 		'$ makeVim'
 		'$ sudo make install'
