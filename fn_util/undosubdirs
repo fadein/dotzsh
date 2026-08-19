@@ -1,20 +1,20 @@
 # vim: set ft=zsh expandtab:
 
-
 undosubdirs() {
-	if [ -z $1 ]
-	then
-		for dir in *
-		do
-			echo Really undo $dir \(y/n\)\?
-			read yn
-			if [ $yn = "y" ]; then
-				mv -i $dir/* .
-				rmdir $dir
-			fi
+    if (( $# == 0 )); then
+        setopt local_options no_null_glob
+        local dir res
+        for dir in *(/); do
+			print "Really undo $dir (y/N)?"
+			read res
+            case $res in
+                y*|Y*)
+                    command mv -i $dir/* .
+                    command rmdir $dir ;;
+            esac
 		done
 	else
-		mv -i $1/* .
-		rmdir $1
+		command mv -i $1/* .
+		command rmdir $1
 	fi
 }

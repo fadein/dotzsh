@@ -3,15 +3,11 @@
 # Split an environment variable on a delimiter (default ':')
 # and return the nth item
 nth () {
-	if [ "$#" -lt 2 ]; then
-		echo Too few arguments to nth: "$*";
-		echo Usage: nth \<position\> \<list\> \<delimiter\>;
-		return 65;
-	fi;
-	local PATHS=$2
-	local DELIMIT=${3-":"};
-	if [ "0" = `expr index $PATHS $DELIMIT` ]; then
-		PATHS=$(eval echo \$$PATHS)
+    if (( $# < 2 )); then
+		print "Too few arguments to nth: $*"
+		print "Usage: nth <position> <list> <delimiter>"
+		return 1
 	fi
-	echo $PATHS | cut -d$DELIMIT -f$1
+    local IFS=${3-":"}
+    print ${${=2}[$1]}
 }

@@ -9,14 +9,14 @@
 
 restore() {
 	if (( $# == 0 )); then
-		1>&2 print "Usage: restore <recycled_file_path>..."
+		print -u2 "Usage: restore <recycled_file_path>..."
 		return 1
 	fi
 
 	local recycled_file
 	for recycled_file in "$@"; do
 		if [[ ! -e "$recycled_file" ]]; then
-			1>&2 print "Error: File '$recycled_file' does not exist; skipping"
+			print -u2 "Error: File '$recycled_file' does not exist; skipping"
 			continue
 		fi
 
@@ -29,7 +29,7 @@ restore() {
 
 		# Ensure the original path starts from the root directory
 		if [[ "$original_path" != /* ]]; then
-			1>&2 print "Reconstructed path '$original_path' is not absolute; skipping"
+			print -u2 "Reconstructed path '$original_path' is not absolute; skipping"
 			continue
 		fi
 

@@ -1,15 +1,20 @@
 # vim: set ft=zsh expandtab:
 
 msec2time() {
-    while (( $# > 0 )); do
-        local t=$1
-        shift
-        if (( ${#t} > 3 )); then
-            t=${t:0:-3}
-        fi
-
-        TZ=GMT perl -e "print scalar localtime $t, \" GMT\n\""
-        TZ=MST perl -e "print scalar localtime $t, \" MST\n\""
-        echo
-    done
+    zmodload zsh/datetime
+    if (( $# == 0 )); then
+        strftime %c
+        TZ=GMT strftime %c
+    else 
+        while (( $# > 0 )); do
+            if [[ $1 =~ '([0-9]+)' ]]; then
+                local ms=$match[1] s
+                (( ${#ms} > 3 )) && s=${ms:0:-3}  # trim 1/1000ths
+                strftime "$s => %c" $s
+                TZ=GMT strftime "$s => %c" $s
+                print
+            fi
+            shift
+        done
+    fi
 }

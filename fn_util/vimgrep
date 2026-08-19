@@ -1,8 +1,8 @@
 # vim: set filetype=zsh expandtab:
 vimgrep() {
     if (( $# < 2 )); then
-        1>&2 print "Error: a search pattern and at least one file are required"
-        1>&2 print "Usage: vimgrep PATTERN FILE..."
+        print -u2 "Error: a search pattern and at least one file are required"
+        print -u2 "Usage: vimgrep PATTERN FILE..."
         return 1
     fi
 
