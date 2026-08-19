@@ -9,5 +9,6 @@ lock() {
         print Mark FILES (and directories) as read-only
 		return 1
 	fi
-    chmod --recursive -w "$@"
+    # chmod -R == recursive
+    chmod -R -w "$@"
 }

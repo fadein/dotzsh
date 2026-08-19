@@ -1,12 +1,11 @@
 # vim: set ft=zsh expandtab:
 
-
 # mount a filesystem to a directory and chdir into it
-mountc() {
+mountcd() {
 	if [ -z "$1" ]; then
-		echo Usage: mountc \<dirname\>
-		echo Mount and chdir into directory \<dirname\>
-		return
+		print -u2 "Mount and chdir into directory DIRNAME"
+		print -u2 "Usage: mountc DIRNAME"
+		return 1
 	fi
 	mount $1 && cd $1
 }

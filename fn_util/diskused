@@ -10,5 +10,6 @@ diskused() {
         args=(* .*)
     fi
 
-    du --human-readable --summarize $args | sort --human-numeric-sort
+    # du -h == --human-readable
+    du -h --summarize $args | sort --human-numeric-sort
 }

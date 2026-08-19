@@ -1,8 +1,6 @@
 # vim: set ft=zsh expandtab:
 
-
 makerepo() {
-
     case $1 in
         -h | -help | --help)
             cat 1>&2 <<MSG 

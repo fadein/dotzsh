@@ -3,24 +3,26 @@
 # autoload misc. Zsh functions
 autoload zmv zargs zcalc zrecompile
 
-# Autoload functions
-for fndir in \
-    ~/.zsh/fn_util    \
-    ~/.zsh/fn_gadgets \
-    ~/.zsh/fn_linux   \
-    ~/.zsh/fn_school  \
-    ; do
-    [[ ! -d $fndir ]] && continue
+# Autoload functions in an anon function for namespace hygiene
+function {
+    local fndirs=(fn_gadgets fn_school fn_util)
+    case $OS_TYPE in
+        linux*) fndirs+=(fn_linux) ;;
+        darwin*) fndirs+=(fn_mac) ;;
+    esac
 
-    zrecompile -p -M ${fndir}.zwc ${fndir}/*
-    # zcompile ${fndir}.zwc ${fndir}/*
+    local fndir
+    for fndir in $fndirs; do
+        fndir=~/.zsh/$fndir
+        [[ ! -d $fndir ]] && continue
 
-    if [[ -f $fndir.zwc ]]; then
-        fpath=($fndir.zwc $fpath)
-        autoload -Uw $fndir.zwc
-    fi
-done
-unset fndir
+        zrecompile -p -M ${fndir}.zwc ${fndir}/*
+        if [[ -f $fndir.zwc ]]; then
+            fpath+=($fndir.zwc)
+            autoload -Uw $fndir.zwc
+        fi
+    done
+} # Anon function for namespace hygiene
 
 specimen() {
 	cat <<-FONT

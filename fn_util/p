@@ -1,6 +1,5 @@
 # vim: set ft=zsh expandtab:
 
-
 # In case I fatfinger Ctrl-p
 p() {
     local i cmd max=20

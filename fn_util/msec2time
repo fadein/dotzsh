@@ -1,6 +1,5 @@
 # vim: set ft=zsh expandtab:
 
-
 msec2time() {
     while (( $# > 0 )); do
         local t=$1

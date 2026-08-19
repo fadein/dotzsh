@@ -2,6 +2,11 @@
 
 # quickly ban an IP address via `iptables`
 ipban() {
+    if [[ ! $OS_TYPE == linux* ]]; then
+        print -Pu2 "%B%F{yellow}This command is meant for linux hosts%f%b"
+        return 1
+    fi
+
     local fw_state=/var/state/iptables.state 
     local success=0
 
