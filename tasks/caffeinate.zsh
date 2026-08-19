@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
 PURPOSE="caffeinate"
-VERSION="2.0"
-   DATE="Thu Jul 30 2026"
+VERSION="2.1"
+   DATE="Wed Aug 19 2026"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -12,6 +12,7 @@ CAF=/usr/bin/caffeinate
 CAF_OPTS=(-d -i)
 
 setup() {
+	[[ $OSTYPE == darwin* ]] || die "This task is only for macOS systems"
 	cat <<-':'
 	          CH3
 	           |
