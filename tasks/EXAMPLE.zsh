@@ -42,10 +42,10 @@ setup() {
 	fi
 
 	# The CLEANUP_TRAPS array variable contains names of signals
-	# upon which the cleanup() function will be called.
-	# HUP is a good choice because this ensures the task is
-	# cleaned up if the controlling terminal is closed
-	CLEANUP_TRAPS=(HUP)
+	# upon which the cleanup() function will be called.  It contains TERM
+	# by default.  HUP is a useful signal to add because this ensures the
+	# task is cleaned up if the controlling terminal is closed
+	CLEANUP_TRAPS+=(HUP)
 }
 
 # how do you want to start your shell

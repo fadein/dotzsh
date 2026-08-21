@@ -13,7 +13,7 @@ FIGLET=$(command -v figlet) || FIGLET=print
 
 setup() {
     print $'\x1b[0m'
-    CLEANUP_TRAPS=(HUP)
+    CLEANUP_TRAPS+=(HUP)
 	old_dpi=$($XRDB -get Xft.dpi)
 	print Xft.dpi: ${dpi:-90} | $XRDB -override
 	$FIGLET Xft.dpi

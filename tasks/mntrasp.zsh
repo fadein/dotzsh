@@ -18,7 +18,7 @@ setup() {
     fi
     raisePrivs
     $MOUNT $MOUNT_POINT
-    CLEANUP_TRAPS=(HUP)
+    CLEANUP_TRAPS+=(HUP)
 }
 
 spawn() {

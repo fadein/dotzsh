@@ -28,7 +28,7 @@ old_dpi=$($XRDB -get Xft.dpi)
 
 
 setup() {
-	CLEANUP_TRAPS=(HUP)
+	CLEANUP_TRAPS+=(HUP)
 	killall picom
 
 	# Set the DPI for Firefox in 1080p mode

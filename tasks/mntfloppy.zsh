@@ -26,7 +26,7 @@ setup() {
         DEVICE=$devices[1]
     fi
     $MOUNT $DEVICE $MOUNT_POINT
-    CLEANUP_TRAPS=(HUP)
+    CLEANUP_TRAPS+=(HUP)
 }
 
 spawn() {

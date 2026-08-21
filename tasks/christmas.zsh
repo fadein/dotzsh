@@ -61,7 +61,7 @@ setup() {
             sleep .25
             ;;
     esac
-    CLEANUP_TRAPS=(HUP)
+    CLEANUP_TRAPS+=(HUP)
 }
 
 env() {

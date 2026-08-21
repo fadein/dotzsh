@@ -11,7 +11,7 @@ setup() {
     print $'\x1b[0m'
     xset -dpms s off
     xset s off
-    CLEANUP_TRAPS=(HUP)
+    CLEANUP_TRAPS+=(HUP)
     xset q | command grep "DPMS is"
     cat <<':'
 ____ ____ ____ ____ ____ _  _ ____ ____ _  _ ____ ____

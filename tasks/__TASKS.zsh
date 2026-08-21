@@ -1,7 +1,7 @@
 #!/bin/env zsh
 #
-# Version: 1.19
-# Date:    Fri Nov 28 2025
+# Version: 1.20
+# Date:    Tue Aug 18 2026
 # Author:  Erik Falor <ewfalor@gmail.com>
 
 # Instructions
@@ -24,6 +24,9 @@
 # When setup() returns non-zero the task is aborted.
 #
 # Explore EXAMPLE.zsh to see the role each of these functions play.
+
+# If cleanup() is defined, run it upon Ctrl-C
+CLEANUP_TRAPS=(INT TERM)
 
 if ! functions raisePrivs >/dev/null; then
 	raisePrivs() {

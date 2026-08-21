@@ -17,7 +17,7 @@ setup() {
 	:
 	loginctl reload
 
-	CLEANUP_TRAPS=(HUP)
+	CLEANUP_TRAPS+=(HUP)
 	cat <<-':'
 	 _                                     _           
 	| |_____ ___ _ __   _ _ _  _ _ _  _ _ (_)_ _  __ _ 

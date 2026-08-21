@@ -24,16 +24,15 @@ case $HOSTNAME in
 esac
 
 setup() {
+    CLEANUP_TRAPS+=(HUP)
     print $'\x1b[0m'
     $FIGLET $TASKNAME
-    CLEANUP_TRAPS=(HUP)
     old_dpi=$($XRDB -get Xft.dpi)
 
     # Set the DPI for Firefox
     echo Xft.dpi: 132 | xrdb -quiet -override
     xrandr --output $display --mode 1920x1080
     pkill -SIGUSR1 conky
-    CLEANUP_TRAPS=(HUP)
 }
 
 

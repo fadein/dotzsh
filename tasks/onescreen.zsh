@@ -14,7 +14,7 @@ FIGLET=$(command -v figlet) || FIGLET=print
 setup() {
     print $'\x1b[0m'
 	$FIGLET $TASKNAME
-    CLEANUP_TRAPS=(HUP)
+    CLEANUP_TRAPS+=(HUP)
 	old_dpi=$($XRDB -get Xft.dpi)
     backlighter !
     case $HOSTNAME in
@@ -61,7 +61,6 @@ setup() {
             ;;
 
     esac
-    CLEANUP_TRAPS=(HUP)
 }
 
 

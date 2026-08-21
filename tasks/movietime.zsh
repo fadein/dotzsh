@@ -34,7 +34,6 @@ find-hdmi-sink-name() {
 setup() {
     print $'\x1b[0m'
 	$FIGLET $TASKNAME
-    CLEANUP_TRAPS=(HUP)
 	old_dpi=$($XRDB -get Xft.dpi)
     backlighter !
     case $HOSTNAME in
@@ -76,6 +75,7 @@ setup() {
             sleep .25
             ;;
     esac
+    CLEANUP_TRAPS+=(HUP)
 }
 
 

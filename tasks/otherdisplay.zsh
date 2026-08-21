@@ -23,7 +23,7 @@ find-connected-displayport() {
 
 
 setup() {
-	CLEANUP_TRAPS=(HUP)
+	CLEANUP_TRAPS+=(HUP)
 
 	# Detect a secondary display
 	if find-connected-displayport; then
