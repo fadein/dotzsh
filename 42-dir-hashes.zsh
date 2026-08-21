@@ -82,7 +82,6 @@ local devel=(
 
 local school=(
 	# +,/)/-1sort
-	1410 $HOME/1410
 	abet $HOME/school/ABET_Chair
 	auto $HOME/school/course_automation
 	automation $HOME/school/course_automation
@@ -95,6 +94,7 @@ local school=(
 	lor $HOME/school/letters_of_recommendation
 	navigation $HOME/school/navigation
 	rec $HOME/school/letters_of_recommendation
+	receipts $HOME/Documents/receipts
 	scanner $HOME/school/scanner
 	school $HOME/school
 	videos $HOME/school/videos
