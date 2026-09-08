@@ -1,26 +1,33 @@
 #!/usr/bin/env zsh
 
 PURPOSE="dunnet"
-VERSION="1.0"
-   DATE="Fri Aug  7 2026"
+VERSION="2.0"
+   DATE="Tue Sep  8 2026"
  AUTHOR="fadein"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
 
 
-STTY=/usr/bin/stty
+STTY==stty
 
 setup() {
 	[[ ! -d ~/games ]] && die "~/games is not a directory"
-	[[ ! -f ~/games/fadein.dunnet ]] && die "~/games/fadein.dunnet is not a file"
 
 	cd ~/games
 
 	# disable ^D so I don't accidentally the game
-	stty eof "^7" 
+	$STTY eof "^7" 
 
-	print -Pu2 "%B%F{green}restore fadein.dunnet%f%b\n"
+	local pmpt
+	local press
+	print -P -v press "%S[PRESS ANY KEY]%s"
+	if [[ -f ~/games/fadein.dunnet ]]; then
+		print -P -v pmpt "Run %B%F{green}restore fadein.dunnet%f%b to load progress\n"
+	else
+		print -P -v pmpt "Run %B%F{green}save fadein.dunnet%f%b in-game to save progress\n"
+	fi
+	read -k -s "?$pmpt$press"
 }
 
 spawn() {
@@ -29,7 +36,7 @@ spawn() {
 }
 
 cleanup() {
-	stty eof "^D"
+	$STTY eof "^D"
 
 	print You were lost in the dungeon for $( prettySeconds )
 }
