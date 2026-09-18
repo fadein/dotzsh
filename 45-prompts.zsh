@@ -68,10 +68,10 @@ function dim {
 
 
 # Render the window title for virtual terminals
-function set-terminal-title {
+function print-terminal-title {
     local ROOT=
     [[ $UID == 0 ]] && ROOT="* "
-    builtin print -n "\e]0;${ROOT}$@\a"
+    builtin print -nP "\e]0;${ROOT}$@\a"
     [[ $TERM == screen* ]] && builtin print -n "\ek${ROOT}$2\e\\"
 }
 
@@ -79,7 +79,7 @@ function set-terminal-title {
 # Set the XTerm window title property
 # The default value appears as "[host] zsh tty cwd"
 function precmd {
-    set-terminal-title "[${HOST%%.*}] " "zsh" "$PWD ${TTY#/dev/}"
+    print-terminal-title "[%m] zsh %~ %l"
 }
 
 
@@ -89,11 +89,10 @@ function precmd {
 function preexec() {
     emulate -L zsh
     # reset console video attribs to null
-    print -nP "\e[0;0m"
+    print -n "\e[0m"
 
     # Re-parse the command line
-    local -a cmd;
-    cmd=(${(z)1})
+    local -a cmd=(${(z)1})
 
     # Construct a command that will output the desired job number.
     case $cmd[1] in
@@ -120,8 +119,8 @@ function preexec() {
                          # through to the next case
 
         *)
-            set-terminal-title "[$HOSTNAME] " $cmd[1]:t $cmd[2,-1]    # Not resuming a job,
-            return                                       # so we're all done
+            print-terminal-title "[%m] $cmd[1]:t $cmd[2,-1]"
+            return  # Not resuming a job, so we're all done
             ;;
     esac
 
@@ -131,7 +130,7 @@ function preexec() {
     # Could parse $rest here, but $jobtexts (via $jt) is easier.
     $cmd >>(read num rest
         cmd=(${(z)${(e):-\$jt$num}})
-        set-terminal-title '[%m] ' $cmd[1]:t $cmd[2,-1]) 2>/dev/null
+        print-terminal-title "[%m] $cmd[1]:t $cmd[2,-1]") 2>/dev/null
 }
 
 
@@ -523,8 +522,8 @@ else
 fi
 
 # if we're rockin' MidnightCommander, drop the precmd() and preexec()
-# functionss as they screw the GNU Screen window title up.  Also drop
-# the RPROMPT, since it doesn't look right in there.
+# functions as they screw the GNU Screen window title up.  Also drop
+# the RPROMPT, since it doesn't look good in MC.
 if [[ -n "$MC_SID" ]]; then
     unfunction precmd preexec
     unset RPROMPT
@@ -538,59 +537,74 @@ unset _UTEXT _UEND
 
 
 
-# Excerpt on Prompt expansion from 'man zshmisc', reproduced for convenience
+# Excerpt on Prompt expansion from 'man zshmisc', for convenience
 : <<'MAN'
 EXPANSION OF PROMPT SEQUENCES
-       Prompt sequences undergo a special form of expansion.  This type of expansion is also available using the -P option to the print builtin.
+       Prompt sequences undergo a special form of expansion.  This type of expansion is also available using the -P
+       option to the print builtin.
 
-       If the PROMPT_SUBST option is set, the prompt string is first subjected to parameter expansion, command substitution and arithmetic expansion.  See zshexpn(1).
+       If the PROMPT_SUBST option is set, the prompt string is first subjected to parameter expansion, command
+       substitution and arithmetic expansion.  See zshexpn(1).
 
        Certain escape sequences may be recognised in the prompt string.
 
-       If the PROMPT_BANG option is set, a `!' in the prompt is replaced by the current history event number.  A literal `!' may then be represented as `!!'.
+       If the PROMPT_BANG option is set, a '!' in the prompt is replaced by the current history event number.  A literal
+       '!' may then be represented as '!!'.
 
-       If the PROMPT_PERCENT option is set, certain escape sequences that start with `%' are expanded.  Many escapes are followed by a single character, although some of these take an optional integer  argu‐
-       ment that should appear between the `%' and the next character of the sequence.  More complicated escape sequences are available to provide conditional expansion.
+       If the PROMPT_PERCENT option is set, certain escape sequences that start with '%' are expanded.  Many escapes are
+       followed by a single character, although some of these take an optional integer  argu‐ ment that should appear
+       between the '%' and the next character of the sequence.  More complicated escape sequences are available to
+       provide conditional expansion.
 
 SIMPLE PROMPT ESCAPES
    Special characters
-       %%     A `%'.
+       %%     A '%'.
 
-       %)     A `)'.
+       %)     A ')'.
 
    Login information
-       %l     The line (tty) the user is logged in on, without `/dev/' prefix.  If the name starts with `/dev/tty', that prefix is stripped.
+       %l     The line (tty) the user is logged in on, without '/dev/' prefix.  If the name starts with '/dev/tty', that
+              prefix is stripped.
 
        %M     The full machine hostname.
 
-       %m     The  hostname  up  to the first `.'.  An integer may follow the `%' to specify how many components of the hostname are desired.  With a negative integer, trailing components of the hostname are
-              shown.
+       %m     The  hostname  up  to the first '.'.  An integer may follow the '%' to specify how many components of the
+              hostname are desired.  With a negative integer, trailing components of the hostname are shown.
 
        %n     $USERNAME.
 
-       %y     The line (tty) the user is logged in on, without `/dev/' prefix.  This does not treat `/dev/tty' names specially.
+       %y     The line (tty) the user is logged in on, without '/dev/' prefix.  This does not treat '/dev/tty' names
+              specially.
 
    Shell state
-       %#     A `#' if the shell is running with privileges, a `%' if not.  Equivalent to `%(!.#.%%)'.  The definition of `privileged', for these purposes, is that either the effective user ID is  zero,  or,
-              if POSIX.1e capabilities are supported, that at least one capability is raised in either the Effective or Inheritable capability vectors.
+       %#     A '#' if the shell is running with privileges, a '%' if not.  Equivalent to '%(!.#.%%)'.  The definition
+              of 'privileged', for these purposes, is that either the effective user ID is  zero,  or, if POSIX.1e
+              capabilities are supported, that at least one capability is raised in either the Effective or Inheritable
+              capability vectors.
 
        %?     The return status of the last command executed just before the prompt.
 
-       %_     The status of the parser, i.e. the shell constructs (like `if' and `for') that have been started on the command line. If given an integer number that many strings will be printed; zero or nega‐
-              tive or no integer means print as many as there are.  This is most useful in prompts PS2 for continuation lines and PS4 for debugging with the XTRACE option; in the latter  case  it  will  also
-              work non-interactively.
+       %_     The status of the parser, i.e. the shell constructs (like 'if' and 'for') that have been started on the
+              command line. If given an integer number that many strings will be printed; zero or nega‐ tive or no
+              integer means print as many as there are.  This is most useful in prompts PS2 for continuation lines and
+              PS4 for debugging with the XTRACE option; in the latter  case  it  will  also work non-interactively.
 
-       %^     The status of the parser in reverse. This is the same as `%_' other than the order of strings.  It is often used in RPS2.
+       %^     The status of the parser in reverse. This is the same as '%_' other than the order of strings.  It is
+              often used in RPS2.
 
        %d
-       %/     Current  working directory.  If an integer follows the `%', it specifies a number of trailing components of the current working directory to show; zero means the whole path.  A negative integer
-              specifies leading components, i.e. %-1d specifies the first component.
+       %/     Current  working directory.  If an integer follows the '%', it specifies a number of trailing components
+              of the current working directory to show; zero means the whole path.  A negative integer specifies leading
+              components, i.e. %-1d specifies the first component.
 
-       %~     As %d and %/, but if the current working directory starts with $HOME, that part is replaced by a `~'. Furthermore, if it has a named directory as its prefix, that part is replaced by a `~' fol‐
-              lowed by the name of the directory, but only if the result is shorter than the full path; see Dynamic and Static named directories in zshexpn(1).
+       %~     As %d and %/, but if the current working directory starts with $HOME, that part is replaced by a '~'.
+              Furthermore, if it has a named directory as its prefix, that part is replaced by a '~' followed by the
+              name of the directory, but only if the result is shorter than the full path; see Dynamic and Static
+              named directories in zshexpn(1).
 
-       %e     Evaluation depth of the current sourced file, shell function, or eval.  This is incremented or decremented every time the value of %N is set or reverted to a previous value, respectively.  This
-              is most useful for debugging as part of $PS4.
+       %e     Evaluation depth of the current sourced file, shell function, or eval.  This is incremented or decremented
+              every time the value of %N is set or reverted to a previous value, respectively.  This is most useful for
+              debugging as part of $PS4.
 
        %h
        %!     Current history event number.
@@ -605,14 +619,14 @@ SIMPLE PROMPT ESCAPES
        %L     The current value of $SHLVL.
 
        %N     The  name of the script, sourced file, or shell function that zsh is currently executing, whichever was started most recently.  If there is none, this is equivalent to the parameter $0.  An in‐
-              teger may follow the `%' to specify a number of trailing path components to show; zero means the full path.  A negative integer specifies leading components.
+              teger may follow the '%' to specify a number of trailing path components to show; zero means the full path.  A negative integer specifies leading components.
 
        %x     The name of the file containing the source code currently being executed.  This behaves as %N except that function and eval command names are not shown, instead the file  where  they  were  de‐
               fined.
 
        %c
        %.
-       %C     Trailing component of the current working directory.  An integer may follow the `%' to get more than one component.  Unless `%C' is used, tilde contraction is performed first.  These are depre‐
+       %C     Trailing component of the current working directory.  An integer may follow the '%' to get more than one component.  Unless '%C' is used, tilde contraction is performed first.  These are depre‐
               cated as %c and %C are equivalent to %1~ and %1/, respectively, while explicit positive integers have the same effect as for the latter two sequences.
 
    Date and time
@@ -638,12 +652,12 @@ SIMPLE PROMPT ESCAPES
 
               In addition, if the system supports the POSIX gettimeofday system call, %. provides decimal fractions of a second since the epoch with leading zeroes.  By default three decimal places are  pro‐
               vided,  but  a  number  of digits up to 9 may be given following the %; hence %6.  outputs microseconds, and %9. outputs nanoseconds.  (The latter requires a nanosecond-precision clock_gettime;
-              systems lacking this will return a value multiplied by the appropriate power of 10.)  A typical example of this is the format `%D{%H:%M:%S.%.}'.
+              systems lacking this will return a value multiplied by the appropriate power of 10.)  A typical example of this is the format '%D{%H:%M:%S.%.}'.
 
               The GNU extension %N is handled as a synonym for %9..
 
-              Additionally, the GNU extension that a `-' between the % and the format character causes a leading zero or space to be stripped is handled directly by the shell for the format characters d,  f,
-              H,  k,  l,  m, M, S and y; any other format characters are provided to the system's strftime(3) with any leading `-' present, so the handling is system dependent.  Further GNU (or other) exten‐
+              Additionally, the GNU extension that a '-' between the % and the format character causes a leading zero or space to be stripped is handled directly by the shell for the format characters d,  f,
+              H,  k,  l,  m, M, S and y; any other format characters are provided to the system's strftime(3) with any leading '-' present, so the handling is system dependent.  Further GNU (or other) exten‐
               sions are also passed to strftime(3) and may work if the system supports them.
 
    Visual effects
@@ -671,9 +685,9 @@ SIMPLE PROMPT ESCAPES
 
               A positive numeric argument between the % and the { is treated as described for %G below.
 
-       %G     Within a %{...%} sequence, include a `glitch': that is, assume that a single character width will be output.  This is useful when outputting characters that otherwise cannot be  correctly  han‐
+       %G     Within a %{...%} sequence, include a 'glitch': that is, assume that a single character width will be output.  This is useful when outputting characters that otherwise cannot be  correctly  han‐
               dled  by  the  shell, such as the alternate character set on some terminals.  The characters in question can be included within a %{...%} sequence together with the appropriate number of %G se‐
-              quences to indicate the correct width.  An integer between the `%' and `G' indicates a character width other than one.  Hence %{seq%2G%} outputs seq and assumes it takes up  the  width  of  two
+              quences to indicate the correct width.  An integer between the '%' and 'G' indicates a character width other than one.  Hence %{seq%2G%} outputs seq and assumes it takes up  the  width  of  two
               standard characters.
 
               Multiple uses of %G accumulate in the obvious fashion; the position of the %G is unimportant.  Negative integers are not handled.
@@ -681,15 +695,18 @@ SIMPLE PROMPT ESCAPES
               Note that when prompt truncation is in use it is advisable to divide up output into single characters within each %{...%} group so that the correct truncation point can be found.
 
 CONDITIONAL SUBSTRINGS IN PROMPTS
-       %v     The value of the first element of the psvar array parameter.  Following the `%' with an integer gives that element of the array.  Negative integers count from the end of the array.
+       %v     The value of the first element of the psvar array parameter.  Following the '%' with an integer gives that element of the array.  Negative integers count from the end of the array.
 
        %(x.true-text.false-text)
-              Specifies  a ternary expression.  The character following the x is arbitrary; the same character is used to separate the text for the `true' result from that for the `false' result.  This sepa‐
-              rator may not appear in the true-text, except as part of a %-escape sequence.  A `)' may appear in the false-text as `%)'.  true-text and false-text may both contain  arbitrarily-nested  escape
-              sequences, including further ternary expressions.
+              Specifies  a ternary expression.  The character following the x is arbitrary; the same character is used
+              to separate the text for the 'true' result from that for the 'false' result.  This separator may not
+              appear in the true-text, except as part of a %-escape sequence.  A ')' may appear in the false-text as
+              '%)'.  true-text and false-text may both contain  arbitrarily-nested  escape sequences, including further
+              ternary expressions.
 
-              The  left parenthesis may be preceded or followed by a positive integer n, which defaults to zero.  A negative integer will be multiplied by -1, except as noted below for `l'.  The test charac‐
-              ter x may be any of the following:
+              The  left parenthesis may be preceded or followed by a positive integer n, which defaults to zero.  A
+              negative integer will be multiplied by -1, except as noted below for 'l'.  The test character x may be any
+              of the following:
 
               !      True if the shell is running with privileges.
               #      True if the effective uid of the current process is n.
@@ -718,30 +735,42 @@ CONDITIONAL SUBSTRINGS IN PROMPTS
        %<string<
        %>string>
        %[xstring]
-              Specifies  truncation  behaviour  for  the  remainder of the prompt string.  The third, deprecated, form is equivalent to `%xstringx', i.e. x may be `<' or `>'.  The string will be displayed in
+              Specifies  truncation  behaviour  for  the  remainder of the prompt string.  The third, deprecated, form
+              is equivalent to '%xstringx', i.e. x may be '<' or '>'.  The string will be displayed in
               place of the truncated portion of any string; note this does not undergo prompt expansion.
 
-              The numeric argument, which in the third form may appear immediately after the `[', specifies the maximum permitted length of the various strings that can be displayed in the  prompt.   In  the
-              first  two forms, this numeric argument may be negative, in which case the truncation length is determined by subtracting the absolute value of the numeric argument from the number of character
-              positions remaining on the current prompt line.  If this results in a zero or negative length, a length of 1 is used.  In other words, a negative argument  arranges  that  after  truncation  at
-              least n characters remain before the right margin (left margin for RPROMPT).
+              The numeric argument, which in the third form may appear immediately after the '[', specifies the maximum
+              permitted length of the various strings that can be displayed in the  prompt.   In  the first  two forms,
+              this numeric argument may be negative, in which case the truncation length is determined by subtracting
+              the absolute value of the numeric argument from the number of character positions remaining on the current
+              prompt line.  If this results in a zero or negative length, a length of 1 is used.  In other words, a
+              negative argument  arranges  that  after  truncation  at least n characters remain before the right margin
+              (left margin for RPROMPT).
 
-              The  forms with `<' truncate at the left of the string, and the forms with `>' truncate at the right of the string.  For example, if the current directory is `/home/pike', the prompt `%8<..<%/'
-              will expand to `..e/pike'.  In this string, the terminating character (`<', `>' or `]'), or in fact any character, may be quoted by a preceding `\'; note when using print -P, however, that this
-              must  be  doubled  as  the  string  is  also  subject  to  standard  print  processing,  in addition to any backslashes removed by a double quoted string:  the worst case is therefore `print -P
-              "%<\\\\<<..."'.
+              The  forms with '<' truncate at the left of the string, and the forms with '>' truncate at the right of
+              the string.  For example, if the current directory is '/home/pike', the prompt '%8<..<%/'
+              will expand to '..e/pike'.  In this string, the terminating character ('<', '>' or ']'), or in fact any
+              character, may be quoted by a preceding '\'; note when using print -P, however, that this must  be
+              doubled  as  the  string  is  also  subject  to  standard  print  processing,  in addition to any
+              backslashes removed by a double quoted string:  the worst case is therefore 'print -P "%<\\\\<<..."'.
 
-              If the string is longer than the specified truncation length, it will appear in full, completely replacing the truncated string.
+              If the string is longer than the specified truncation length, it will appear in full, completely
+              replacing the truncated string.
 
-              The part of the prompt string to be truncated runs to the end of the string, or to the end of the next enclosing group of the `%(' construct, or to the next truncation encountered at  the  same
-              grouping  level  (i.e. truncations inside a `%(' are separate), which ever comes first.  In particular, a truncation with argument zero (e.g., `%<<') marks the end of the range of the string to
-              be truncated while turning off truncation from there on. For example, the prompt `%10<...<%~%<<%# ' will print a truncated representation of the current directory, followed by  a  `%'  or  `#',
-              followed  by  a  space.   Without the `%<<', those two characters would be included in the string to be truncated.  Note that `%-0<<' is not equivalent to `%<<' but specifies that the prompt is
-              truncated at the right margin.
+              The part of the prompt string to be truncated runs to the end of the string, or to the end of the next
+              enclosing group of the '%(' construct, or to the next truncation encountered at  the  same grouping  level
+              (i.e. truncations inside a '%(' are separate), which ever comes first.  In particular, a truncation with
+              argument zero (e.g., '%<<') marks the end of the range of the string to be truncated while turning off
+              truncation from there on. For example, the prompt '%10<...<%~%<<%# ' will print a truncated representation
+              of the current directory, followed by  a  '%'  or  '#', followed  by  a  space.   Without the '%<<', those
+              two characters would be included in the string to be truncated.  Note that '%-0<<' is not equivalent to
+              '%<<' but specifies that the prompt is truncated at the right margin.
 
-              Truncation applies only within each individual line of the prompt, as delimited by embedded newlines (if any).  If the total length of any line of the prompt after truncation  is  greater  than
-              the   terminal  width,  or  if  the  part  to  be  truncated  contains  embedded  newlines,  truncation  behavior  is  undefined  and  may  change  in  a  future  version  of  the  shell.   Use
-              `%-n(l.true-text.false-text)' to remove parts of the prompt when the available space is less than n.
+              Truncation applies only within each individual line of the prompt, as delimited by embedded newlines (if
+              any).  If the total length of any line of the prompt after truncation  is  greater  than the   terminal
+              width,  or  if  the  part  to  be  truncated  contains  embedded  newlines,  truncation  behavior  is
+              undefined  and  may  change  in  a  future  version  of  the  shell.   Use '%-n(l.true-text.false-text)'
+              to remove parts of the prompt when the available space is less than n.
 MAN
 
 
