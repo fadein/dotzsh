@@ -69,17 +69,15 @@ function dim {
 
 # Render the window title for virtual terminals
 function print-terminal-title {
-    local ROOT=
-    [[ $UID == 0 ]] && ROOT="* "
-    builtin print -nP "\e]0;${ROOT}$@\a"
-    [[ $TERM == screen* ]] && builtin print -n "\ek${ROOT}$2\e\\"
+    builtin print -nP "\e]0;%(!.* .)[%m] $@\a"
+    [[ $TERM == screen* ]] && builtin print -nP "\ek%(!* .)$1\e\\"
 }
 
 
 # Set the XTerm window title property
-# The default value appears as "[host] zsh tty cwd"
+# The default value appears as "zsh tty cwd"
 function precmd {
-    print-terminal-title "[%m] zsh %~ %l"
+    print-terminal-title zsh %~ %l
 }
 
 
@@ -119,7 +117,7 @@ function preexec() {
                          # through to the next case
 
         *)
-            print-terminal-title "[%m] $cmd[1]:t $cmd[2,-1]"
+            print-terminal-title "$cmd[1]:t" "$cmd[2,-1]"
             return  # Not resuming a job, so we're all done
             ;;
     esac
@@ -130,7 +128,7 @@ function preexec() {
     # Could parse $rest here, but $jobtexts (via $jt) is easier.
     $cmd >>(read num rest
         cmd=(${(z)${(e):-\$jt$num}})
-        print-terminal-title "[%m] $cmd[1]:t $cmd[2,-1]") 2>/dev/null
+        print-terminal-title "$cmd[1]:t" "$cmd[2,-1]") 2>/dev/null
 }
 
 
@@ -552,7 +550,7 @@ EXPANSION OF PROMPT SEQUENCES
        '!' may then be represented as '!!'.
 
        If the PROMPT_PERCENT option is set, certain escape sequences that start with '%' are expanded.  Many escapes are
-       followed by a single character, although some of these take an optional integer  argu‐ ment that should appear
+       followed by a single character, although some of these take an optional integer  argument that should appear
        between the '%' and the next character of the sequence.  More complicated escape sequences are available to
        provide conditional expansion.
 
@@ -585,9 +583,9 @@ SIMPLE PROMPT ESCAPES
        %?     The return status of the last command executed just before the prompt.
 
        %_     The status of the parser, i.e. the shell constructs (like 'if' and 'for') that have been started on the
-              command line. If given an integer number that many strings will be printed; zero or nega‐ tive or no
-              integer means print as many as there are.  This is most useful in prompts PS2 for continuation lines and
-              PS4 for debugging with the XTRACE option; in the latter  case  it  will  also work non-interactively.
+              command line. If given an integer number that many strings will be printed; zero or negative or no integer
+              means print as many as there are.  This is most useful in prompts PS2 for continuation lines and PS4 for
+              debugging with the XTRACE option; in the latter  case  it  will  also work non-interactively.
 
        %^     The status of the parser in reverse. This is the same as '%_' other than the order of strings.  It is
               often used in RPS2.
@@ -609,25 +607,31 @@ SIMPLE PROMPT ESCAPES
        %h
        %!     Current history event number.
 
-       %i     The line number currently being executed in the script, sourced file, or shell function given by %N.  This is most useful for debugging as part of $PS4.
+       %i     The line number currently being executed in the script, sourced file, or shell function given by %N.  This
+              is most useful for debugging as part of $PS4.
 
-       %I     The line number currently being executed in the file %x.  This is similar to %i, but the line number is always a line number in the file where the code was defined, even if the code is a  shell
+       %I     The line number currently being executed in the file %x.  This is similar to %i, but the line number is
+              always a line number in the file where the code was defined, even if the code is a  shell
               function.
 
        %j     The number of jobs.
 
        %L     The current value of $SHLVL.
 
-       %N     The  name of the script, sourced file, or shell function that zsh is currently executing, whichever was started most recently.  If there is none, this is equivalent to the parameter $0.  An in‐
-              teger may follow the '%' to specify a number of trailing path components to show; zero means the full path.  A negative integer specifies leading components.
+       %N     The  name of the script, sourced file, or shell function that zsh is currently executing, whichever was
+              started most recently.  If there is none, this is equivalent to the parameter $0.  An integer may follow
+              the '%' to specify a number of trailing path components to show; zero means the full path.  A negative
+              integer specifies leading components.
 
-       %x     The name of the file containing the source code currently being executed.  This behaves as %N except that function and eval command names are not shown, instead the file  where  they  were  de‐
-              fined.
+       %x     The name of the file containing the source code currently being executed.  This behaves as %N except that
+              function and eval command names are not shown, instead the file  where  they  were  defined.
 
        %c
        %.
-       %C     Trailing component of the current working directory.  An integer may follow the '%' to get more than one component.  Unless '%C' is used, tilde contraction is performed first.  These are depre‐
-              cated as %c and %C are equivalent to %1~ and %1/, respectively, while explicit positive integers have the same effect as for the latter two sequences.
+       %C     Trailing component of the current working directory.  An integer may follow the '%' to get more than one
+              component.  Unless '%C' is used, tilde contraction is performed first.  These are deprecated as %c and %C
+              are equivalent to %1~ and %1/, respectively, while explicit positive integers have the same effect as for
+              the latter two sequences.
 
    Date and time
        %D     The date in yy-mm-dd format.
@@ -644,21 +648,27 @@ SIMPLE PROMPT ESCAPES
        %W     The date in mm/dd/yy format.
 
        %D{string}
-              string is formatted using the strftime function.  See strftime(3) for more details.  Various zsh extensions provide numbers with no leading zero or space if the number is a single digit:
+              string is formatted using the strftime function.  See strftime(3) for more details.  Various zsh
+              extensions provide numbers with no leading zero or space if the number is a single digit:
 
               %f     a day of the month
               %K     the hour of the day on the 24-hour clock
               %L     the hour of the day on the 12-hour clock
 
-              In addition, if the system supports the POSIX gettimeofday system call, %. provides decimal fractions of a second since the epoch with leading zeroes.  By default three decimal places are  pro‐
-              vided,  but  a  number  of digits up to 9 may be given following the %; hence %6.  outputs microseconds, and %9. outputs nanoseconds.  (The latter requires a nanosecond-precision clock_gettime;
-              systems lacking this will return a value multiplied by the appropriate power of 10.)  A typical example of this is the format '%D{%H:%M:%S.%.}'.
+              In addition, if the system supports the POSIX gettimeofday system call, %. provides decimal fractions of a
+              second since the epoch with leading zeroes.  By default three decimal places are  provided,  but  a
+              number  of digits up to 9 may be given following the %; hence %6.  outputs microseconds, and %9. outputs
+              nanoseconds.  (The latter requires a nanosecond-precision clock_gettime; systems lacking this will return
+              a value multiplied by the appropriate power of 10.)  A typical example of this is the format
+              '%D{%H:%M:%S.%.}'.
 
               The GNU extension %N is handled as a synonym for %9..
 
-              Additionally, the GNU extension that a '-' between the % and the format character causes a leading zero or space to be stripped is handled directly by the shell for the format characters d,  f,
-              H,  k,  l,  m, M, S and y; any other format characters are provided to the system's strftime(3) with any leading '-' present, so the handling is system dependent.  Further GNU (or other) exten‐
-              sions are also passed to strftime(3) and may work if the system supports them.
+              Additionally, the GNU extension that a '-' between the % and the format character causes a leading zero or
+              space to be stripped is handled directly by the shell for the format characters d,  f, H,  k,  l,  m, M, S
+              and y; any other format characters are provided to the system's strftime(3) with any leading '-' present,
+              so the handling is system dependent.  Further GNU (or other) extensions are also passed to strftime(3) and
+              may work if the system supports them.
 
    Visual effects
        %B (%b)
@@ -673,29 +683,37 @@ SIMPLE PROMPT ESCAPES
               Start (stop) standout mode.
 
        %F (%f)
-              Start (stop) using a different foreground colour, if supported by the terminal.  The colour may be specified two ways: either as a numeric argument, as normal, or by a sequence in  braces  fol‐
-              lowing the %F, for example %F{red}.  In the latter case the values allowed are as described for the fg zle_highlight attribute; see Character Highlighting in zshzle(1).  This means that numeric
-              colours are allowed in the second format also.
+              Start (stop) using a different foreground colour, if supported by the terminal.  The colour may be
+              specified two ways: either as a numeric argument, as normal, or by a sequence in  braces  following the
+              %F, for example %F{red}.  In the latter case the values allowed are as described for the fg zle_highlight
+              attribute; see Character Highlighting in zshzle(1).  This means that numeric colours are allowed in the
+              second format also.
 
        %K (%k)
               Start (stop) using a different bacKground colour.  The syntax is identical to that for %F and %f.
 
        %{...%}
-              Include a string as a literal escape sequence.  The string within the braces should not change the cursor position.  Brace pairs can nest.
+              Include a string as a literal escape sequence.  The string within the braces should not change the cursor
+              position.  Brace pairs can nest.
 
               A positive numeric argument between the % and the { is treated as described for %G below.
 
-       %G     Within a %{...%} sequence, include a 'glitch': that is, assume that a single character width will be output.  This is useful when outputting characters that otherwise cannot be  correctly  han‐
-              dled  by  the  shell, such as the alternate character set on some terminals.  The characters in question can be included within a %{...%} sequence together with the appropriate number of %G se‐
-              quences to indicate the correct width.  An integer between the '%' and 'G' indicates a character width other than one.  Hence %{seq%2G%} outputs seq and assumes it takes up  the  width  of  two
-              standard characters.
+       %G     Within a %{...%} sequence, include a 'glitch': that is, assume that a single character width will be
+              output.  This is useful when outputting characters that otherwise cannot be  correctly  handled  by  the
+              shell, such as the alternate character set on some terminals.  The characters in question can be included
+              within a %{...%} sequence together with the appropriate number of %G sequences to indicate the correct
+              width.  An integer between the '%' and 'G' indicates a character width other than one.  Hence %{seq%2G%}
+              outputs seq and assumes it takes up  the  width  of  two standard characters.
 
-              Multiple uses of %G accumulate in the obvious fashion; the position of the %G is unimportant.  Negative integers are not handled.
+              Multiple uses of %G accumulate in the obvious fashion; the position of the %G is unimportant.  Negative
+              integers are not handled.
 
-              Note that when prompt truncation is in use it is advisable to divide up output into single characters within each %{...%} group so that the correct truncation point can be found.
+              Note that when prompt truncation is in use it is advisable to divide up output into single characters
+              within each %{...%} group so that the correct truncation point can be found.
 
 CONDITIONAL SUBSTRINGS IN PROMPTS
-       %v     The value of the first element of the psvar array parameter.  Following the '%' with an integer gives that element of the array.  Negative integers count from the end of the array.
+       %v     The value of the first element of the psvar array parameter.  Following the '%' with an integer gives that
+              element of the array.  Negative integers count from the end of the array.
 
        %(x.true-text.false-text)
               Specifies  a ternary expression.  The character following the x is arbitrary; the same character is used
@@ -723,8 +741,7 @@ CONDITIONAL SUBSTRINGS IN PROMPTS
               g      True if the effective gid of the current process is n.
               j      True if the number of jobs is at least n.
               L      True if the SHLVL parameter is at least n.
-              l      True if at least n characters have already been printed on the current line.  When n is negative, true if at least abs(n) characters remain before the opposite margin (thus the left mar‐
-                     gin for RPROMPT).
+              l      True if at least n characters have already been printed on the current line.  When n is negative, true if at least abs(n) characters remain before the opposite margin (thus the left margin for RPROMPT).
               S      True if the SECONDS parameter is at least n.
               T      True if the time in hours is equal to n.
               t      True if the time in minutes is equal to n.
