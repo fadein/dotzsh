@@ -1,16 +1,21 @@
 #!/usr/bin/env zsh
 
+# Usage:
+# export $no_resize to suppress automatic TTY resizing
+# export $no_xkbmap to leave the current X keyboard map
+
+
 PURPOSE="Play NetHack locally or online"
-VERSION="5.3.0"
-   DATE="Tue Aug 11 2026"
+VERSION="5.3.2"
+   DATE="Mon Sep 14 2026"
  AUTHOR="erik"
 
 PROGNAME=$0
 TASKNAME=$0:t:r
 
-WIZKIT=$HOME/games/wizkit.txt
+WIZKIT=${WIZKIT:-$HOME/games/wizkit.txt}
 PLAYGROUND=$HOME/build/NetHack/playground/nethack
-FONT="departuremono nerd font"
+NH_FONT=${NH_FONT:-"departuremono nerd font"}
 COLOR_SCHEME="NetHack"
 DELAY="2"
 DPI=${DPI:-$(xrdb -get Xft.dpi)}
@@ -211,16 +216,16 @@ setup() {
 	if [[ -d $HOME/.local/bin/ && ! -x $HOME/.local/bin/nh.tty ]]; then
 		cat <<-SHIM > $HOME/.local/bin/nh.tty
 	#!/bin/zsh
-	
+
 	[[ -L /tmp/nethack.tty ]] && tcd --scheme=NetHack > /tmp/nethack.tty
 	SHIM
 	chmod +x $HOME/.local/bin/nh.tty
 	fi
 
 	if [[ -n ${no_resize+1} ]] || nethack-right-size; then
-		[[ -z ${no_xkbmap+1} ]] && setxkbmap us,colehack -option grp:ctrls_toggle -option grp_led:scroll
+		[[ -z ${no_xkbmap+1} ]] && setxkbmap us,colehack -option grp:ctrls_toggle,grp_led:caps
 		clear
-		if [[ $TASKNAME != wizard ]]; then 
+		if [[ $TASKNAME != wizard ]]; then
 			ln -sf $TTY /tmp/nethack.tty
 			local scheme=$(tcd --scheme)
 			if [[ $scheme:l != "this is the color scheme '$COLOR_SCHEME:l'" ]]; then
@@ -254,14 +259,14 @@ spawn() {
 				warn "wizkit.txt not found at '$WIZKIT'"
 				pause
 				MAILREADER=/usr/bin/mutt $PLAYGROUND -D
-			fi
-			break ;;
+			fi ;;
+		*) err "Unsupported taskname '$TASKNAME'" ;;
 	esac
 }
 
 
 cleanup() {
-	[[ -z ${no_xkbmap+1} ]] && setxkbmap colehack,us -option grp:ctrls_toggle -option grp_led:scroll || true
+	[[ -z ${no_xkbmap+1} ]] && setxkbmap colehack,us -option grp:ctrls_toggle,grp_led:caps || true
 }
 
 
