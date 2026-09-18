@@ -69,8 +69,10 @@ function dim {
 
 # Render the window title for virtual terminals
 function print-terminal-title {
-    builtin print -nP "\e]0;%(!.* .)[%m] $@\a"
-    [[ $TERM == screen* ]] && builtin print -nP "\ek%(!.*.)$1\e\\"
+    case $TERM in
+        screen*) builtin print -nP "\e]0;%(!.* .)[%m] $@\a\ek%(!.*.)$1\e\\" ;;
+        *)       builtin print -nP "\e]0;%(!.* .)[%m] $@\a" ;;
+    esac
 }
 
 
