@@ -79,7 +79,7 @@ function print-terminal-title {
 # Set the XTerm window title property
 # The default value appears as "zsh tty cwd"
 function precmd {
-    print-terminal-title zsh %~ %l
+    print-terminal-title zsh %~ %y
 }
 
 
