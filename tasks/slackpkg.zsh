@@ -2,8 +2,8 @@
 
  PURPOSE="Slackware update task"
 
- VERSION="1.20"
-    DATE="Wed Dec 24 2025"
+ VERSION="1.21"
+    DATE="Tue Sep 29 2026"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -116,12 +116,16 @@ recordTimeOfLastUpdate() {
 assert-initrd-has-colehack() {
 	if ! tar ztf /usr/share/mkinitrd/keymaps.tar.gz | grep -q colehack; then
 		print "Adding colehack.bmap to /usr/share/mkinitrd/keymaps.tar.gz..."
-		loadkeys -b colehack > colehack.bmap
-		gunzip -c /usr/share/mkinitrd/keymaps.tar.gz > /tmp/keymaps.tar
-		tar -rvf /tmp/keymaps.tar colehack.bmap
-		gzip -f /tmp/keymaps.tar
-		mv -f /usr/share/mkinitrd/keymaps.tar.gz{,.bak}
-		mv /tmp/keymaps.tar.gz /usr/share/mkinitrd/keymaps.tar.gz
+		(
+			cd /tmp
+			loadkeys -b colehack > colehack.bmap
+			gunzip -c /usr/share/mkinitrd/keymaps.tar.gz > /tmp/keymaps.tar
+			tar -rvf /tmp/keymaps.tar colehack.bmap
+			gzip -f /tmp/keymaps.tar
+			mv -f /usr/share/mkinitrd/keymaps.tar.gz{,.bak}
+			mv /tmp/keymaps.tar.gz /usr/share/mkinitrd/keymaps.tar.gz
+			rm -f colehack.bmap
+		)
 	else
 		print "colehack.bmap is already present"
 	fi
