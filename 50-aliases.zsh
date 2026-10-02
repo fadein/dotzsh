@@ -7,6 +7,7 @@ alias -- +x='chmod +x'
 alias -- -r='chmod -r'
 alias -- -w='chmod -w'
 alias -- -x='chmod -x'
+alias attach='tmux attach'
 alias backlighter='noglob backlighter'
 alias clipi=clipin
 alias clipo=clipout
