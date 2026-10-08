@@ -67,42 +67,42 @@ command -v pygount >/dev/null && alias pygount="pygount --format=summary"
 #
 # because I can't spell...
 # +,/^\(#.*\)\?$/-1sort
-alias cdx=cd
-alias cs=cd
-alias ecoh=echo
-alias ehco=echo
-alias fiel=file
-alias gerp=grep
-alias gi=git
-alias gitc=git
-alias gitlog='git log'
-alias got=git
-alias grpe=grep
-alias gti=git alias igt=git
-alias ivm=vim
-alias jbos=jobs
-alias jods=jobs
-alias jorbs=jobs
-alias les=less
-alias lss=less
-alias maek=make
-alias maike=make
-alias mak=make
-alias mor=more
-alias mplayre=mplayer
-alias mroe=more
-alias pgerp='pgrep -l'
-alias pyhton=python
-alias pyhtoon=python
-alias pyhtooon=python
-alias pythoon=python
-alias pythooon=python
-alias scd=cd
-alias sl=ls
-alias sls=ls
-alias sync-tody=sync-todo
-alias vm=vim
-alias vmi=vim
+#alias cdx=cd
+#alias cs=cd
+#alias ecoh=echo
+#alias ehco=echo
+#alias fiel=file
+#alias gerp=grep
+#alias gi=git
+#alias gitc=git
+#alias gitlog='git log'
+#alias got=git
+#alias grpe=grep
+#alias gti=git alias igt=git
+#alias ivm=vim
+#alias jbos=jobs
+#alias jods=jobs
+#alias jorbs=jobs
+#alias les=less
+#alias lss=less
+#alias maek=make
+#alias maike=make
+#alias mak=make
+#alias mor=more
+#alias mplayre=mplayer
+#alias mroe=more
+#alias pgerp='pgrep -l'
+#alias pyhton=python
+#alias pyhtoon=python
+#alias pyhtooon=python
+#alias pythoon=python
+#alias pythooon=python
+#alias scd=cd
+#alias sl=ls
+#alias sls=ls
+#alias sync-tody=sync-todo
+#alias vm=vim
+#alias vmi=vim
 
 #
 # vi commands
