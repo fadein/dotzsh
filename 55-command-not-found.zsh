@@ -139,7 +139,7 @@ _ykutwidntimwytim_count() {
     done
     (( n++ ))
     {
-        [[ -r $file ]] && grep -vxF -- "$(print -r -- "$((n-1))	$typo")" $file
+        [[ -r $file ]] && command grep -vxF -- "$(print -r -- "$((n-1))	$typo")" $file
         print -r -- "$n	$typo"
     } >| $file.$$ && command mv $file.$$ $file
     print -r -- $n
@@ -177,7 +177,7 @@ command_not_found_handler() {
 
     # Nothing sensible to suggest for very short words or paths, or for ignored typos.
     if (( ${#typo} >= 2 )) && [[ $typo != */* ]] && ! _ykutwidntimwytim_is_ignored $typo \
-            && (( $(_ykutwidntimwytim_count $typo) >= $YKUTWIDNTIMWYTIM_THRESHOLD )); then
+            && (( $(_ykutwidntimwytim_count $typo) >= YKUTWIDNTIMWYTIM_THRESHOLD )); then
         local -a ranked
         ranked=(${(f)"$(_ykutwidntimwytim_candidates $typo | sort -t$'\t' -k1,1n -k2,2n -k3,3n -k4,4)"})
         if (( ${#ranked} )); then
