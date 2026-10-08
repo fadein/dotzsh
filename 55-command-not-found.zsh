@@ -176,13 +176,13 @@ command_not_found_handler() {
 
     # Nothing sensible to suggest for very short words ...
     if (( ${#typo} < 2 )); then
-        print -u2 -r -- "0. ykutwidntimwytim: command not found: $typo"
+        print -u2 -r -- "ykutwidntimwytim: command not found: $typo"
     # ... or for ignored typos
     elif _ykutwidntimwytim_is_ignored $typo; then
-        print -u2 -r -- "1. ykutwidntimwytim: command not found: $typo (ignored)"
+        print -u2 -r -- "ykutwidntimwytim: command not found: $typo (ignored)"
     # when the typo is within THRESHOLD distance of a known command
     elif (( $(_ykutwidntimwytim_count $typo) >= YKUTWIDNTIMWYTIM_THRESHOLD )); then
-        print -u2 -r -- "2. ykutwidntimwytim: command not found: $typo"
+        print -u2 -r -- "ykutwidntimwytim: command not found: $typo"
         local -a ranked
         ranked=(${(f)"$(_ykutwidntimwytim_candidates $typo | sort -t$'\t' -k1,1n -k2,2n -k3,3n -k4,4)"})
         if (( ${#ranked} )); then
@@ -234,7 +234,7 @@ command_not_found_handler() {
             print -u2 -r -- "  no suggestions available"
         fi
     else
-        print -u2 -r -- "3. ykutwidntimwytim: command not found: $typo"
+        print -u2 -r -- "ykutwidntimwytim: command not found: $typo"
     fi
     return 127
 }
