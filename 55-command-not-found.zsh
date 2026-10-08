@@ -111,8 +111,8 @@ _ykutwidntimwytim_candidates() {
     names=(${(f)"$(awk -F'\t' -v list="${(j:\n:)${(f)"$(_ykutwidntimwytim_deletes $typo)"}}" '
         BEGIN { n = split(list, a, "\n"); for (i = 1; i <= n; i++) want[a[i]] = 1 }
         $1 in want { print $2 }' $file | sort -u)"})
-    # Aliases and functions change often, so check them directly (cheap length filter first).
-    for name in ${(k)aliases} ${(k)functions}; do
+    # Functions change often, so check them directly (cheap length filter first).
+    for name in ${(k)functions}; do
         [[ $name == _* ]] && continue
         (( ${#name} - ${#typo} <= YKUTWIDNTIMWYTIM_MAX_DIST && ${#typo} - ${#name} <= YKUTWIDNTIMWYTIM_MAX_DIST )) && names+=($name)
     done
@@ -120,7 +120,7 @@ _ykutwidntimwytim_candidates() {
         [[ $name == $typo ]] && continue
         dist=$(_ykutwidntimwytim_distance $typo $name)
         (( dist > YKUTWIDNTIMWYTIM_MAX_DIST )) && continue
-        if _ykutwidntimwytim_in $name ${(k)aliases} ${(k)functions}; then rank=0
+        if _ykutwidntimwytim_in $name ${(k)functions}; then rank=0
         elif _ykutwidntimwytim_in $name ${(k)builtins} ${(k)reswords}; then rank=1
         else rank=2; fi
         print -r -- "$dist	$rank	${#name}	$name"
@@ -173,42 +173,68 @@ reload-aliases() {
 # Main entry point - this function is invoked automatically by Zsh when the user submits a non-existant command
 command_not_found_handler() {
     local typo=$1
-    print -u2 -r -- "ykutwidntimwytim: command not found: $typo"
 
-    # Nothing sensible to suggest for very short words or paths, or for ignored typos.
-    if (( ${#typo} >= 2 )) && [[ $typo != */* ]] && ! _ykutwidntimwytim_is_ignored $typo \
-            && (( $(_ykutwidntimwytim_count $typo) >= YKUTWIDNTIMWYTIM_THRESHOLD )); then
+    # Nothing sensible to suggest for very short words ...
+    if (( ${#typo} < 2 )); then
+        print -u2 -r -- "0. ykutwidntimwytim: command not found: $typo"
+    # ... or for ignored typos
+    elif _ykutwidntimwytim_is_ignored $typo; then
+        print -u2 -r -- "1. ykutwidntimwytim: command not found: $typo (ignored)"
+    # when the typo is within THRESHOLD distance of a known command
+    elif (( $(_ykutwidntimwytim_count $typo) >= YKUTWIDNTIMWYTIM_THRESHOLD )); then
+        print -u2 -r -- "2. ykutwidntimwytim: command not found: $typo"
         local -a ranked
         ranked=(${(f)"$(_ykutwidntimwytim_candidates $typo | sort -t$'\t' -k1,1n -k2,2n -k3,3n -k4,4)"})
         if (( ${#ranked} )); then
             local best=${${(ps:\t:)ranked[1]}[4]}
-            local line="alias ${(q)typo}=${(q)best}"
-            print -u2 -r -- "Did you mean '$best'?"
+            local line="${(q)typo}=${(q)best}"
+            print -u2 -rP -- "Did you mean '%B%F{green}$best%f%b'?"
             if (( ${#ranked} > 1 )); then
                 local -a others
                 local r
                 for r in ${ranked[2,4]}; do others+=(${${(ps:\t:)r}[4]}); done
-                print -u2 -r -- "Other candidates: ${(j:, :)others}"
+                print -u2 -P "Other candidates: %B%F{yellow}${(j:, :)others}%f%b"
             fi
-            # Ask on the terminal; with no terminal, just show the line.
-            local reply
-            print -u2 -rn -- "Append '$line' to $YKUTWIDNTIMWYTIM_ALIASES? [yes/No/ignore] "
-            if read -r reply </dev/tty 2>/dev/null; then
-                case ${(L)reply} in
-                    y|yes)
-                        print -r -- $line >> $YKUTWIDNTIMWYTIM_ALIASES \
-                            && print -u2 -r -- "Saved. Run reload-aliases to use it in this shell."
-                        ;;
-                    i|ignore)
-                        _ykutwidntimwytim_ignore $typo
-                        print -u2 -r -- "Ignoring '$typo' from now on."
-                        ;;
-                esac
-            else
-                print -u2
-                print -u2 -r -- "  $line"
-            fi
+
+            local reply=edit
+            while [[ ${(L)reply} == e* ]]; do
+                if [[ -z $line ]]; then
+                    print -u2 "Aborting alias edit"
+                    break
+                fi
+
+                print -u2 -nP "\nAppend '%B%F{green}alias $line%f%b' to $YKUTWIDNTIMWYTIM_ALIASES? [%B%F{green}yes%f/%F{red}No%f/%F{cyan}edit%f/%F{black}ignore%f%b] "
+                if read -r reply </dev/tty 2>/dev/null; then
+                    case ${(L)reply} in
+                        y|yes)
+                            print -r -- alias $line >> $YKUTWIDNTIMWYTIM_ALIASES \
+                                && print -u2 -P "\nSaved! Run %B%F{green}reload-aliases%f%b to use it in this shell."
+                            ;;
+                        i|ignore)
+                            _ykutwidntimwytim_ignore $typo
+                            print -u2 -P -- "Ignoring %B%F{yellow}$typo%f%b from now on."
+                            ;;
+
+                        e|edit)
+                            print -u2
+                            # Edit the value in $line through a manually spawned subshell.
+                            # This chichanery is necessary b/c this hook function runs in an
+                            # extremely restricted environment which does not have ZLE.
+                            #
+                            # zsh -i forces an interactive shell
+                            #     -f avoids loading rc files to reduce startup time
+                            line=$(line=$line zsh -fc 'bindkey -e; vared -ep "alias " line; print $line')
+                            ;;
+                    esac
+                else
+                    print -u2 -- "\n  $line"
+                fi
+            done
+        else
+            print -u2 -r -- "  no suggestions available"
         fi
+    else
+        print -u2 -r -- "3. ykutwidntimwytim: command not found: $typo"
     fi
     return 127
 }
