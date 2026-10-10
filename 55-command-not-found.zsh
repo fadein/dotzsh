@@ -82,25 +82,68 @@ _ykutwidntimwytim_in() {
     [[ -n ${(M)@:#${(b)n}} ]]
 }
 
-# Rebuild the delete index if the set of commands has changed. Echoes its path.
+# Bring the delete index up to date with the commands now available, touching only
+# what changed. The header line holds a checksum of the sorted command names; each
+# indexed word appears in the file as its own zero-deletion variant ("word<TAB>word").
+# Echoes the index path.
 _ykutwidntimwytim_index() {
     local dir=${XDG_CACHE_HOME:-~/.cache}/ykutwidntimwytim
     local file=$dir/deletes
-    local key="$PATH|${#commands}|${#builtins}"
-    if [[ ! -r $file || $(head -n1 $file) != "# $key" ]]; then
-        mkdir -p $dir || return 1
-        print -u2 -r -- "ykutwidntimwytim: building the command index (one-time, may take a few seconds)..."
-        local w v
-        {
-            print -r -- "# $key"
-            for w in ${(k)commands} ${(k)builtins} ${(k)reswords}; do
-                for v in ${(f)"$(_ykutwidntimwytim_deletes $w)"}; do
-                    print -r -- "$v	$w"
-                done
-            done
-        } >| $file.$$ && command mv $file.$$ $file
+    local -a words old_words added removed
+    local key header w v
+
+    words=(${(k)commands} ${(k)builtins} ${(k)reswords})
+    words=(${(u)words})
+    key=$(print -rl -- $words | LC_ALL=C sort -u | cksum)
+    key=${key// /:}
+
+    [[ -r $file ]] && header=$(head -n1 $file)
+    if [[ $header == "# $key" ]]; then
+        print -r -- $file
+        return
     fi
+
+    mkdir -p $dir || return 1
+    if [[ -n $header ]]; then
+        old_words=(${(f)"$(awk -F'\t' 'NR > 1 && $1 == $2 { print $2 }' $file | sort -u)"})
+    fi
+    if (( ${#old_words} )); then
+        added=(${words:|old_words})
+        removed=(${old_words:|words})
+        local -a parts
+        (( ${#added} )) && parts+=("${#added} added ($(_ykutwidntimwytim_few $added))")
+        (( ${#removed} )) && parts+=("${#removed} removed ($(_ykutwidntimwytim_few $removed))")
+        print -u2 -r -- "ykutwidntimwytim: updating the command index: ${(j:, :)parts}"
+    else
+        # No usable index: start from scratch.
+        added=($words)
+        removed=()
+        print -u2 -r -- "ykutwidntimwytim: building the command index for ${#words} commands; this takes a few seconds..."
+    fi
+
+    {
+        print -r -- "# $key"
+        if (( ${#old_words} )); then
+            # Keep every line whose word was not removed.
+            awk -F'\t' -v list="${(j:\n:)removed}" '
+                BEGIN { n = split(list, a, "\n"); for (i = 1; i <= n; i++) if (a[i] != "") gone[a[i]] = 1 }
+                NR > 1 && !($2 in gone)' $file
+        fi
+        for w in $added; do
+            for v in ${(f)"$(_ykutwidntimwytim_deletes $w)"}; do
+                print -r -- "$v	$w"
+            done
+        done
+    } >| $file.$$ && command mv $file.$$ $file
     print -r -- $file
+}
+
+# Join up to 5 arguments with commas, noting how many more were left out.
+_ykutwidntimwytim_few() {
+    local -i extra=$(( $# - 5 ))
+    local out=${(j:, :)@[1,5]}
+    (( extra > 0 )) && out+=" (+$extra more)"
+    print -r -- $out
 }
 
 # Print "distance<TAB>rank<TAB>length<TAB>name" lines for plausible intended commands.
@@ -172,6 +215,14 @@ reload-aliases() {
 
 # Main entry point - this function is invoked automatically by Zsh when the user submits a non-existant command
 command_not_found_handler() {
+    # If anything inside this handler is itself not found, zsh would call us again,
+    # forking without end. The local is visible to the subshells we spawn.
+    if (( ${+_YKUTWIDNTIMWYTIM_ACTIVE} )); then
+        print -u2 -r -- "ykutwidntimwytim: command not found: $1 (while handling another typo)"
+        return 127
+    fi
+    local _YKUTWIDNTIMWYTIM_ACTIVE=1
+
     local typo=$1
 
     # Nothing sensible to suggest for very short words ...
