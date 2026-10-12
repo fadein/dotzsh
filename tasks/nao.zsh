@@ -6,8 +6,8 @@
 
 
 PURPOSE="Play NetHack locally or online"
-VERSION="5.3.2"
-   DATE="Mon Sep 14 2026"
+VERSION="5.3.3"
+   DATE="Mon Oct 12 2026"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -117,6 +117,7 @@ nethack-right-size() {
 		# idempotency check for subsequent iterations
 		if (( i > 2 )) && ! term-size-changed; then
 			print -P "%B%F{red}Terminal size is not changing%f%b"
+			set-font-size 14
 			return 1
 		fi
 		case $REPLY in
@@ -141,6 +142,7 @@ nethack-right-size() {
 		# idempotency check
 		if ! term-size-changed; then
 			print -P "%B%F{red}Terminal size is not changing%f%b"
+			set-font-size 14
 			return 1
 		fi
 		case $REPLY in
