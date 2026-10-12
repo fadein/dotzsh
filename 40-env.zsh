@@ -23,8 +23,9 @@ export HISTSIZE=13337
 export SAVEHIST=13337
 
 #
-# You Keep Using That Word, I Do Not Think It Means What You Think It Means
+# configuration for You Keep Using That Word, I Do Not Think It Means What You Think It Means
 export YKUTWIDNTIMWYTIM_ALIASES=~/.zsh/55-typo-aliases.zsh
+export YKUTWIDNTIMWYTIM_THRESHOLD=2
 
 #
 # DIR_COLORS for `ls` and other tools
