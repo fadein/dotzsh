@@ -2,8 +2,8 @@
 
  PURPOSE="Slackware update task"
 
- VERSION="1.21"
-    DATE="Tue Sep 29 2026"
+ VERSION="1.22"
+    DATE="Tue Oct 13 2026"
   AUTHOR="Erik Falor"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -285,7 +285,6 @@ env() {
 					_TODO+=(
 					"$ assert-initrd-has-colehack"
 					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
-					"$ cp /boot/initrd.gz /boot/initrd-$KERNEL_VER.img"
 					"$ $EDITOR /etc/grub.d/??_amdgpu_dcdebug"
 					"$ grub-mkconfig -o /boot/grub/grub.cfg"
 					)
@@ -296,7 +295,6 @@ env() {
 					"$ cp /boot/vmlinuz*(.) ."
 					"$ assert-initrd-has-colehack"
 					"$ \$(/usr/share/mkinitrd/mkinitrd_command_generator.sh -r -k $KERNEL_VER -a '-l colehack')"
-					"$ cp /boot/initrd.gz initrd-$KERNEL_VER.gz"
 					"$ $EDITOR elilo.conf"
 					)
 					;;
