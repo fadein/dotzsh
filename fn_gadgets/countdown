@@ -11,7 +11,10 @@ function countdown {
 		echo 'Usage: countdown SECONDS [CMD ARGS]'
 		return 1
 	fi
-	local N=$1
+
+    trap "progress-bar; return" EXIT INT
+
+	local N=$1 D=$1
 	shift
 	local MSG CEOL=$(tput el 2>&1)
 
@@ -20,10 +23,11 @@ function countdown {
 
 	until [[ $N -le 0 ]]; do
 		printf $'\r%s%d...' "$MSG" $N
+        progress-bar normal $N $D
 		zselect -t 100  # sleep for 100 centiseconds = 1 second
 		((N--))
 	done
-	echo
+	print
 
 	[[ $# -ge 1 ]] && eval $@ || true
 }
