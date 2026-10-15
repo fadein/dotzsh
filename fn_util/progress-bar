@@ -1,0 +1,36 @@
+# vim: set ft=zsh expandtab:
+
+# Draw a progress bar with the OSC 9 4 escape sequence in supported terminals such as iTerm2 and Kitty.
+# Seems to be ignored by terms that are not in the know.
+
+# Usage:
+#   progress-bar          # undisplay a visible progress bar
+#   progress-bar i        # draw indeterminate bar
+#                           for when there's no end in sight
+#   progress bar n 19 20  # draw a normal progress bar at 95%
+#   progress bar w 4 10   # draw a warning progress bar at 40%
+#   progress bar e 1 5    # draw an error progress bar at 20%
+
+progress-bar() {
+    if (( $# == 0 )); then
+        # turn off the progress bar when no args are given
+        printf "\e]9;4;0\a"
+        return
+    elif [[ $1:l == i* ]]; then
+        # an indefinite progress bar needs no ratio
+        printf "\e]9;4;3\a"
+        return
+    fi
+
+    local mode
+    case $1:l in
+        error|e) mode=2 ;;
+        normal|n) mode=1 ;;
+        warning|w) mode=4 ;;
+    esac
+
+    local n=${2:?"A numerator is required"}
+    local d=${3:?"A denominator is required"}
+    local -i ratio=$(( 100.0 * n * (1.0 / d)))
+    printf "\e]9;4;$mode;$ratio\a"
+}
