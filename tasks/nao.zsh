@@ -6,8 +6,8 @@
 
 
 PURPOSE="Play NetHack locally or online"
-VERSION="5.3.3"
-   DATE="Mon Oct 12 2026"
+VERSION="5.4"
+   DATE="Fri Oct 16 2026"
  AUTHOR="erik"
 
 PROGNAME=$0
@@ -80,6 +80,12 @@ set-font-size() {
 		# calculate equivalent point size for font size given in pixels
 		local point_size=$(( $size * 72 / $DPI ))
 		alacritty msg config font.size=$point_size
+
+	elif [[ -n $KITTY_WINDOW_ID ]]; then
+		kitten @ set-font-size $size
+
+	else  # Don't know how to change the font size in this terminal
+		return 1
 	fi
 
 	print "Setting font size $size..."
