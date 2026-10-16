@@ -12,6 +12,12 @@
 # from each. The index is cached on disk and built on the first miss, so there
 # is no shell startup cost and no scan of every command per typo.
 
+
+# Exit status from command_not_found_handler that signals the precmd hook to
+# load the newly created alias
+YKUTWIDNTIMWYTIM_RELOAD_SIGNAL=129
+YKUTWIDNTIMWYTIM_NEWEST_ALIAS=
+
 # where to store aliases
 if [[ -z $YKUTWIDNTIMWYTIM_ALIASES ]]; then
     YKUTWIDNTIMWYTIM_ALIASES=~/.zsh_typo_aliases
@@ -203,16 +209,6 @@ _ykutwidntimwytim_ignore() {
     mkdir -p ${file:h} && print -r -- "$1" >> $file
 }
 
-# Re-source the alias file so newly saved aliases take effect in this shell.
-reload-aliases() {
-    if [[ -r $YKUTWIDNTIMWYTIM_ALIASES ]]; then
-        source $YKUTWIDNTIMWYTIM_ALIASES && print -u2 -r -- "ykutwidntimwytim: reloaded $YKUTWIDNTIMWYTIM_ALIASES"
-    else
-        print -u2 -r -- "ykutwidntimwytim: no alias file at $YKUTWIDNTIMWYTIM_ALIASES"
-        return 1
-    fi
-}
-
 # Main entry point - this function is invoked automatically by Zsh when the user submits a non-existant command
 command_not_found_handler() {
     # If anything inside this handler is itself not found, zsh would call us again,
@@ -254,12 +250,13 @@ command_not_found_handler() {
                     break
                 fi
 
-                print -u2 -nP "\nAppend '%B%F{green}alias $line%f%b' to $YKUTWIDNTIMWYTIM_ALIASES? [%B%F{green}yes%f/%F{red}No%f/%F{cyan}edit%f/%F{black}ignore%f%b] "
+                print -u2 -nP "\nAppend '%B%F{green}alias $line%f%b' to %B%F{cyan}${(D)YKUTWIDNTIMWYTIM_ALIASES}%f%b? [%B%F{green}yes%f/%F{red}No%f/%F{cyan}edit%f/%F{black}ignore%f%b] "
                 if read -r reply </dev/tty 2>/dev/null; then
                     case ${(L)reply} in
                         y|yes)
-                            print -r -- alias $line >> $YKUTWIDNTIMWYTIM_ALIASES \
-                                && print -u2 -P "\nSaved! Run %B%F{green}reload-aliases%f%b to use it in this shell."
+                            YKUTWIDNTIMWYTIM_NEWEST_ALIAS=$line
+                            print -r -- alias $YKUTWIDNTIMWYTIM_NEWEST_ALIAS >> $YKUTWIDNTIMWYTIM_ALIASES \
+                                && return $YKUTWIDNTIMWYTIM_RELOAD_SIGNAL
                             ;;
                         i|ignore)
                             _ykutwidntimwytim_ignore $typo
@@ -289,3 +286,15 @@ command_not_found_handler() {
     fi
     return 127
 }
+
+
+# Re-source the alias file so newly saved aliases take effect in the interactive shell.
+_ykutwidntimwytim-reload-aliases() {
+    [[ $? == $YKUTWIDNTIMWYTIM_RELOAD_SIGNAL ]] || return
+    if [[ -r $YKUTWIDNTIMWYTIM_ALIASES ]]; then
+        source $YKUTWIDNTIMWYTIM_ALIASES && print -Pru2 -- "ykutwidntimwytim: reloaded %B%F{cyan}${(D)YKUTWIDNTIMWYTIM_ALIASES}%f%b"
+    else
+        print -Pru2 -- "%B%F{yellow}ykutwidntimwytim: alias file %F{cyan}${(D)YKUTWIDNTIMWYTIM_ALIASES}%F{yellow} is not readable%f%b"
+    fi
+}
+precmd_functions+=(_ykutwidntimwytim-reload-aliases)

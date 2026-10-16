@@ -78,9 +78,10 @@ function print-terminal-title {
 
 # Set the XTerm window title property
 # The default value appears as "zsh tty cwd"
-function precmd {
+function _terminal-title {
     print-terminal-title zsh %~ %y
 }
+precmd_functions+=(_terminal-title)
 
 
 # Helper to set the terminal window's title to the running command,
