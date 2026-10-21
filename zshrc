@@ -5,7 +5,7 @@
 [[ -r /etc/zsh/zprofile ]] && source /etc/zsh/zprofile
 
 # variables used by modularized dotfiles
-declare -a precmd_functions
+declare -aU precmd_functions
 
 # Source my modularized dotfiles
 for F in ~/.zsh/[0-9][0-9]-*.zsh(N); do
