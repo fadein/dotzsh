@@ -1,0 +1,8 @@
+# vim: set ft=zsh expandtab:
+
+# Print a command before running it
+# Only show, don't run when $DRYRUN is non-null
+function echodo {
+	print $@
+	[[ -n $DRYRUN ]] && return || $@
+}
