@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="enter 1080p mode"
-VERSION="1.5"
-   DATE="Wed Sep 24 2025"
+VERSION="1.6"
+   DATE="Mon Oct 26 2026"
  AUTHOR="fadein"
 
 PROGNAME=$0
@@ -13,11 +13,11 @@ FIGLET=$(command -v figlet) || FIGLET=print
 
 
 case $HOSTNAME in
-    atlantis)
+    atlantis*)
         display=eDP
         resolution=2880x1920
         ;;
-    columbia|endeavour)
+    columbia*|endeavour*)
         display=eDP-1 
         resolution=3840x2160
         ;;
