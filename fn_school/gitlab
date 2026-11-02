@@ -1,6 +1,8 @@
 # vim: set ft=zsh expandtab:
 
 # Open a repo's HTTPS GitLab page from its "origin" (or $1) remote
+# (Technically, this will likely work for any repo URL starting with git@ that
+#  has a corresponding HTTPS service)
 gitlab() {
 	local URL
 	if git status > /dev/null 2>&1
