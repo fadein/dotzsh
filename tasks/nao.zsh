@@ -254,7 +254,7 @@ setup() {
 spawn() {
 	case $TASKNAME in
 		nao) countdown $DELAY ssh nethack@alt.org ;;
-		hardfought) countdown $DELAY ssh nethack@hardfought.org ;;
+		tnnt|hardfought) countdown $DELAY ssh nethack@hardfought.org ;;
 		nethack) MAILREADER=/usr/bin/mutt command nethack ;;
 		wizard)
 			if [[ ! -x $PLAYGROUND ]]; then
