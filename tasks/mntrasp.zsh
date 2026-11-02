@@ -1,8 +1,8 @@
 #!/bin/env zsh
 
 PURPOSE="Mount/unmount /mnt/rasp"
-VERSION="1.3"
-   DATE="Tue Dec  9 2025"
+VERSION="1.4"
+   DATE="Thu Oct 29 2026"
  AUTHOR="Erik Falor <ewfalor@gmail.com>"
 PROGNAME=$0
 TASKNAME=$0:t:r
@@ -10,6 +10,7 @@ TASKNAME=$0:t:r
 MOUNT=/bin/mount
 UMOUNT=/bin/umount
 MOUNT_POINT=/mnt/rasp
+MOUNT_OPTS=(-o nolock)
 
 
 setup() {
@@ -17,7 +18,7 @@ setup() {
         die "$MOUNT_POINT is already mounted"
     fi
     raisePrivs
-    $MOUNT $MOUNT_POINT
+    $MOUNT $MOUNT_OPTS $MOUNT_POINT
     CLEANUP_TRAPS+=(HUP)
 }
 
