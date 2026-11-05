@@ -1,5 +1,5 @@
 reinit-completion() {
-    command rm --force ~/.zsh/compdump
+    command rm -f ~/.zsh/compdump
     compinit -u -d ~/.zsh/compdump
 }
 
