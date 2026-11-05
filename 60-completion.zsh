@@ -1,4 +1,11 @@
-# enable the completion system
+reinit-completion() {
+    command rm --force ~/.zsh/compdump
+    compinit -u -d ~/.zsh/compdump
+}
+
+# Enable the completion system if its directory is present
+[[ -d $HOME/.zsh/completion ]] || return
+
 fpath=($HOME/.zsh/completion $fpath)
 autoload -U $HOME/.zsh/completion/*(:t)
 autoload -U compinit && compinit -i && compinit -u -d ~/.zsh/compdump

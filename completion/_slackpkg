@@ -1,0 +1,295 @@
+#compdef slackpkg -value-,SLACKPKGPLUS,-default- -value-,GREYLIST,-default- -value-,ALLOW32BIT,-default- -value-,USEBL,-default- -value-,LEGACYBL,-default- -value-,TAG_PRIORITY,-default- -value-,SENSITIVE_SEARCH,-default- -value-,CACHEUPDATE,-default- -value-,DOWNLOADONLY,-default- -value-,STRICTGPG,-default- -value-,WW_FILE_SEARCH,-default- -value-,USETERSE,-default- -value-,TERSESEARCH,-default- -value-,DETAILED_INFO,-default- -value-,VERBOSE,-default-
+# Zsh completion for slackpkg(8) extended by slackpkg+ (slackpkgplus).
+#
+# In addition to everything stock slackpkg accepts, this completes the
+# slackpkg+ argument syntax:
+#   repository            all packages from a third-party repository
+#   repository:package    a package from a specific repository
+#   file:PKG.txz          a local package file
+#   dir:DIRECTORY         every package in a local directory
+#   http(s)://...         a remote package or directory
+#   ,package / package,   "comma syntax" for an exact name match
+# and the slackpkgplus.conf settings that can be overridden from the
+# environment, e.g.  SENSITIVE_SEARCH=off slackpkg search mplayer
+#
+# Install: put this file in a directory on your $fpath, INSTEAD of _slackpkg
+# (both claim the slackpkg command), then `rm -f ~/.zcompdump; compinit`.
+
+(( $+functions[_slackpkgplus_conf] )) ||
+_slackpkgplus_conf() {
+  REPLY=${CONF:-${ROOT}/etc/slackpkg}
+}
+
+# Location of slackpkg's package lists (WORKDIR in slackpkg.conf).
+(( $+functions[_slackpkgplus_workdir] )) ||
+_slackpkgplus_workdir() {
+  local line dir
+  _slackpkgplus_conf
+  local conf=$REPLY/slackpkg.conf
+  if [[ -r $conf ]]; then
+    for line in ${(M)${(f)"$(<$conf)"}:#WORKDIR=*}; do
+      dir=${${line#WORKDIR=}//[\"\']/}
+    done
+  fi
+  REPLY=${ROOT}${dir:-/var/lib/slackpkg}
+}
+
+# Read the package list once per completion attempt.  Fills these arrays,
+# which are declared local in _slackpkgplus:
+#   _sp_pkgs     every available package name
+#   _sp_series   package series / subdirectories (a, kde, a-compat32, ...)
+#   _sp_repos    repository names (official and third-party)
+#   _sp_repopkgs associative: repository -> space-separated package names
+#   _sp_inst     associative: installed package name -> 1
+(( $+functions[_slackpkgplus_load] )) ||
+_slackpkgplus_load() {
+  (( _sp_loaded )) && return $_sp_loadstatus
+  _sp_loaded=1 _sp_loadstatus=1
+
+  local REPLY line repo dir conf
+  local -a f parts
+  local -A seen
+
+  # Installed packages.
+  dir=${ROOT}/var/lib/pkgtools/packages
+  [[ -d $dir ]] || dir=${ROOT}/var/log/packages
+  for line in $dir/*(N:t); do
+    _sp_inst[${line%-*-*-*}]=1
+  done
+
+  # Repositories configured in slackpkgplus.conf (MIRRORPLUS['name']=...).
+  _slackpkgplus_conf
+  conf=$REPLY/slackpkgplus.conf
+  if [[ -r $conf ]]; then
+    for line in ${(M)${(f)"$(<$conf)"}:#[[:space:]]#MIRRORPLUS\[*}; do
+      repo=${${line#*\[}%%\]*}
+      repo=${repo//[\"\']/}
+      [[ -n $repo ]] && seen[$repo]=1
+    done
+  fi
+
+  _slackpkgplus_workdir
+  if [[ -r $REPLY/pkglist ]]; then
+    _sp_loadstatus=0
+    for line in ${(f)"$(<$REPLY/pkglist)"}; do
+      f=( ${=line} )
+      repo=${f[1]#SLACKPKGPLUS_}
+      seen[$repo]=1
+      _sp_pkgs+=( $f[2] )
+      _sp_repopkgs[$repo]+=" $f[2]"
+      # Path components below the repository directory, minus the
+      # per-package directories third-party repos tend to use.
+      parts=( ${(s:/:)f[7]} )
+      parts=( ${parts[3,-1]:#$f[2]} )
+      _sp_series+=( $parts )
+    done
+  fi
+  _sp_repos=( ${(k)seen} )
+  _sp_pkgs=( ${(u)_sp_pkgs} )
+  _sp_series=( ${(u)_sp_series} )
+  return $_sp_loadstatus
+}
+
+# Complete one package argument.
+#   $1 = available  install/download: packages from the mirrors
+#        installed  remove/upgrade/reinstall: packages already installed
+#        search     search/info: available packages, no local sources
+(( $+functions[_slackpkgplus_pkgarg] )) ||
+_slackpkgplus_pkgarg() {
+  local mode=$1 repo ret=1
+  local -a expl pkgs installed repoflags
+  local -a srcwords=( file: dir: ) srcdescs=(
+    'file:  -- a local package file (.txz/.tgz)'
+    'dir:   -- every package in a local directory'
+  )
+
+  # Comma syntax: a leading comma asks for an exact name match.
+  compset -P ','
+
+  case $PREFIX in
+    file:*)
+      [[ $mode == search ]] && return 1
+      compset -P 'file:'
+      _wanted files expl 'local package file' _files -g '*.t[blxg]z(-.)'
+      return
+      ;;
+    dir:*)
+      [[ $mode == search ]] && return 1
+      compset -P 'dir:'
+      _wanted directories expl 'local package directory' _directories
+      return
+      ;;
+    (http|https|ftp)://*)
+      [[ $mode == search ]] && return 1
+      _wanted urls expl 'package URL' _urls
+      return
+      ;;
+    (/|./|../)*)
+      # Stock slackpkg: a path is a file containing a list of patterns.
+      [[ $mode == search ]] && return 1
+      _wanted files expl 'package list file' _files
+      return
+      ;;
+    *:*)
+      _slackpkgplus_load
+      repo=${PREFIX%%:*}
+      compset -P '*:'
+      pkgs=( ${=_sp_repopkgs[$repo]} )
+      if [[ $mode == installed ]]; then
+        installed=( ${(k)_sp_inst} )
+        pkgs=( ${pkgs:*installed} )
+      fi
+      _wanted packages expl "package from $repo" compadd -a pkgs
+      return
+      ;;
+  esac
+
+  if ! _slackpkgplus_load && [[ $mode != installed ]]; then
+    _message "available package (run 'slackpkg update' first)"
+  fi
+
+  if [[ $mode == installed ]]; then
+    pkgs=( ${(k)_sp_inst} )
+  else
+    pkgs=( $_sp_pkgs )
+  fi
+
+  # "repo" alone selects the whole repository; "repo:" narrows to one of its
+  # packages.  The ':' suffix is removed again if a space is typed next.
+  [[ $mode != search ]] && repoflags=( -q -S ':' )
+
+  _tags packages series repositories sources
+  while _tags; do
+    _requested packages expl "${mode/search/available} package" \
+      compadd -a pkgs && ret=0
+    _requested series expl 'package series' compadd -a _sp_series && ret=0
+    _requested repositories expl 'repository' \
+      compadd $repoflags -a _sp_repos && ret=0
+    [[ $mode != search ]] &&
+      _requested sources expl 'local package source' \
+        compadd -S '' -l -d srcdescs -a srcwords && ret=0
+    (( ret )) || break
+  done
+  return ret
+}
+
+(( $+functions[_slackpkgplus_templates] )) ||
+_slackpkgplus_templates() {
+  local REPLY
+  local -a tmpls
+  _slackpkgplus_conf
+  tmpls=( $REPLY/templates/*.template(N:t:r) )
+  _wanted templates expl 'template' compadd -a tmpls
+}
+
+# Values for slackpkgplus.conf settings given in the environment.
+(( $+functions[_slackpkgplus_envvalue] )) ||
+_slackpkgplus_envvalue() {
+  local -a expl
+  case $1 in
+    VERBOSE)
+      local -a levels=(
+        '0:no download bars'
+        '1:download bar for packages only'
+        '2:download bars everywhere (slackpkg default)'
+        '3:debug output'
+      )
+      _describe -t values 'verbosity' levels ;;
+    DETAILED_INFO)
+      _wanted values expl 'detail level' compadd none basic filelist ;;
+    TERSESEARCH)
+      _wanted values expl 'value' compadd on off tiny ;;
+    *)
+      _wanted values expl 'value' compadd on off ;;
+  esac
+}
+
+_slackpkgplus() {
+  if [[ $service == -value-* ]]; then
+    _slackpkgplus_envvalue ${${service#-value-,}%%,*}
+    return
+  fi
+
+  local curcontext=$curcontext state line ret=1
+  local -a onoff
+  local opt
+
+  # Shared, lazily-filled package data (see _slackpkgplus_load).
+  local _sp_loaded=0 _sp_loadstatus=1
+  local -a _sp_pkgs _sp_series _sp_repos
+  local -A _sp_repopkgs _sp_inst
+
+  for opt in delall checkmd5 checkgpg checksize postinst onoff download_all \
+             dialog batch only_new_dotnew orig_backups use_includes spinning; do
+    onoff+=( "-${opt}=-[set ${(U)opt}]:value:(on off)" )
+  done
+
+  _arguments -C \
+    $onoff \
+    '-default_answer=-[default answer in batch mode]:answer:(y n yes no)' \
+    '-dialog_maxargs=-[max characters passed to dialog]:number' \
+    '-mirror=-[override mirror URL]:mirror:_urls' \
+    '1:action:->action' \
+    '*:: :->args' && ret=0
+
+  case $state in
+    action)
+      local -a actions
+      actions=(
+        'install:download and install packages'
+        'remove:remove installed packages'
+        'search:search for packages by name (all repositories and SBo)'
+        'file-search:search packages for a file'
+        'download:download packages without installing'
+        'upgrade:upgrade packages to the latest version'
+        'reinstall:reinstall installed packages'
+        'generate-template:create a template from installed packages'
+        'install-template:install packages from a template'
+        'remove-template:remove packages listed in a template'
+        'info:show information about a package'
+        'update:download the latest package lists'
+        'clean-system:remove packages not in the official tree'
+        'upgrade-all:upgrade every installed package (all repositories)'
+        'install-new:install packages newly added to the tree'
+        'new-config:find and merge .new configuration files'
+        'check-updates:report repositories changed since the last update'
+        'show-changelog:display ChangeLog.txt'
+        'help:show a summary of actions'
+      )
+      _describe -t actions 'slackpkg action' actions && ret=0
+      ;;
+    args)
+      curcontext=${curcontext%:*:*}:slackpkg-$words[1]:
+      case $words[1] in
+        install|download)
+          _slackpkgplus_pkgarg available && ret=0
+          ;;
+        remove|upgrade|reinstall)
+          _slackpkgplus_pkgarg installed && ret=0
+          ;;
+        search|info)
+          (( CURRENT == 2 )) && _slackpkgplus_pkgarg search && ret=0
+          ;;
+        file-search)
+          (( CURRENT == 2 )) && _message -e files 'file name' && ret=0
+          ;;
+        install-template|remove-template)
+          (( CURRENT == 2 )) && _slackpkgplus_templates && ret=0
+          ;;
+        generate-template)
+          (( CURRENT == 2 )) && _message -e templates 'new template name' && ret=0
+          ;;
+        update)
+          (( CURRENT == 2 )) && _wanted args expl 'argument' compadd gpg && ret=0
+          ;;
+        *)
+          _message 'no more arguments'
+          ;;
+      esac
+      ;;
+  esac
+
+  return ret
+}
+
+_slackpkgplus "$@"
